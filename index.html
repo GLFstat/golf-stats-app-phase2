@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Golf Stats Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="clubhouse.css">
+</head>
+<body>
+
+<!-- Splash Screen -->
+<div id="splashScreen" style="position:fixed; inset:0; z-index:99999; background:#000; display:block; opacity:1;">
+  <div class="splash-bg"></div>
+  <img class="splash-logo" src="images/splash-2.png" alt="">
+
+  <div id="appVersionDisplay" style="
+      position: absolute;
+      bottom: 10px;
+      right: 12px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+      z-index: 100000;
+  ">v10000</div>
+</div>
+
+<div id="fadeOverlay" style="position:fixed; inset:0; z-index:99998; background:#000; display:block; opacity:1;"></div>
+
+<!-- ===== Round Details Screen ===== -->
+<div id="roundDetailsScreen" style="display:none;">
+  <div class="round-details-box">
+    <h2>Today's Round Details</h2>
+
+    <div id="resumeRoundPanel" class="resume-panel hidden">
+      <div class="resume-title">Active Round Found</div>
+      <div id="resumeRoundCourse" class="resume-course"></div>
+      <div id="resumeRoundStatus" class="resume-status"></div>
+      <div class="resume-actions">
+        <button id="resumeRoundBtn" type="button">Resume</button>
+        <button id="newRoundBtn" type="button">Start New</button>
+      </div>
+    </div>
+
+    <div class="round-form">
+
+      <div class="form-row detail-row required-row date-display-row" id="row-roundDate">
+        <div class="form-group full-width">
+          <div id="roundDateDisplay" class="date-display-text"></div>
+          <input type="hidden" id="roundDate">
+        </div>
+      </div>
+
+      <div class="form-row detail-row required-row" id="row-roundType">
+        <div class="form-group full-width">
+          <label for="roundType">Round Type</label>
+          <select id="roundType">
+            <option value="" selected>Select Round Type</option>
+            <option value="Practice Round">Practice Round</option>
+            <option value="Jr PGA Tournament">Jr PGA Tournament</option>
+            <option value="High School Tournament">High School Tournament</option>
+            <option value="Other Event">Other Event</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row detail-row required-row" id="row-courseName">
+        <div class="form-group full-width">
+          <label for="courseName">Course Name</label>
+          <input type="text" id="courseName">
+        </div>
+      </div>
+
+      <div class="form-row detail-row required-row" id="row-startingHole">
+        <div class="form-group full-width">
+          <label for="startingHole">Starting Hole</label>
+          <select id="startingHole">
+            <option value="" selected>Select Hole</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+            <option value="18">18</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="postRoundGuidance" class="post-round-guidance">
+        Complete the highlighted <span class="guidance-accent">Round Details</span> fields to continue.
+      </div>
+
+      <div id="postRoundReturnWrap" class="post-round-return-wrap">
+        <button id="postRoundReturnBtn" type="button">Back to Round Wrap-up</button>
+      </div>
+
+      <div class="form-row detail-row recommended-row" id="row-teeInfo">
+ <div class="form-group">
+  <label for="teeRating">Rating</label>
+  <input type="text" id="teeRating" placeholder="00.0">
+</div>
+<div class="form-group">
+  <label for="teeSlope">Slope</label>
+  <input type="number" id="teeSlope" placeholder="000">
+</div>
+        <div class="form-group">
+          <label for="teeYardage">Yardage</label>
+          <input type="number" id="teeYardage" placeholder="0000">
+        </div>
+      </div>
+
+      <div class="form-row detail-row required-row" id="row-coursePars">
+        <div class="form-group">
+          <label for="frontPar">Front 9 Par</label>
+          <input type="number" id="frontPar" name="frontPar" min="0" max="99">
+        </div>
+        <div class="form-group">
+          <label for="backPar">Back 9 Par</label>
+          <input type="number" id="backPar" name="backPar" min="0" max="99">
+        </div>
+        <div class="form-group">
+          <label for="coursePar">Course Par</label>
+          <input type="number" id="coursePar" name="coursePar" readonly>
+        </div>
+      </div>
+
+      <div class="yardages-link-row">
+  <button id="addHoleYardagesBtn" class="yardages-link-btn" type="button">
+    Add Hole Yardages
+  </button>
+</div>
+
+
+<div id="holeYardagesPopup" class="yardages-popup-overlay hidden">
+  <div class="yardages-popup-card">
+    <h2 class="yardages-popup-title">Hole Yardages</h2>
+
+    <div class="yardages-popup-section-label">FRONT 9</div>
+
+    <div class="yardages-grid">
+      <div class="yardage-item"><label for="yardage1" class="yardage-hole-label">1</label><input type="number" id="yardage1" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage2" class="yardage-hole-label">2</label><input type="number" id="yardage2" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage3" class="yardage-hole-label">3</label><input type="number" id="yardage3" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage4" class="yardage-hole-label">4</label><input type="number" id="yardage4" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage5" class="yardage-hole-label">5</label><input type="number" id="yardage5" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage6" class="yardage-hole-label">6</label><input type="number" id="yardage6" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage7" class="yardage-hole-label">7</label><input type="number" id="yardage7" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage8" class="yardage-hole-label">8</label><input type="number" id="yardage8" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage9" class="yardage-hole-label">9</label><input type="number" id="yardage9" class="yardage-input" min="0" inputmode="numeric"></div>
+    </div>
+
+    <div class="yardages-popup-section-label yardages-back9-label">BACK 9</div>
+
+    <div class="yardages-grid">
+      <div class="yardage-item"><label for="yardage10" class="yardage-hole-label">10</label><input type="number" id="yardage10" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage11" class="yardage-hole-label">11</label><input type="number" id="yardage11" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage12" class="yardage-hole-label">12</label><input type="number" id="yardage12" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage13" class="yardage-hole-label">13</label><input type="number" id="yardage13" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage14" class="yardage-hole-label">14</label><input type="number" id="yardage14" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage15" class="yardage-hole-label">15</label><input type="number" id="yardage15" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage16" class="yardage-hole-label">16</label><input type="number" id="yardage16" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage17" class="yardage-hole-label">17</label><input type="number" id="yardage17" class="yardage-input" min="0" inputmode="numeric"></div>
+      <div class="yardage-item"><label for="yardage18" class="yardage-hole-label">18</label><input type="number" id="yardage18" class="yardage-input" min="0" inputmode="numeric"></div>
+    </div>
+
+    <div class="yardages-total-row">
+      <span class="yardages-total-label">Course Yardage:</span>
+      <span id="holeYardagesTotal">0</span>
+    </div>
+
+    <div class="yardages-popup-actions">
+      <button id="saveHoleYardagesBtn" type="button">Save Yardages</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="round-form-note" id="roundFormNote">
+  Required rows must be complete to start. Tee details are recommended and can be added later.
+</div>
+
+<button id="startRoundBtn" type="button">Start Round</button>
+
+<div class="dev-only">
+  <button id="demoRoundBtn" type="button">Load Demo Round</button>
+  <button id="fillTo18Btn" type="button">Fill to Hole 18</button>
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="appVersionDisplay" style="
+    position: fixed;
+    bottom: 6px;
+    right: 8px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.6);
+    z-index: 999999;
+">
+</div>
+
+<!-- Main Stats Input / Home Page -->
+<div id="appContainer">
+  <header>
+  <h1></h1>
+  <button id="statsHelpBtn" class="help-btn" type="button">?</button>
+  
+</header>
+
+  <div class="hole-nav">
+    <div class="hole-par-section">
+      <h2 class="enter-stats-header">Enter Stats for Hole <span id="holeHeader">1</span></h2>
+
+      <div class="hole-par-container">
+        <div class="hole-par-header">Select Hole's Par</div>
+        <div class="hole-par-radios">
+          <label class="hole-par-radio">
+            <input type="radio" name="holePar" value="3">
+            <span>3</span>
+          </label>
+          <label class="hole-par-radio">
+            <input type="radio" name="holePar" value="4">
+            <span>4</span>
+          </label>
+          <label class="hole-par-radio">
+            <input type="radio" name="holePar" value="5">
+            <span>5</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gray-background">
+    <div class="checkbox-container">
+      <div class="checkbox-row">
+        <div class="checkbox-item"><input type="checkbox" id="fir"><span>FIR</span></div>
+        <div class="checkbox-item"><input type="checkbox" id="gir"><span>GIR</span></div>
+      </div>
+      <div class="checkbox-row">
+        <div class="checkbox-item"><input type="checkbox" id="updown"><span>U&amp;D</span></div>
+        <div class="checkbox-item"><input type="checkbox" id="sand"><span>SndSv</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-counter">
+    <label for="putts">Putts</label>
+    <div class="counter-group">
+      <button class="minus" type="button"><span>−</span></button>
+      <input type="number" id="putts" value="0">
+      <button class="plus" type="button"><span>+</span></button>
+    </div>
+  </div>
+
+  <div class="stat-counter">
+    <label for="penalty">Penalty</label>
+    <div class="counter-group">
+      <button class="minus" type="button"><span>−</span></button>
+      <input type="number" id="penalty" value="0">
+      <button class="plus" type="button"><span>+</span></button>
+    </div>
+  </div>
+
+  <div class="stat-counter">
+    <label for="score">Score</label>
+    <div class="counter-group">
+      <button class="minus" type="button"><span>−</span></button>
+      <input type="number" id="score" value="0">
+      <button class="plus" type="button"><span>+</span></button>
+    </div>
+  </div>
+
+
+
+
+
+
+
+<div class="actions">
+  
+  <div class="save-hole-row">
+    <button id="prevHole" class="nav-btn arrow-btn" type="button">◀</button>
+
+    <button id="openEnhancedStats" class="es-btn" type="button">
+      <span class="plus">+</span> Stats
+    </button>
+
+    <button id="saveHole" type="button">Save Hole</button>
+
+    <button id="forwardHole" class="nav-btn arrow-btn" type="button">▶</button>
+  </div>
+
+  <button id="seeStats" type="button">View Stats Summary</button>
+</div>
+
+
+
+<!-- Enhanced Stats Panel -->
+<div id="enhancedStatsPanel" class="es-panel-overlay hidden">
+  <div class="es-panel-sheet">
+    <div class="es-panel-handle"></div>
+
+    <div class="es-panel-header">
+      <div class="es-panel-title-wrap">
+        <div class="es-panel-hole">Current Hole</div>
+        <div class="es-panel-title">Enhanced Stats</div>
+      </div>
+
+      <button id="closeEnhancedStats" class="es-close-btn" type="button">✕</button>
+    </div>
+
+    <div class="es-panel-body">
+      <p class="es-panel-text">
+        <strong>Add what you have time for.</strong><br>You can always add more later.
+      </p>
+
+      <div class="es-tile-grid">
+        <button class="es-tile" type="button">
+          <div class="es-tile-title">Tee Shot</div>
+          <div class="es-tile-sub">Direction &amp; Distance</div>
+        </button>
+
+        <button class="es-tile" type="button">
+          <div class="es-tile-title">Approach</div>
+          <div class="es-tile-sub">Distance &amp; Result</div>
+        </button>
+
+        <button class="es-tile" type="button">
+          <div class="es-tile-title">Short Game</div>
+          <div class="es-tile-sub">Chip, Pitch or Bunker</div>
+        </button>
+
+        <button class="es-tile" type="button">
+          <div class="es-tile-title">Putting</div>
+          <div class="es-tile-sub">First Putt Distance</div>
+        </button>
+
+        <button class="es-tile es-tile-wide" type="button">
+          <div class="es-tile-title">Notes</div>
+          <div class="es-tile-sub">Lie, Wind, Trouble, Anything Else</div>
+        </button>
+      </div>
+
+      <div class="es-panel-footer">
+        <button id="enhancedStatsDone" class="es-done-btn" type="button">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+  <div class="return-row">
+    <button id="returnToDetails" type="button">← Return to Round Details</button>
+  </div>
+</div>
+
+<!-- Stats Help Popup -->
+<div id="statsHelpPopup" class="popup-overlay">
+  <div class="help-popup-box">
+    <div class="help-popup-title">Stats Screen Help</div>
+
+    <div class="help-popup-text">
+      <p><strong>Select the hole par</strong> first.</p>
+
+      <p>
+        Enter the stats for that hole, including
+        <strong>Putts</strong> and <strong>Score</strong>.
+      </p>
+
+      <p>
+        Check <strong>FIR</strong>, <strong>GIR</strong>,
+        <strong>U&amp;D</strong>, and <strong>SndSv</strong>
+        only if they apply to that hole.
+      </p>
+
+      <p>
+        Tap <strong>Save Hole</strong> when finished.
+        The app will automatically move to the next hole.
+      </p>
+
+      <p>
+        Use the left and right arrows only if you need to view another hole screen.
+      </p>
+    </div>
+
+    <button id="statsHelpCloseBtn" type="button">Close</button>
+  </div>
+</div>
+
+
+<!-- Save Confirmation Popup -->
+<div id="saveConfirmPopup" class="popup-overlay">
+  <div class="popup-box">
+    <div id="saveConfirmText">Save Hole X Stats?</div>
+
+    <p class="warning-text save-hole-warning">
+      Be sure you have entered <br>all this hole's stats accurately.<br>
+      You will not be able to edit this later.
+    </p>
+
+    <button id="confirmOK" type="button">OK</button>
+    <button id="confirmCancel" type="button">Cancel</button>
+  </div>
+</div>
+
+<!-- Validation Popup -->
+<div id="validationPopup" class="popup-overlay">
+  <div class="popup-box">
+    <div id="validationText"></div>
+    <button id="validationOK" type="button">OK</button>
+  </div>
+</div>
+
+<!-- Hole Saved Fade Message -->
+<div id="holeSavedFade" class="popup-overlay">
+  <div class="popup-box">
+    <div class="hole-saved-text">
+      Hole <span id="holeSavedNumber">1</span> Saved <span class="checkmark">✔</span>
+    </div>
+  </div>
+</div>
+
+<!-- Round Complete Modal -->
+<div id="roundCompleteModal" class="popup-overlay">
+  <div class="popup-box">
+    <div id="roundCompleteText" style="font-size:22px; font-weight:bold; margin-bottom:16px;"></div>
+
+    <div id="roundCompleteSubtext" style="font-size:16px; line-height:1.4; margin-bottom:20px;"></div>
+
+    <div class="round-complete-buttons">
+      <button id="roundCompleteSummaryBtn" type="button">View Summary</button>
+      <button id="roundCompleteDetailsBtn" type="button">Round Details</button>
+      <button id="roundCompleteCloseBtn" type="button">Go to Round Wrap-up</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Round Details Help Popup -->
+
+
+<!-- 19th Hole Screen -->
+<div id="nineteenthHoleScreen" class="screen hidden">
+  <div class="summary-box nineteenth-box" style="text-align:center;">
+    <div class="nineteenth-box-inner">
+
+      <h2 style="margin-bottom:10px;">Today's Round Wrap-up</h2>
+      <div id="nineteenthHeadline" style="font-size:18px; margin-bottom:20px;"></div>
+
+      <div id="finalScoreCircle" class="score-circle nineteenth-score-circle"></div>
+
+      <div class="nineteenth-mini-stats">
+        <div class="nineteenth-mini-stat nineteenth-score-summary">
+          <div><strong>Final Score:</strong> <span id="nineteenthFinalScore"></span></div>
+          <div><strong>Vs Par:</strong> <span id="nineteenthVsPar"></span></div>
+        </div>
+
+        <div class="nineteenth-avg-row">
+          <div class="nineteenth-mini-stat">
+            <div>Par 3 Avg</div>
+            <div id="par3Avg">--</div>
+          </div>
+          <div class="nineteenth-mini-stat">
+            <div>Par 4 Avg</div>
+            <div id="par4Avg">--</div>
+          </div>
+          <div class="nineteenth-mini-stat">
+            <div>Par 5 Avg</div>
+            <div id="par5Avg">--</div>
+          </div>
+        </div>
+
+        <div class="nineteenth-mini-stat nineteenth-putts-stat">
+          <div><strong>Putts for Round:</strong> <span id="roundPuttsTotal">0</span></div>
+        </div>
+      </div>
+
+      <div id="missingCourseDataReminder" style="margin-bottom:20px; font-size:14px; display:none;"></div>
+
+      <div class="actions">
+        <button id="nineteenthSummaryBtn" type="button">View Summary</button>
+        <button id="viewSavedRoundsBtn" type="button">Go to Saved Rounds</button>
+        <button id="nineteenthDetailsBtn" type="button">Finish Round Details</button>
+        <button id="nineteenthNewRoundBtn" type="button">Start New Round</button>
+        <button id="goToClubhouseBtn" type="button" onclick="showClubhouseScreen()">Go to the Clubhouse</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Saved Rounds Hub Screen -->
+<div id="savedRoundsScreen" class="screen hidden saved-rounds-screen">
+  <div class="saved-rounds-overlay">
+    <div class="saved-rounds-panel">
+      <h2 class="saved-rounds-title">Saved Rounds</h2>
+      <div class="saved-rounds-subtitle">History and performance review</div>
+
+      <div class="saved-rounds-hub-actions">
+        <button id="openPerformanceChartsBtn" type="button">Open Performance Charts</button>
+        <button id="openSavedRoundsListBtn" type="button">View Saved Rounds</button>
+      </div>
+
+      <button
+        id="savedRoundsHubBackBtn"
+        type="button"
+        onclick="
+          document.getElementById('savedRoundsScreen')?.classList.add('hidden');
+          document.getElementById('performanceChartsScreen')?.classList.add('hidden');
+          document.getElementById('savedRoundsListScreen')?.classList.add('hidden');
+          document.getElementById('nineteenthHoleScreen')?.classList.remove('hidden');
+        "
+      >Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- Performance Charts Screen -->
+<div id="performanceChartsScreen" class="screen hidden saved-rounds-screen">
+  <div class="saved-rounds-overlay">
+    <div class="saved-rounds-panel">
+
+      <h2 class="saved-rounds-title">Performance Charts</h2>
+      <div class="saved-rounds-subtitle">Round analysis and trends</div>
+
+      <div class="analytics-review-section">
+        <div class="analytics-swiper" id="analyticsSwiper">
+          <div class="analytics-swiper-track" id="analyticsSwiperTrack">
+
+            <div class="analytics-slide">
+              <div class="analytics-chart-card">
+                <div class="analytics-card-title">Score vs Yardage</div>
+                <canvas id="scoreYardageChart" aria-label="Score versus yardage chart"></canvas>
+              </div>
+            </div>
+
+            <div class="analytics-slide">
+              <div class="analytics-chart-card">
+                <div class="analytics-card-title">FIR % by Round</div>
+                <canvas id="firByRoundChart" aria-label="Fairways in regulation by round"></canvas>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="analytics-dots">
+          <button type="button" class="analytics-dot active" data-chart-index="0" aria-label="Show chart 1"></button>
+          <button type="button" class="analytics-dot" data-chart-index="1" aria-label="Show chart 2"></button>
+        </div>
+
+        <div class="analytics-metrics-grid">
+          <div class="analytics-metric-card">
+            <div class="analytics-metric-label">Avg Score</div>
+            <div id="avgScoreValue" class="analytics-metric-value">--</div>
+          </div>
+
+          <div class="analytics-metric-card">
+            <div class="analytics-metric-label">Avg vs Par</div>
+            <div id="avgVsParValue" class="analytics-metric-value">--</div>
+          </div>
+
+          <div class="analytics-metric-card">
+            <div class="analytics-metric-label">Putts / Round</div>
+            <div id="avgPuttsValue" class="analytics-metric-value">--</div>
+          </div>
+
+          <div class="analytics-metric-card">
+            <div class="analytics-metric-label">U&amp;D</div>
+            <div id="avgUpDownValue" class="analytics-metric-value">--</div>
+          </div>
+        </div>
+        <!-- ========================================= -->
+<!-- FIR CHART → DOT TAP POPUP (START) -->
+<!-- ========================================= -->
+<div id="chartPointPopup" class="chart-point-popup hidden">
+
+  <div class="chart-popup-box">
+
+    <div class="chart-popup-close" id="chartPopupClose">✖</div>
+
+    <div class="chart-popup-content">
+
+      <div class="chart-popup-section">
+        <div class="chart-popup-title">Round Details</div>
+        <div id="popupCourse">Course: --</div>
+        <div id="popupDate">Date: --</div>
+      </div>
+
+      <div class="chart-popup-section">
+        <div class="chart-popup-title">FIR Context</div>
+        <div id="popupPar4FIR">Par 4 FIR: --</div>
+        <div id="popupPar5FIR">Par 5 FIR: --</div>
+      </div>
+
+      <div class="chart-popup-section">
+        <div class="chart-popup-title">Course Setup</div>
+        <div id="popupYardage">Yardage: --</div>
+        <div id="popupRating">Rating: --</div>
+        <div id="popupSlope">Slope: --</div>
+      </div>
+
+    </div>
+
+    <div id="chartPopupPointer" class="chart-popup-pointer"></div>
+
+  </div>
+</div>
+<!-- ========================================= -->
+<!-- FIR CHART → DOT TAP POPUP (END) -->
+<!-- ========================================= -->
+      </div>
+
+      <button
+        id="performanceChartsBackBtn"
+        type="button"
+        onclick="
+          document.getElementById('performanceChartsScreen')?.classList.add('hidden');
+          document.getElementById('savedRoundsListScreen')?.classList.add('hidden');
+          document.getElementById('savedRoundsScreen')?.classList.remove('hidden');
+          document.dispatchEvent(new Event('savedRoundsShown'));
+        "
+      >Back</button>
+
+    </div>
+  </div>
+</div>
+
+<!-- Saved Rounds List Screen -->
+<div id="savedRoundsListScreen" class="screen hidden saved-rounds-screen">
+  <div class="saved-rounds-overlay">
+    <div class="saved-rounds-panel">
+      <h2 class="saved-rounds-title">Saved Rounds</h2>
+      <div class="saved-rounds-subtitle">Round history and results</div>
+
+      <div id="savedRoundsList" class="saved-rounds-list"></div>
+
+      <button
+        id="savedRoundsListBackBtn"
+        type="button"
+        onclick="
+          document.getElementById('savedRoundsListScreen')?.classList.add('hidden');
+          document.getElementById('performanceChartsScreen')?.classList.add('hidden');
+          document.getElementById('savedRoundsScreen')?.classList.remove('hidden');
+          document.dispatchEvent(new Event('savedRoundsShown'));
+        "
+      >Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- Final Closure Popup -->
+<div id="finalClosurePopup" class="popup-overlay">
+  <div class="popup-box">
+    <div id="finalClosureTitle" style="font-size:22px; font-weight:bold; margin-bottom:16px;">
+      Round Complete
+    </div>
+    <div id="finalClosureText" style="font-size:16px; line-height:1.5; margin-bottom:20px;">
+      Awesome. Complete stats make your analysis more accurate and more useful to coaches and recruiters. Keep up the good work!
+    </div>
+    <button id="finalClosureBtn" type="button">See You on the Next Round</button>
+  </div>
+</div>
+
+<!-- Round Summary Modal -->
+<div id="summaryModal">
+  <div class="summary-box">
+    <div id="exitSummary">EXIT ✖</div>
+    <h2>Round Summary</h2>
+<div id="summaryCourseName" style="font-size:14px; color:#555; margin-top:-6px; margin-bottom:10px;"></div>
+    <div class="table-container">
+      <table id="summaryTable">
+        <thead>
+          <tr>
+            <th>Hole</th>
+            <th>FIR</th>
+            <th>GIR</th>
+            <th>Putts</th>
+            <th>U&amp;D</th>
+            <th>SndSv</th>
+            <th>Pnlty</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- JS generated rows -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="rotateOverlay">
+  <div id="rotateMessage">
+    ⛳ Please rotate your phone back to portrait to continue
+  </div>
+</div>
+
+<div id="deleteRoundPopup" class="popup-overlay hidden">
+  <div class="popup-box">
+    <h2>Start New Round?</h2>
+    <p class="warning-text">
+      Are you sure you want to start a new round?<br><br>
+      There is an active round in progress.<br>
+      All data from that round will be deleted.
+    </p>
+
+    <div class="popup-actions">
+      <button id="keepCurrentRoundBtn" type="button">Keep Current Round</button>
+      <button id="deleteAndStartNewBtn" type="button">Delete and Start New</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- ===== Clubhouse Block) ===== -->
+
+<!-- ===== DEV BUILD LABEL (REMOVE BEFORE TOURNAMENT) ===== -->
+<div id="clubhouseScreen" class="hidden">
+  <div class="clubhouse-box">
+
+    <h2>Welcome to the Clubhouse</h2>
+
+    <div id="clubhouseMessage" class="clubhouse-message-text"></div>
+
+    <div class="actions clubhouse-actions">
+      <button id="clubhouseSummaryBtn" type="button" onclick="openClubhouseSummary()">View Summary</button>
+      <button id="clubhouseNewRoundBtn" type="button" onclick="startNewRoundFromClubhouse()">Start New Round</button>
+      <button id="clubhouseCloseBtn" type="button" onclick="showClubhouseDoneScreen(event)">Done</button>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ===== CLOSING Clubhouse Goodbye) ===== -->
+<div id="clubhouseDoneScreen" class="hidden">
+  <div class="clubhouse-done-inner">
+    <img
+      id="clubhouseDoneLogo"
+      src="images/Stracker-header-2.png"
+      alt="Stracker"
+    >
+
+    <button id="clubhouseDoneStartBtn" type="button" onclick="startNewRoundFromClubhouseDone()">
+      Tap Here to Start a New Round
+    </button>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
+
+<script src="js/state.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/analytic.js"></script>
+<script src="js/live-round.js"></script>
+<script src="js/app.js"></script>
+<script src="js/clubhouse.js"></script>
+
+</body>
+</html>

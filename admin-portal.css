@@ -1,0 +1,1670 @@
+*
+
+{
+  box-sizing: border-box;
+}
+
+:root {
+  --page-bg: #e7e7e7;
+  --panel-bg-top: #fbfbfb;
+  --panel-bg-bottom: #f2f2f2;
+  --panel-border: #cfcfcf;
+  --text-main: #1f1f27;
+  --text-soft: #5b5b63;
+  --text-faint: #7a7a83;
+  --green: #2cab49;
+  --green-dark: #1f8739;
+  --gold: #d5a03f;
+  --gold-dark: #c3871e;
+  --gray: #8f8f95;
+  --gray-dark: #73737a;
+  --red: #c83e47;
+  --red-dark: #b52b34;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--page-bg);
+  color: var(--text-main);
+}
+
+.portal-shell {
+  max-width: 1380px;
+  margin: 26px auto;
+  padding: 0 18px 28px;
+}
+
+.portal-header {
+  position: relative;
+  min-height: 186px;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  background: url("images/Golf-ShotA11.png") center 40% / cover no-repeat;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.header-overlay {
+  min-height: 186px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px 28px;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.08));
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.header-logo {
+  height: 76px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 7px rgba(0, 0, 0, 0.5));
+}
+
+.header-title-lockup {
+  margin-left: 10px;
+}
+
+.header-subtitle {
+  font-size: 26px;
+  font-weight: 700;
+  color: #f3f3f3;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 👈 THIS is the spacing */
+}
+
+.header-btn,
+.refresh-main-btn,
+.gray-btn,
+.gold-btn,
+.round-action-btn {
+  display: inline-block;
+  padding: 8px 12px;
+  font-size: 13px;
+  white-space: nowrap;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #c62828;
+  color: white;
+}
+
+.header-btn,
+.refresh-main-btn {
+  background: linear-gradient(to bottom, var(--green), var(--green-dark));
+}
+
+.header-btn {
+  padding: 12px 18px;
+  font-size: 17px;
+}
+
+.portal-main {
+  background: #f1f1f1;
+  border: 1px solid var(--panel-border);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  padding: 24px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+}
+
+.portal-grid {
+  display: grid;
+  grid-template-columns: 1.08fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.portal-card {
+  background: linear-gradient(to bottom, var(--panel-bg-top), var(--panel-bg-bottom));
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+.live-card,
+.completed-card {
+  min-height: 300px;
+}
+
+.latest-completed-card {
+  min-height: 280px;
+}
+
+.latest-completed-content {
+  padding: 18px 20px 17px;
+  min-height:180px;
+}
+
+.maintenance-card {
+  grid-column: 2 / 3;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #d9d9d9;
+  background: linear-gradient(to bottom, #fbfbfb, #f1f1f1);
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.card-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.icon-btn {
+  border: none;
+  background: transparent;
+  color: #c8c8c8;
+  font-size: 30px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.live-round-content {
+  padding: 18px 22px 22px;
+}
+
+.live-player-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e1e1e1;
+  margin-bottom: 14px;
+}
+
+.live-player-name {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.live-course-name {
+  font-size: 18px;
+  color: var(--text-soft);
+}
+
+.live-hole-box {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.live-hole-number {
+  font-size: 62px;
+  line-height: 0.9;
+  font-weight: 700;
+}
+
+.live-hole-of {
+  font-size: 20px;
+  font-weight: 600;
+  color: #494950;
+}
+
+.live-stats-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.live-stat-line {
+  font-size: 18px;
+}
+
+.holes-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(54px, 1fr));
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.hole {
+  background: #ececec;
+  border: 1px solid #d2d2d2;
+  border-radius: 8px;
+  padding: 9px 4px;
+  font-size: 13px;
+  text-align: center;
+  color: #25252b;
+}
+
+.placeholder-holes .hole {
+  color: #6e6e77;
+}
+
+.hole.saved {
+  background: linear-gradient(to bottom, var(--green), var(--green-dark));
+  border-color: var(--green-dark);
+  color: #fff;
+}
+
+.live-footer-row {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.last-updated {
+  font-size: 16px;
+  color: #3e3e45;
+}
+
+.refresh-main-btn {
+  padding: 12px 26px;
+  font-size: 18px;
+}
+
+.completed-rounds-list {
+  padding: 10px 0 6px;
+}
+
+.rounds-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 18px;
+}
+
+.rounds-table th,
+.rounds-table td {
+  text-align: left;
+  padding: 10px 20px;
+  border-bottom: 1px solid #dddddd;
+  vertical-align: middle;
+}
+
+.rounds-table th {
+  font-size: 17px;
+  font-weight: 400;
+  color: #303038;
+}
+
+.placeholder-cell {
+  text-align: center !important;
+  color: var(--text-faint);
+  padding: 26px 20px !important;
+}
+
+.round-action-btn {
+  background: linear-gradient(to bottom, var(--red), var(--red-dark));
+  padding: 8px 14px;
+  font-size: 16px;
+  min-width: 88px;
+}
+
+.check-mark {
+  color: #249d44;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1;
+}
+
+.maintenance-actions {
+  display: flex;
+  gap: 12px;
+  padding: 18px 20px 10px;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  padding: 12px 18px;
+  font-size: 17px;
+}
+
+.gold-btn {
+  background: linear-gradient(to bottom, var(--gold), var(--gold-dark));
+}
+
+.gray-btn {
+  background: linear-gradient(to bottom, var(--gray), var(--gray-dark));
+}
+
+.maintenance-stats {
+  padding: 8px 20px 20px;
+  font-size: 16px;
+  color: #4a4a52;
+}
+
+@media (max-width: 980px) {
+  .portal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .maintenance-card {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .portal-shell {
+    margin: 12px auto;
+    padding: 0 10px 18px;
+  }
+
+  .portal-header,
+  .header-overlay {
+    min-height: 110px;
+  }
+
+  .header-overlay {
+    padding: 14px;
+  }
+
+  .header-logo {
+    height: 48px;
+  }
+
+  .header-subtitle {
+    font-size: 17px;
+  }
+
+  .header-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .portal-main {
+    padding: 12px;
+  }
+
+  .card-header {
+    padding: 12px 14px;
+  }
+
+  .card-header h2 {
+    font-size: 18px;
+  }
+
+  .live-round-content {
+    padding: 14px;
+  }
+
+  .live-player-name {
+    font-size: 17px;
+  }
+
+  .live-course-name {
+    font-size: 13px;
+  }
+
+  .live-hole-number {
+    font-size: 42px;
+  }
+
+  .live-hole-of,
+  .live-stat-line,
+  .last-updated,
+  .rounds-table,
+  .maintenance-stats {
+    font-size: 14px;
+  }
+
+  .rounds-table th,
+  .rounds-table td {
+    padding: 8px 10px;
+  }
+
+  .refresh-main-btn,
+  .action-btn,
+  .round-action-btn {
+    font-size: 14px;
+  }
+
+  .refresh-main-btn,
+  .action-btn {
+    width: 100%;
+    padding: 10px 14px;
+  }
+
+  .holes-grid {
+    grid-template-columns: repeat(3, minmax(54px, 1fr));
+  }
+}
+
+.header-logo {
+  display: block;
+  width: auto;
+  height: 64px;
+  max-width: 260px;
+  max-height: 64px;
+  object-fit: contain;
+}
+
+.total-score-line {
+  margin-bottom: 6px;
+}
+
+.total-score-value {
+  font-size: 18px;
+  font-weight: 700;
+  margin-left: 6px;
+}
+
+.score-main {
+  font-size: 32px;
+  font-weight: 700;
+  margin-left: 6px;
+}
+
+.score-sub {
+  font-size: 16px;
+  opacity: 0.8;
+  margin-left: 4px;
+}
+
+/* ===== HOLE TILE SIZE IMPROVEMENT ===== */
+
+.live-tile-hint {
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.8;
+  margin: 10px 0 -10px;
+}
+
+
+.hole-number {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.hole-score {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* ===== HOLE TILE COLOR SYSTEM ===== */
+
+.hole {
+  border: none;
+  color: #ffffff; /* keep text white */
+}
+
+/* Birdie or better */
+.hole-birdie {
+  background-color: #d32f2f; /* red */
+}
+
+/* Par */
+.hole-par {
+  background-color: #2e7d32; /* green */
+}
+
+/* Bogey or worse */
+.hole-bogey {
+  background-color: #333333; /* dark gray */
+}
+
+/* ===== FORCE LIVE HOLE TILE COLORS ===== */
+
+.holes-grid .hole.hole-birdie {
+  background: #d32f2f !important;
+  color: #ffffff !important;
+}
+
+.holes-grid .hole.hole-par {
+  background: #27a62d !important;
+  color: #ffffff !important;
+}
+
+.holes-grid .hole.hole-bogey {
+  background: #4c4b4b !important;
+  color: #ffffff !important;
+}
+
+.holes-grid .hole.hole-birdie strong,
+.holes-grid .hole.hole-par strong,
+.holes-grid .hole.hole-bogey strong,
+.holes-grid .hole.hole-birdie .hole-score,
+.holes-grid .hole.hole-par .hole-score,
+.holes-grid .hole.hole-bogey .hole-score {
+  color: #ffffff !important;
+}
+
+/* === COURSE NAME SIZE ONLY === */
+.live-course-name {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.rounds-table td,
+.rounds-table th {
+  padding: 10px 8px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.rounds-table td:last-child,
+.rounds-table th:last-child {
+  width: 110px;
+  text-align: center;
+}
+
+
+
+.live-round-last-update {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.7);
+}
+
+
+/* =========================
+   Portal custom modal
+========================= */
+
+.portal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.portal-modal-overlay.hidden {
+  display: none;
+}
+
+/* ===== CARD ===== */
+.portal-modal-card {
+  width: min(94vw, 520px);
+  background: #ffffff;                /* ✅ white card */
+  border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.35);
+  padding: 22px 20px 18px;
+  color: #111111;                    /* ✅ black text */
+  text-align: center;
+}
+
+/* ===== TITLE ===== */
+.portal-modal-card h3 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #000000;
+}
+
+/* ===== MESSAGE ===== */
+.portal-modal-message {
+  font-size: 0.95rem;
+  line-height: 1.2;
+  color: #111111;
+  margin-bottom: 18px;
+}
+
+.portal-modal-message strong {
+  color: #000000;
+}
+
+/* ===== RED WARNING ===== */
+.portal-modal-message .warning-line {
+  display: block;
+  margin: 10px 0 10px;
+  color: #d93025;   /* clean red */
+  font-weight: 700;
+}
+
+/* ===== BUTTON ROW ===== */
+.portal-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ===== BUTTONS ===== */
+.portal-modal-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 11px 18px;
+  min-width: 150px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Green confirm (matches app feel) */
+.portal-modal-btn.primary {
+  background: linear-gradient(180deg, #1f8f43, #13672f);
+  color: #fff;
+}
+
+/* Neutral cancel */
+.portal-modal-btn.secondary {
+  background: #f2f2f2;
+  color: #111;
+  border: 1px solid #ddd;
+}
+
+/* ===== SUMMARY WRAP ===== */
+.portal-summary-wrap {
+  margin-bottom: 16px;
+}
+
+.portal-summary-wrap.hidden {
+  display: none;
+}
+
+.portal-round-summary-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* =========================
+   Live tile instruction line
+========================= */
+
+.live-round-instruction {
+  margin: 8px 0 12px;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  color: rgba(255,255,255,0.72);
+  text-align: center;
+}
+
+/* =========================
+   Summary table inside modal
+========================= */
+
+.portal-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.portal-modal-overlay.hidden {
+  display: none;
+}
+
+.portal-modal-card {
+  width: min(96vw, 760px);
+  max-height: 86vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+  padding: 20px 18px 22px;
+  color: #111;
+  text-align: center;
+}
+
+.portal-modal-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #000;
+}
+
+.portal-modal-message {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: #111;
+  margin-bottom: 14px;
+}
+
+.portal-modal-message strong {
+  color: #000;
+}
+
+.portal-modal-message .warning-line {
+  display: block;
+  margin: 10px 0 6px;
+  color: #d93025;
+  font-weight: 700;
+}
+
+.portal-summary-wrap {
+  margin-top: 6px;
+  margin-bottom: 14px;
+}
+
+.portal-summary-wrap.hidden {
+  display: none;
+}
+
+.portal-round-summary-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.portal-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+.portal-summary-table th,
+.portal-summary-table td {
+  border: 1px solid #c8c8c8;
+  padding: 8px 6px;
+  text-align: center;
+  color: #111;
+}
+
+.portal-summary-table th {
+  background: #2f7d32;
+  color: #fff;
+  font-weight: 700;
+}
+
+.portal-summary-table td {
+  background: #fff;
+}
+
+.portal-empty-summary {
+  color: #111;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.portal-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.portal-modal-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 11px 18px;
+  min-width: 150px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.portal-modal-btn.primary {
+  background: linear-gradient(180deg, #1f8f43, #13672f);
+  color: #fff;
+}
+
+.portal-modal-btn.secondary {
+  background: #f2f2f2;
+  color: #111;
+  border: 1px solid #ddd;
+}
+
+/* =========================
+   Make hole tiles feel tappable
+========================= */
+
+.hole-tile {
+  cursor: pointer;
+}
+
+.hole-tile:hover {
+  transform: translateY(-1px);
+}
+
+.hole-tile:active {
+  transform: scale(0.98);
+}
+
+
+.card-header-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.live-round-last-update {
+  font-size: 0.82rem;
+  margin-top: 2px;
+  color: rgba(94, 93, 93, 0.75);
+}
+
+
+.hole-detail-modal {
+  width: min(92vw, 420px) !important;
+  max-height: none !important;
+}
+
+.hole-detail-popup {
+  padding: 4px 2px 2px;
+}
+
+.hole-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.hole-detail-item {
+  background: #f6f6f6;
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.hole-detail-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #666666;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.hole-detail-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111111;
+}
+
+.live-round-instruction {
+  margin: 8px 0 12px;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  color: rgba(0,0,0,0.62);
+  text-align: center;
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+
+.summary-modal.hidden {
+  display: none;
+}
+
+.summary-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+}
+
+.summary-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.summary-modal-card {
+  position: relative;
+  z-index: 2;
+  width: min(92vw, 520px);   /* ✅ responsive width */
+  max-width: 92vw;           /* ✅ prevents overflow */
+  margin: 4vh auto 0;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-modal-header {
+  padding: 18px 22px 12px;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.summary-modal-header h2 {
+  margin: 0 0 6px;
+  font-size: 1.35rem;
+  color: #111;
+}
+
+.summary-meta {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.summary-modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 18px 20px;
+}
+
+.summary-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.summary-top-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.summary-stat-card {
+  background: #f6f8fa;
+  border: 1px solid #e8ecef;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.summary-stat-label {
+  font-size: 0.82rem;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.summary-stat-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111;
+}
+
+.summary-hole-table {
+  font-size: 0.75rem;
+  width: auto;
+}
+
+.summary-hole-table th,
+.summary-hole-table td {
+  padding: 5px 3px;
+  font-size: 11px;
+}
+
+.summary-hole-table th,
+.summary-hole-table td {
+  padding: 5px 2px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.summary-hole-table th {
+  background: #f3f5f7;
+  color: #222;
+  position: sticky;
+  top: 0;
+}
+
+.summary-hole-table td:first-child,
+.summary-hole-table th:first-child {
+  text-align: left;
+}
+
+.summary-hole-table tr:nth-child(10) td {
+  border-top: 6px solid #f5f7f9;
+  box-shadow: inset 0 1px 0 #bbb;
+}
+
+@media (max-width: 720px) {
+.summary-modal-card {
+  position: relative;
+  z-index: 2;
+  width: min(92vw, 520px);
+  max-width: 92vw;
+  max-height: 85vh;
+  margin: 4vh auto 0;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-modal-body {
+  padding: 14px 16px 16px;
+  overflow: auto;
+}
+
+.summary-modal-header {
+  padding: 16px 16px 10px;
+  background: linear-gradient(135deg, #27b34a, #249d44);      /* Stracker green */
+  color: #ffffff;             /* white text */
+}
+
+.summary-modal-header h2 {
+  color: #ffffff;
+}
+
+.summary-meta {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 720px) {
+  .summary-modal-overlay {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .summary-modal-card {
+    width: 84vw !important;
+    max-width: 84vw !important;
+    max-height: 88vh;
+    margin: 3vh auto 0;
+    border-radius: 14px;
+  }
+
+  .summary-modal-body {
+    padding: 10px 10px 14px;
+    overflow-x: hidden;
+  }
+
+  .summary-hole-table {
+    font-size: 0.72rem;
+  }
+
+  .summary-hole-table th,
+  .summary-hole-table td {
+    padding: 4px 3px;
+  }
+
+  .summary-stat-card {
+    padding: 8px;
+  }
+
+  .summary-stat-label {
+    font-size: 0.72rem;
+  }
+
+  .summary-stat-value {
+    font-size: 0.95rem;
+  }
+}
+
+.summary-hole-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.summary-hole-table th,
+.summary-hole-table td {
+  padding: 5px 4px;
+}
+
+/* Give columns intentional widths */
+.summary-hole-table th:nth-child(1),
+.summary-hole-table td:nth-child(1) { width: 18%; }  /* Hole */
+
+.summary-hole-table th:nth-child(2),
+.summary-hole-table td:nth-child(2) { width: 10%; }  /* Par */
+
+.summary-hole-table th:nth-child(3),
+.summary-hole-table td:nth-child(3) { width: 12%; }  /* Score */
+
+.summary-hole-table th:nth-child(4),
+.summary-hole-table td:nth-child(4) { width: 12%; }  /* Putts */
+
+.summary-hole-table th:nth-child(5),
+.summary-hole-table td:nth-child(5) { width: 12%; }  /* FIR */
+
+.summary-hole-table th:nth-child(6),
+.summary-hole-table td:nth-child(6) { width: 12%; }  /* GIR */
+
+.summary-hole-table th:nth-child(7),
+.summary-hole-table td:nth-child(7) { width: 24%; }  /* Up & Down */
+
+}
+
+  
+
+
+
+
+.view-summary-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(145deg, #111, #2a2a2a);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  transition: all 0.15s ease;
+}
+
+.view-summary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.view-summary-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+
+.completed-header-row,
+.completed-data-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 0.8fr 0.8fr 1fr;
+  align-items: center;
+}
+
+.completed-header-row > div,
+.completed-data-row > div {
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+.completed-header-row {
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: 600;
+  padding: 6px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.completed-data-row {
+  padding: 10px 0;
+  font-size: 0.95rem;
+}
+
+.completed-data-row div {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+}
+
+/* Course (left aligned) */
+.completed-header-row > div:nth-child(1),
+.completed-data-row > div:nth-child(1) {
+  text-align: left;
+}
+
+/* Date (left aligned) */
+.completed-header-row > div:nth-child(2),
+.completed-data-row > div:nth-child(2) {
+  text-align: left;
+}
+
+/* Score (centered) */
+.completed-header-row > div:nth-child(3),
+.completed-data-row > div:nth-child(3) {
+  text-align: center;
+  justify-content: center;
+}
+
+/* To Par (centered) */
+.completed-header-row > div:nth-child(4),
+.completed-data-row > div:nth-child(4) {
+  text-align: center;
+  justify-content: center;
+}
+
+/* Action (right aligned) */
+.completed-header-row > div:nth-child(5),
+.completed-data-row > div:nth-child(5) {
+  text-align: right;
+  justify-content: flex-end;
+}
+
+/* Summary button override */
+.round-action-btn.summary-btn {
+  background: linear-gradient(180deg, #888888, #111);
+  color: #ffffff;
+}
+
+
+@media (max-width: 720px) {
+  .rounds-table {
+    width: 100%;
+    table-layout: fixed;
+    font-size: 13px;
+  }
+
+  .rounds-table th,
+  .rounds-table td {
+    padding: 6px 4px;
+  }
+
+  .rounds-table th {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .rounds-table th:nth-child(4),
+  .rounds-table td:nth-child(4) {
+    white-space: nowrap;
+  }
+
+  .rounds-table th:nth-child(5),
+  .rounds-table td:nth-child(5) {
+    white-space: nowrap;
+  }
+}
+
+
+/* =========================
+   ADMIN LOGIN OVERLAY
+========================= */
+
+.admin-login-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.70);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.admin-login-box {
+  background: #ffffff;
+  padding: 24px 20px;
+  border-radius: 16px;
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+
+.admin-login-box h2 {
+  margin-bottom: 18px;
+}
+
+.admin-login-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.admin-login-box button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#adminLoginBtn {
+  background: #2e7d32;
+  color: white;
+}
+
+#adminLoginBtn:hover {
+  background: #256628;
+}
+
+#closeAdminLoginBtn {
+  background: #e0e0e0;
+  color: #333;
+}
+
+#closeAdminLoginBtn:hover {
+  background: #d5d5d5;
+}
+
+.admin-login-box button:hover {
+  background: #256628;
+}
+
+.admin-login-error {
+  margin-top: 10px;
+  color: red;
+  font-size: 13px;
+}
+
+
+
+
+
+/* =========================
+   BRANDING MODAL
+========================= */
+
+.branding-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+}
+
+.branding-modal.hidden {
+  display: none;
+}
+
+.branding-modal-box {
+  background: #ffffff;
+  width: 300px;
+  max-width: calc(100vw - 32px);
+  padding: 24px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+.branding-section {
+  margin-top: 16px;
+}
+
+.branding-label {
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.branding-image-options {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.branding-option-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #c7c7c7;
+  background: #f5f5f5;
+  color: #222;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.branding-option-btn:hover {
+  background: #ececec;
+}
+
+.branding-actions {
+  margin-top: 18px;
+}
+
+
+.branding-select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+
+.hidden {
+  display: none !important;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.header-btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+@media (max-width: 640px) {
+  .header-right {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .header-btn {
+    width: 100%;
+    max-width: 140px;
+    text-align: center;
+  }
+}
+
+  .admin-login-box {
+    width: calc(100vw - 24px);
+    padding: 20px 16px;
+  }
+}
+
+/* =========================
+   COMPLETED SUMMARY POPUP
+========================= */
+
+.summary-top-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.summary-stat-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f7faf8 100%);
+  border: 1px solid #dfe7e2;
+  border-radius: 14px;
+  padding: 14px 12px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.summary-stat-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #557062;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.summary-stat-value {
+    font-size: 22px;
+  font-weight: 800;
+  color: #18392b;
+}
+
+.summary-hole-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 16px 0 10px;
+  color: #18392b;
+}
+
+.summary-hole-table-wrap {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #e7e7e7;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.summary-hole-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.summary-hole-table th,
+.summary-hole-table td {
+  padding: 10px 8px;
+  text-align: center;
+  border-bottom: 1px solid #ececec;
+  font-size: 13px;
+}
+
+.summary-hole-table th {
+  background: #a8f2c2;
+  color: #244536;
+  font-weight: 700;
+}
+
+.summary-hole-table tbody tr:nth-child(even) {
+  background: #e0fae4;;
+}
+
+.summary-hole-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+@media (max-width: 640px) {
+  .summary-top-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .summary-stat-card {
+  background: linear-gradient(180deg, #ffffff 0%, #eef6f0 100%);
+  border: 1px solid #cce8d2;
+  border-radius: 14px;
+  padding: 12px 10px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+  .summary-stat-value {
+    font-size: 20px;
+  }
+
+  .summary-hole-table th,
+  .summary-hole-table td {
+    font-size: 12px;
+    padding: 8px 6px;
+  }
+}
+
+.summary-modal-card {
+  position: relative;
+  width: min(920px, calc(100vw - 24px));
+  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+
+@media (max-width: 640px) {
+
+  .summary-modal-card {
+    width: calc(100vw - 12px);
+    max-height: 92vh;
+    border-radius: 14px;
+  }
+
+  .summary-modal-header {
+    padding: 12px 14px 8px;
+  }
+
+  .summary-modal-header h2 {
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  .summary-meta {
+    font-size: 12px;
+  }
+
+  .summary-modal-body {
+    padding: 10px 10px 14px;
+  }
+
+  .summary-top-grid {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .summary-stat-card {
+    padding: 10px 8px;
+    border-radius: 12px;
+  }
+
+  .summary-stat-label {
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+
+  .summary-stat-value {
+    font-size: 18px;
+  }
+
+  .summary-hole-section-title {
+    font-size: 14px;
+    margin: 10px 0 8px;
+  }
+
+  .summary-hole-table th,
+  .summary-hole-table td {
+    padding: 6px 4px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .summary-modal-close {
+    top: 8px;
+    right: 8px;
+    font-size: 22px;
+  }
+}
+
+.score-even {
+  color: #1f7a1f;
+}
+
+.score-under {
+  color: #c62828;
+}
+
+.score-over {
+  color: #111111;
+}
+
+.summary-hole-table strong,
+.summary-stat-value {
+  font-weight: 900;
+}
+
+
+
+
+
+
+

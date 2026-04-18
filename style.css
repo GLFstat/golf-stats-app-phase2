@@ -1,0 +1,2553 @@
+/* ================= Global ================= */
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background-color: black;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+body {
+    background-color: black;
+}
+
+.hidden {
+    display: none !important;
+}
+
+:root {
+    --round-bg-image: url("images/golf-shot1.jpg");
+}
+
+/* ================= Footer ================= */
+footer {
+    display: none;
+    background-color: white;
+    color: black;
+    padding: 12px 16px;
+    width: 100%;
+    box-sizing: border-box;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+}
+
+footer a#contact-link {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+/* ================= Splash Screen ================= */
+#splashScreen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: black;
+    overflow: hidden;
+    z-index: 99999;
+    
+}
+
+.splash-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url("images/splash-1.jpg");
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transform: scale(0.75);
+    animation:
+        splashBGIn 2s ease forwards,
+        splashBGOut 1.5s ease 2s forwards;
+}
+
+.splash-logo {
+    position: absolute;
+    width: 35%;
+    left: 50%;
+    top: 60%; /* 👈 THIS is your starting height */
+    transform: translate(-50%, -50%) scale(0.75);
+    transform-origin: center center;
+    animation:
+        splashLogoIn 2s ease forwards,
+        splashLogoMove 1.5s ease 2s forwards,
+        splashLogoHold 1s linear 3.5s forwards,
+        splashLogoOut 2s ease 3.5s forwards;
+}
+
+#fadeOverlay {
+    position: fixed;
+    inset: 0;
+    background: black;
+    z-index: 99998;
+    opacity: 1;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+}
+
+#appContainer {
+    display: none;
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.34)),
+        var(--round-bg-image) center center / cover no-repeat;
+    background-color: white;
+    opacity: 1;
+    transform: scale(1);
+    min-height: 100vh;
+    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    box-sizing: border-box;
+}
+
+@keyframes splashBGIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.75);
+    }
+    25% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes splashBGOut {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes splashLogoIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 160%) scale(0.75);
+    }
+    25% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, 160%) scale(1);
+    }
+}
+
+@keyframes splashLogoMove {
+    from {
+        opacity: 1;
+        transform: translate(-50%, 160%) scale(1);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(2);
+    }
+}
+
+@keyframes splashLogoHold {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(2);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(2);
+    }
+}
+
+@keyframes splashLogoOut {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(2);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(2);
+    }
+}
+
+/* ================= Header ================= */
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    color: white;
+    background-image: url("images/Stracker-header-1.png");
+    background-color: rgb(50, 50, 50);
+    background-repeat: no-repeat;
+    background-position: center 0%;
+    background-size: contain;
+    padding: 16px 0;
+}
+
+.help-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.35);
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 20;
+}
+
+
+
+header h1 {
+    padding-top: 10px;
+    margin: 0;
+}
+
+#speakerToggle {
+    position: absolute;
+    right: 15px;
+    cursor: pointer;
+    font-size: 22px;
+}
+
+/* ================= Rotate Overlay ================= */
+#rotateOverlay {
+    position: fixed;
+    inset: 0;
+    background: black;
+    display: none;
+    z-index: 9999;
+    pointer-events: all;
+}
+
+#rotateMessage {
+    color: white;
+    text-align: center;
+    font-size: 24px;
+    margin-top: 15%;
+    padding: 0 20px;
+}
+
+@media screen and (orientation: landscape) {
+    #rotateOverlay {
+        display: block;
+    }
+}
+
+/* ================= Hole Section ================= */
+.hole-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 5% 8px;
+    background: transparent;
+    margin-bottom: 3px;
+}
+
+.hole-par-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -6px;
+    gap: 4px;
+    margin-bottom: -10px;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 10px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 420px;
+}
+
+.enter-stats-header {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    text-align: left;
+    color: white;
+}
+
+.hole-par-header {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    text-align: center;
+    color: white;
+}
+
+.hole-par-radios {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.hole-par-radio {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.hole-par-radio input[type="radio"] {
+    display: none;
+}
+
+.hole-par-radio span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 55px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 0.9);
+    color: black;
+    font-weight: bold;
+    font-size: 20px;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.hole-par-radio input[type="radio"]:checked + span {
+    background-color: #4caf50;
+    border-color: #4caf50;
+    color: white;
+    box-shadow: 0 0 6px rgba(76, 175, 80, 0.6);
+}
+
+/* ================= Gray Stats Box ================= */
+.gray-background {
+    background-color: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 10px;
+    padding: 12px 0 1px 0;
+    margin: 10px 5%;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.checkbox-container {
+    display: inline-block;
+}
+
+.checkbox-row {
+    display: flex;
+    gap: 80px;
+    margin-bottom: 15px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+}
+
+.checkbox-item span {
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 28px;
+    height: 28px;
+    transform: scale(1.4);
+    margin-right: 12px;
+    accent-color: #4caf50;
+    background-color: rgba(255, 255, 255, 0.75);
+    border-radius: 6px;
+}
+
+#gir {
+    margin-left: 15px;
+    margin-right: 16px;
+}
+
+/* ================= Counters ================= */
+.stat-counter {
+    background-color: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 10px 5%;
+    box-sizing: border-box;
+}
+
+.stat-counter label {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+.counter-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: -2px;
+}
+
+.counter-group button {
+    width: 50px;
+    height: 40px;
+    font-size: 40px;
+    line-height: 34px;
+    color: white;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    touch-action: manipulation;
+}
+
+.counter-group input {
+    width: 50px;
+    height: 28px;
+    font-size: 18px;
+    text-align: center;
+    padding: 0;
+    line-height: 28px;
+}
+
+.counter-group input::placeholder {
+    color: #888;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* ================= Action Buttons ================= */
+.actions {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.save-hole-row {
+    width: 92%;
+    max-width: 430px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 54px 90px minmax(0, 1fr) 54px;
+    gap: 12px;
+    align-items: center;
+}
+
+
+/* + STATS BUTTON */
+
+.es-btn {
+    background: #3aa34a;
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+    border-radius: 14px;
+    height: 72px;
+    min-height: 72px;
+    max-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+
+.es-btn .plus {
+    font-size: 1.4rem;
+    line-height: 1;
+}
+
+
+/* ENHANCED STATS PANEL */
+.es-panel-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.22);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 9998;
+}
+
+.es-panel-overlay.hidden {
+    display: none;
+}
+
+.es-panel-sheet {
+    width: 88%;
+    max-width: 405px;
+    background: rgba(243,243,240,.90);
+    color: #1f1f1f;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-shadow: 0 -8px 20px rgba(0,0,0,.22);
+    padding: 7px 12px 12px;
+    margin-bottom: 98px;
+}
+
+.es-panel-handle {
+    width: 48px;
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(0,0,0,.18);
+    margin: 2px auto 10px;
+}
+
+.es-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.es-panel-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.es-panel-hole {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2f7d38;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.es-panel-title {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.es-close-btn {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: #1f1f1f;
+    font-size: 28px;
+    line-height: 1;
+    padding: 0;
+    width: auto;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+}
+
+.es-panel-body {
+    margin-top: 10px;
+}
+
+.es-panel-text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.25;
+    color: #333;
+}
+
+.es-tile-grid {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.es-tile {
+    background: rgba(230,242,231,.88);
+    border: 1px solid #9ec7a2;
+    border-radius: 13px;
+    padding: 10px;
+    text-align: left;
+    color: #1f1f1f;
+    min-height: 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    box-shadow: none;
+}
+
+.es-tile-wide {
+    grid-column: 1 / -1;
+    min-height: 58px;
+}
+
+.es-tile-title {
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.es-tile-sub {
+    font-size: 12px;
+    line-height: 1.2;
+    color: #35523a;
+}
+
+.es-panel-footer {
+    margin-top: 10px;
+}
+
+.es-done-btn {
+    width: 100%;
+    min-height: 46px;
+    border-radius: 13px;
+    font-size: 18px;
+    font-weight: 800;
+    background: linear-gradient(180deg,#6a6a6a 0%,#1c1c1c 100%);
+    color: #fff;
+}
+
+
+
+
+.actions > .save-hole-row {
+    width: 92%;
+    max-width: 430px;
+}
+
+#prevHole,
+#forwardHole {
+    width: 54px;
+    min-width: 54px;
+    max-width: 54px;
+    height: 86px;
+    min-height: 86px;
+    max-height: 86px;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    justify-self: stretch;
+    font-size: 30px;
+    line-height: 1;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+#saveHole {
+    width: 100%;
+    min-width: 0;
+    min-height: 86px;
+    height: 86px;
+    padding: 0 16px;
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#seeStats {
+    margin-top: 2px;
+    padding: 10px 16px;
+    font-size: 18px;
+    width: 75%;
+}
+
+#nextHole {
+    display: none !important;
+}
+
+.actions button {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    cursor: pointer;
+    background: linear-gradient(
+        to bottom,
+        rgba(60, 60, 60, 0.9),
+        rgba(20, 20, 20, 0.95)
+    );
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 4px 10px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    white-space: nowrap;
+}
+
+#saveHole.inactive {
+    background-color: #aaa;
+    color: #666;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* ================= Navigation Buttons ================= */
+.nav-btn {
+    padding: 0;
+    margin: 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    cursor: pointer;
+    background: linear-gradient(
+        to bottom,
+        rgba(70, 70, 70, 0.9),
+        rgba(20, 20, 20, 0.95)
+    );
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.arrow-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.actions button:active,
+.nav-btn:active {
+    transform: scale(0.96);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.nav-btn.disabled,
+.main-btn.disabled,
+.arrow-btn.disabled {
+    background-color: #b8b8b8 !important;
+    color: #6f6f6f !important;
+    cursor: not-allowed;
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+
+
+
+/* ================= Popup Overlay ================= */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.popup-box {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    width: 85%;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+#deleteRoundPopup {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 9999;
+}
+
+#deleteRoundPopup .popup-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(88vw, 460px);
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#saveConfirmText {
+    font-size: 22px;
+    margin-bottom: 24px;
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+#validationText {
+    font-size: 18px;
+    margin-bottom: 24px;
+    color: #2e7d32;
+    font-weight: normal;
+    line-height: 1.35;
+}
+
+#confirmOK,
+#confirmCancel,
+#validationOK,
+#keepCurrentRoundBtn,
+#deleteAndStartNewBtn {
+    padding: 14px 28px;
+    font-size: 20px;
+    margin: 6px;
+    border-radius: 8px;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.validation-highlight {
+    box-shadow: 0 0 0 4px #ff3b30 !important;
+    border-radius: 10px;
+}
+
+
+.help-popup-box {
+    background: rgba(255, 255, 255, 0.70);
+    backdrop-filter: blur(4px);
+    border-radius: 12px;
+    padding: 18px 16px 16px;
+    width: 84%;
+    max-width: 360px;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+}
+
+.help-popup-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: black;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.help-popup-text {
+    font-size: 14px;
+    line-height: 1.4;
+    color: black;
+}
+
+.help-popup-text p {
+    margin: 0 0 10px 0;
+}
+
+#statsHelpCloseBtn {
+    display: block;
+    margin: 14px auto 0;
+    padding: 10px 18px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #999;
+    background: rgba(255, 255, 255, 0.96);
+    color: black;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+
+
+/* ================= Hole Saved Overlay ================= */
+#holeSavedFade {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.18);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 99999;
+    transition: opacity 0.45s ease;
+}
+
+#holeSavedFade .popup-box {
+    background: rgba(20, 20, 20, 0.88);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+    padding: 18px 26px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.hole-saved-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+}
+
+.hole-saved-text .checkmark {
+    color: #5cff87;
+    margin-left: 6px;
+}
+
+/* ================= Round Complete Modal ================= */
+#roundCompleteModal {
+    z-index: 10002;
+}
+
+.round-complete-box {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 14px;
+    padding: 30px 22px 24px;
+    width: 86%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+}
+
+.round-complete-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1f1f1f;
+    line-height: 1.25;
+    margin-bottom: 14px;
+}
+
+.round-complete-subtext {
+    font-size: 16px;
+    line-height: 1.45;
+    color: #2f2f2f;
+    margin-bottom: 20px;
+}
+
+.round-complete-actions,
+.round-complete-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    margin-top: 18px;
+}
+
+.round-complete-btn,
+#roundCompleteSummaryBtn,
+#roundCompleteDetailsBtn,
+#roundCompleteCloseBtn {
+    background: linear-gradient(to bottom, #3a3a3a 0%, #111 50%, #000 100%);
+    color: white;
+    border: 1px solid #5a5a5a;
+    border-radius: 14px;
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 220px;
+    text-align: center;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 5px 12px rgba(0, 0, 0, 0.4);
+    transition: all 0.15s ease;
+}
+
+.round-complete-btn:hover,
+#roundCompleteSummaryBtn:hover,
+#roundCompleteDetailsBtn:hover,
+#roundCompleteCloseBtn:hover {
+    filter: brightness(1.1);
+}
+
+.round-complete-btn:active,
+#roundCompleteSummaryBtn:active,
+#roundCompleteDetailsBtn:active,
+#roundCompleteCloseBtn:active {
+    transform: translateY(1px);
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.4),
+        0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+#roundCompleteCloseBtn {
+    border: 1px solid #7fdc8a;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 5px 14px rgba(0, 0, 0, 0.45),
+        0 0 8px rgba(127, 220, 138, 0.3);
+}
+
+.highlight-green {
+    color: #4fd16c;
+    font-weight: 600;
+}
+
+/* ================= Summary Modal ================= */
+#summaryModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    overflow-y: hidden;
+}
+
+.summary-box {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    width: 95%;
+    max-height: 90vh;
+    max-width: 700px;
+    margin: 60px auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    overflow-x: auto;
+    overflow-y: auto;
+    text-align: center;
+    position: relative;
+}
+
+#exitSummary {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.table-container {
+    max-height: 60vh;
+    max-width: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.table-container::-webkit-scrollbar {
+    display: none;
+}
+
+#summaryTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    table-layout: fixed;
+}
+
+#summaryTable th,
+#summaryTable td {
+    border: 1px solid #ccc;
+    padding: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+#summaryTable thead th {
+    position: sticky;
+    color: white;
+    top: 0;
+    background: #257629;
+    z-index: 2;
+}
+
+#summaryTable th:nth-child(2),
+#summaryTable td:nth-child(2),
+#summaryTable th:nth-child(3),
+#summaryTable td:nth-child(3) {
+    width: 40px;
+}
+
+#summaryTable th:nth-child(8),
+#summaryTable td:nth-child(8) {
+    width: 50px;
+}
+
+.sub-header {
+    font-size: 12px;
+    font-weight: bold;
+    background: #f1f1f1;
+    text-align: left;
+    padding-left: 8px;
+}
+
+.totals-title {
+    background-color: #daebfc;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* ================= Score Circles ================= */
+.score-circle {
+    display: inline-block;
+    min-width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 16px;
+    color: black;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.score-circle.eagle {
+    background-color: red;
+    color: white;
+}
+
+.score-circle.birdie {
+    background-color: red;
+    color: white;
+}
+
+.score-circle.par {
+    background-color: rgb(12, 150, 74);
+    border: 1px solid rgb(12, 150, 74);
+    color: white;
+}
+
+.score-circle.bogey {
+    background-color: #3c3c3c;
+    color: white;
+}
+
+.score-circle.double-bogey {
+    background-color: #3c3c3c;
+    color: white;
+}
+
+
+
+/* ================= Round Details Screen ================= */
+#roundDetailsScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+    background: url("images/Round-details-1.jpg") no-repeat center center;
+    background-size: cover;
+    display: none;
+    justify-content: center;
+    align-items: flex-start;
+    z-index: 200;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 0 calc(110px + env(safe-area-inset-bottom));
+    box-sizing: border-box;
+}
+
+#roundDetailsScreen,
+#roundDetailsScreen label,
+#roundDetailsScreen h2,
+#roundDetailsScreen select,
+#roundDetailsScreen input {
+    color: white !important;
+}
+
+
+/* HOLE YARDAGES POPUP COLOR FIX */
+#holeYardagesPopup,
+#holeYardagesPopup label,
+
+#holeYardagesPopup input,
+/* #holeYardagesPopup button,*/
+#holeYardagesPopup span,
+#holeYardagesPopup div {
+    color: #111 !important;
+}
+
+#holeYardagesPopup input {
+    background: #fff !important;
+    border: 1px solid #cfcfcf !important;
+}
+
+
+#roundDetailsScreen input,
+#roundDetailsScreen select {
+    background: rgba(255, 255, 255, 0.82);
+    color: black !important;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    padding: 6px 8px;
+    border-radius: 4px;
+}
+
+#roundDetailsScreen option {
+    color: black !important;
+}
+
+.round-details-box {
+    padding: 0.95rem 1rem 1.1rem;
+    border-radius: 12px;
+    width: 92%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    box-sizing: border-box;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    background: rgba(0, 0, 0, 0.42);
+}
+
+.round-details-box h2 {
+    margin: 0 0 4px;
+    font-size: 1.45rem;
+}
+
+/* ===== Resume Panel ===== */
+.resume-panel {
+    background: rgba(0, 0, 0, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 10px;
+    padding: 9px 10px 10px;
+    text-align: center;
+}
+
+.resume-title {
+    font-size: 17px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.resume-course {
+    font-size: 15px;
+    line-height: 1.2;
+    margin-bottom: 3px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.resume-status {
+    font-size: 14px;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.resume-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+#resumeRoundBtn,
+#newRoundBtn {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 15px;
+    cursor: pointer;
+    min-width: 108px;
+    white-space: nowrap;
+}
+
+#resumeRoundBtn {
+    background: #007bff;
+    color: white;
+}
+
+#newRoundBtn {
+    background: #c9a349;
+    color: white;
+}
+
+/* ===== Detail Rows ===== */
+.round-form .form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-end;
+    margin-bottom: 8px;
+}
+
+.detail-row {
+    position: relative;
+    border-radius: 10px;
+    padding: 10px 16px;
+    background-color: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.detail-row.row-complete {
+    background-color: rgba(40, 120, 55, 0.55) !important;
+    border-color: rgba(155, 255, 180, 0.95) !important;
+    box-shadow: inset 4px 0 0 #7dff9c !important;
+}
+
+.detail-row.row-incomplete-required {
+    box-shadow: 0 0 0 2px rgba(255, 59, 48, 0.55);
+    border-color: rgba(255, 59, 48, 0.85);
+}
+
+.detail-row.row-incomplete-postround {
+    box-shadow:
+        0 0 0 3px rgba(255, 59, 48, 0.88),
+        0 0 14px rgba(255, 59, 48, 0.28) !important;
+    border-color: rgba(255, 59, 48, 0.95) !important;
+    background-color: rgba(120, 16, 16, 0.22) !important;
+}
+
+.round-form .form-row .form-group,
+.form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    min-width: 0;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.form-group label {
+    font-size: 0.98rem;
+    color: #fff;
+    margin-bottom: 0.28rem;
+    white-space: nowrap;
+    line-height: 1.1;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.48rem 0.58rem;
+    font-size: 1.02rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.date-display-row {
+    padding: 4px 0 8px;
+    text-align: center;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.date-display-text {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: white;
+    line-height: 1.2;
+}
+
+.round-form-note {
+    font-size: 14px;
+    line-height: 1.35;
+    text-align: center;
+    color: white;
+    margin-top: -2px;
+    margin-bottom: 2px;
+}
+
+/* ===== Post-round guidance / return area ===== */
+.post-round-guidance {
+    display: none;
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 2px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.32);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.post-round-guidance.active {
+    display: block;
+}
+
+.post-round-guidance .guidance-accent {
+    color: #ff8078;
+    font-weight: 700;
+}
+
+.post-round-return-wrap {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 2px;
+    min-height: 56px;
+    opacity: 0;
+    transform: scale(0.88);
+}
+
+.post-round-return-wrap.active {
+    display: flex;
+    animation: fadeInScale 0.35s ease forwards;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes goldPulse {
+    0% {
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.2),
+            0 6px 16px rgba(0, 0, 0, 0.45),
+            0 0 0 rgba(212, 175, 55, 0);
+    }
+    35% {
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.2),
+            0 6px 16px rgba(0, 0, 0, 0.45),
+            0 0 14px rgba(212, 175, 55, 0.8);
+    }
+    70% {
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.2),
+            0 6px 16px rgba(0, 0, 0, 0.45),
+            0 0 22px rgba(212, 175, 55, 0.55);
+    }
+    100% {
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.2),
+            0 6px 16px rgba(0, 0, 0, 0.45),
+            0 0 0 rgba(212, 175, 55, 0);
+    }
+}
+
+#postRoundReturnBtn {
+    display: inline-block;
+    width: min(86%, 340px);
+    padding: 15px 18px;
+    border-radius: 16px;
+    border: 2px solid #ffd11b;
+    background: linear-gradient(to bottom, #3a3a3a 0%, #111 50%, #000 100%);
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 6px 16px rgba(0, 0, 0, 0.45),
+        0 0 10px rgba(127, 220, 138, 0.24);
+    transition: all 0.15s ease;
+}
+
+.post-round-return-wrap.active #postRoundReturnBtn {
+    animation: goldPulse 1.15s ease 0.18s 1;
+}
+
+#postRoundReturnBtn:hover {
+    filter: brightness(1.08);
+}
+
+#postRoundReturnBtn:active {
+    transform: translateY(1px);
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.38),
+        0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+#startRoundBtn {
+    display: block;
+    margin: 0.35rem auto 0 auto;
+    padding: 0.8rem;
+    font-size: 1.05rem;
+    border-radius: 5px;
+    border: none;
+    background-color: #4caf50;
+    color: #fff;
+    cursor: pointer;
+}
+
+
+#demoRoundBtn,
+#fillTo18Btn {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(45,45,45,0.95), rgba(20,20,20,0.95));
+    color: #ffffff;
+    cursor: pointer;
+    box-sizing: border-box;
+    box-shadow:
+        0 6px 18px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+#demoRoundBtn:active,
+#fillTo18Btn:active {
+    transform: translateY(1px);
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+
+#demoRoundBtn,
+#fillTo18Btn {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: linear-gradient(180deg, rgba(45,45,45,0.95), rgba(20,20,20,0.95));
+    color: #ffffff;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    box-shadow:
+        0 6px 18px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+#demoRoundBtn:active,
+#fillTo18Btn:active {
+    transform: translateY(1px);
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+
+
+/* ================= 19th Hole Screen ================= */
+#nineteenthHoleScreen {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    z-index: 300;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 10px 10px 6px;
+    box-sizing: border-box;
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.1)),
+        url("images/golf-shot10.jpg") center center / cover no-repeat;
+    overflow: hidden;
+}
+
+.nineteenth-box {
+    width: min(92vw, 430px);
+    height: calc(100dvh - 16px);
+    max-height: calc(100dvh - 16px);
+    margin: 0 auto !important;
+    padding: 0;
+    border-radius: 20px;
+    text-align: center;
+    background: linear-gradient(
+        to bottom,
+        rgba(85, 85, 85, 0.42),
+        rgba(28, 28, 28, 0.68)
+    );
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(1px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    color: white;
+    box-sizing: border-box;
+    overflow-y: auto;
+    animation: nineteenthSlideUp 0.55s ease-out;
+}
+
+.nineteenth-box-inner {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px 16px 22px;
+    box-sizing: border-box;
+}
+
+.nineteenth-box.summary-box {
+    background: linear-gradient(
+        to bottom,
+        rgba(85, 85, 85, 0.42),
+        rgba(28, 28, 28, 0.68)
+    );
+    color: white;
+    margin: 0 auto !important;
+    height: calc(100dvh - 16px) !important;
+    max-height: calc(100dvh - 16px) !important;
+    padding: 0 !important;
+}
+
+.nineteenth-box h2 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: white;
+}
+
+#nineteenthHeadline {
+    font-size: 18px;
+    margin-bottom: 14px;
+    color: white;
+    line-height: 1.3;
+}
+
+.nineteenth-score-circle {
+    min-width: 78px;
+    min-height: 78px;
+    font-size: 28px;
+    font-weight: 800;
+    border-width: 3px;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    margin: 0 auto 14px auto;
+    width: 104px;
+    height: 104px;
+    line-height: 104px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1);
+}
+
+.nineteenth-score-circle.par {
+    background-color: rgb(12, 150, 74);
+    border: 2px solid rgb(12, 150, 74);
+    color: white;
+}
+
+.nineteenth-score-circle.birdie {
+    background-color: red;
+    border: 2px solid red;
+    color: white;
+}
+
+.nineteenth-score-circle.eagle {
+    background-color: red;
+    border: 3px solid red;
+    color: rgb(255, 255, 255);
+}
+
+.nineteenth-score-circle.bogey {
+    background-color: #3c3c3c;
+    border: 2px solid #3c3c3c;
+    color: white;
+}
+
+.nineteenth-score-circle.double-bogey {
+    background-color: rgb(49, 49, 49);
+    border: 3px solid rgb(49, 49, 49);
+    color: rgb(255, 255, 255);
+}
+
+.nineteenth-mini-stats {
+    margin-bottom: 14px;
+}
+
+.nineteenth-mini-stat {
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 10px;
+    padding: 9px 11px;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.04);
+    color: white;
+}
+
+.nineteenth-score-summary {
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.nineteenth-avg-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.nineteenth-avg-row .nineteenth-mini-stat {
+    flex: 1 1 88px;
+    min-width: 88px;
+    text-align: center;
+}
+
+.nineteenth-putts-stat {
+    line-height: 1.45;
+}
+
+#missingCourseDataReminder {
+    margin-bottom: 14px;
+    font-size: 14px;
+    line-height: 1.35;
+    color: white;
+}
+
+#nineteenthSummaryBtn,
+#viewSavedRoundsBtn,
+#nineteenthDetailsBtn,
+#nineteenthNewRoundBtn,
+#savedRoundsBackBtn,
+#savedRoundsHubBackBtn,
+#savedRoundsListBackBtn,
+#performanceChartsBackBtn,
+#goToClubhouseBtn 
+{
+    background: linear-gradient(to bottom, #3a3a3a 0%, #111 50%, #000 100%);
+    color: white;
+    border: 1px solid #5a5a5a;
+    border-radius: 14px;
+    padding: 13px 18px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer; /* 👈 THIS fixes the hand cursor */
+    width: 220px;
+    text-align: center;
+    margin: 6px auto;
+    display: block;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 5px 12px rgba(0, 0, 0, 0.4);
+    transition: all 0.15s ease;
+}
+
+#nineteenthSummaryBtn:hover,
+#viewSavedRoundsBtn:hover,
+#nineteenthDetailsBtn:hover,
+#nineteenthNewRoundBtn:hover,
+#savedRoundsBackBtn:hover,
+#savedRoundsHubBackBtn:hover,
+#savedRoundsListBackBtn:hover,
+#performanceChartsBackBtn:hover {
+    transform: translateY(-1px);
+    box-shadow:
+        0 6px 14px rgba(0, 0, 0, 0.4);
+}
+
+#nineteenthSummaryBtn:active,
+#viewSavedRoundsBtn:active,
+#nineteenthDetailsBtn:active,
+#nineteenthNewRoundBtn:active,
+#savedRoundsBackBtn:active,
+#savedRoundsHubBackBtn:active,
+#savedRoundsListBackBtn:active,
+#performanceChartsBackBtn:active {
+    transform: translateY(1px);
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.4),
+        0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes nineteenthSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(60px);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(-4px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================= Return to Details ================= */
+.return-row {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 8px;
+}
+
+#returnToDetails {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    padding-bottom: 40px;
+}
+
+/* ================= Responsive ================= */
+@media (max-width: 768px) {
+    .counter-group button {
+        width: 50px;
+        height: 50px;
+        font-size: 46px;
+    }
+
+    .counter-group input {
+        width: 80px;
+        height: 30px;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+  
+
+    .nav-btn {
+        font-size: 22px;
+        padding: 16px 0;
+    }
+
+    .round-details-box {
+        padding: 0.85rem 0.9rem 1rem;
+        gap: 0.5rem;
+    }
+
+    .round-form .form-row {
+        gap: 8px;
+        margin-bottom: 7px;
+    }
+
+    .detail-row {
+        padding: 10px 14px;
+    }
+
+    .form-group label {
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        font-size: 0.98rem;
+        padding: 0.44rem 0.5rem;
+    }
+
+    .resume-course {
+        font-size: 14px;
+    }
+
+    .resume-status {
+        font-size: 13px;
+    }
+
+    #resumeRoundBtn,
+    #newRoundBtn {
+        min-width: 96px;
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+
+    .post-round-guidance {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    #postRoundReturnBtn {
+        width: 92%;
+        font-size: 18px;
+        padding: 16px 16px;
+    }
+
+    .round-complete-btn,
+    #roundCompleteSummaryBtn,
+    #roundCompleteDetailsBtn,
+    #roundCompleteCloseBtn {
+        width: 92%;
+        font-size: 18px;
+        padding: 15px 16px;
+    }
+
+    .round-complete-text {
+        font-size: 22px;
+    }
+
+    .round-complete-subtext {
+        font-size: 15px;
+    }
+
+    #nineteenthHoleScreen {
+        padding: 8px 8px 4px;
+        gap: 8px;
+    }
+
+    #nineteenthHoleScreen .actions button {
+    margin: 0;
+}
+
+    .nineteenth-box {
+        width: 100%;
+        max-width: 430px;
+        height: calc(100dvh - 12px);
+        max-height: calc(100dvh - 12px);
+    }
+
+    .nineteenth-box-inner {
+        padding: 18px 14px 20px;
+    }
+
+    .nineteenth-score-circle {
+        width: 96px;
+        min-width: 96px;
+        height: 96px;
+        line-height: 96px;
+        font-size: 34px;
+    }
+}
+
+/* ================= Saved Round Styles ================= */
+
+.saved-rounds-screen {
+    min-height: 100vh;
+    padding: 24px 16px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    background-image: url("images/golf-shot6.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+@media (min-width: 1100px) {
+    .saved-rounds-screen {
+        background-size: contain;
+        background-position: center top;
+        background-color: #000;
+    }
+}
+
+.saved-rounds-overlay {
+    min-height: calc(100vh - 48px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.saved-rounds-panel {
+    width: 100%;
+    max-width: 720px;
+    margin-top: 18px;
+    padding: 20px 16px 18px 16px;
+    border-radius: 18px;
+    background: rgba(20, 28, 24, 0.26);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+.saved-rounds-title {
+    margin: 0 0 6px 0;
+    text-align: center;
+    color: #ffffff;
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.saved-rounds-subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.98rem;
+    margin-bottom: 18px;
+}
+
+.saved-rounds-list {
+    margin-bottom: 16px;
+}
+
+.saved-round-item {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 14px 14px 12px 14px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+    text-align: left;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.saved-round-item strong {
+    font-size: 1.02rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.saved-round-item div {
+    line-height: 1.4;
+}
+
+
+
+
+
+
+#savedRoundsBackBtn {
+    margin: 10px auto 0 auto;
+}
+
+.score-under {
+    color: #ff6b6b;   /* red (under par) */
+    font-weight: 700;
+}
+
+.score-over {
+    color: #a9a2a2;   /* your light gray */
+    font-weight: 700;
+}
+
+.score-even {
+    color: #4caf50;   /* green */
+    font-weight: 700;
+}
+
+
+/* ================= Temp demo bypass ================= */
+
+#demoRoundBtn {
+    margin-top: 0.65rem;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid rgba(255,255,255,0.22);
+    background: linear-gradient(180deg, rgba(40,40,40,0.96), rgba(20,20,20,0.96));
+    color: #ffffff;
+    cursor: pointer;
+    width: 100%;
+    box-shadow:
+        0 6px 18px rgba(0,0,0,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+#demoRoundBtn:hover,
+#demoRoundBtn:focus {
+    transform: translateY(-1px);
+    box-shadow:
+        0 8px 22px rgba(0,0,0,0.34),
+        inset 0 1px 0 rgba(255,255,255,0.16);
+}
+
+#demoRoundBtn:active {
+    transform: translateY(0);
+}
+
+.warning-text {
+    color: #c62828;
+    font-weight: 700;
+}
+
+.save-hole-warning {
+    font-size: 18px;
+    line-height: 1.35;
+    margin: 0 0 22px 0;
+    text-align: center;
+}
+
+/* ===== ANALYTICS SECTION ===== */
+
+.analytics-review-section {
+    margin: 20px auto;
+    width: min(92%, 1000px);
+    text-align: center;
+    position: relative;
+}
+
+.analytics-section-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: white;
+}
+
+/* Chart Card */
+.analytics-chart-card {
+    min-height: 380px;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    padding: 14px 12px 20px 12px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    position: relative;
+}
+
+.analytics-card-title {
+    color: white;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+/* Canvas */
+#scoreYardageChart {
+    width: 100%;
+    height: 280px;
+    display: block;
+    border-radius: 10px;
+    background: transparent;
+}
+
+/* Metrics Grid */
+.analytics-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+/* Metric Cards */
+.analytics-metric-card {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 12px 8px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.analytics-metric-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 6px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+}
+
+.analytics-metric-value {
+    font-size: 20px;
+    font-weight: bold;
+    color: #39ff14;
+}
+
+
+.analytics-swiper {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.analytics-swiper-track {
+    display: flex;
+    transform: translateX(0%);
+    transition: transform 0.28s ease;
+     width: 100%;
+}
+
+.analytics-slide {
+    width: 100%;
+    flex: 0 0 100%;
+}
+
+.analytics-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: -8px 0 8px 0;
+}
+
+.analytics-dot {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    appearance: none;
+    -webkit-appearance: none;
+    touch-action: manipulation;
+}
+
+.analytics-dot::before {
+    content: "";
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.28);
+    box-sizing: border-box;
+    display: block;
+}
+
+.analytics-dot.active::before {
+    background: #39ff14;
+    border-color: #39ff14;
+    box-shadow: 0 0 6px rgba(57, 255, 20, 0.45);
+}
+
+@media (min-width: 768px) {
+    .analytics-section-title {
+        font-size: 28px;
+        margin-bottom: 14px;
+    }
+
+    .analytics-card-title {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+
+    #scoreYardageChart {
+        height: 380px;
+    }
+
+    .analytics-metrics-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .analytics-metric-card {
+        padding: 16px 10px;
+    }
+
+    .analytics-metric-label {
+        font-size: 14px;
+    }
+
+    .analytics-metric-value {
+        font-size: 24px;
+    }
+}
+
+
+/* ========================================= */
+/* FIR CHART → DOT TAP POPUP (START) */
+/* ========================================= */
+
+.chart-point-popup {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(86%, 320px);
+    z-index: 25;
+    pointer-events: none;
+}
+
+.chart-point-popup.hidden {
+    display: none;
+}
+
+.chart-popup-box {
+    position: relative;
+    background: rgba(18, 18, 18, 0.96);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 14px;
+    padding: 14px 14px 18px 14px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34);
+    text-align: left;
+    pointer-events: auto;
+}
+
+.chart-popup-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.chart-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chart-popup-section {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.chart-popup-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #39ff14;
+    margin-bottom: 4px;
+}
+
+.chart-popup-pointer {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 72px;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: 0 0 4px rgba(255, 255, 255, 0.15);
+}
+
+/* ========================================= */
+/* FIR CHART → DOT TAP POPUP (END) */
+/* ========================================= */
+
+
+@media (min-width: 1100px) {
+    .analytics-review-section {
+        width: min(94%, 1200px);
+        position: relative;
+    }
+
+    #scoreYardageChart {
+        height: 440px;
+    }
+}
+
+.saved-rounds-hub-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-top: 22px;
+    margin-bottom: 18px;
+}
+
+.saved-rounds-hub-actions button,
+#savedRoundsHubBackBtn {
+    width: 78%;
+    max-width: 340px;
+    min-height: 58px;
+    padding: 14px 22px;
+    border-radius: 18px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.12);
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.saved-rounds-hub-actions button:active,
+#savedRoundsHubBackBtn:active {
+    transform: scale(0.98);
+}
+
+#savedRoundsHubBackBtn {
+    margin-top: 0;
+}
+
+
+/* ===== DEV BUILD LABEL ===== */
+#devBuildLabel {
+    position: fixed;
+    bottom: 6px;
+    right: 10px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    z-index: 999999;
+    pointer-events: none;
+    font-family: Arial, sans-serif;
+}
+
+#devJumpToSavedRounds {
+    left: 20px !important;
+    right: auto !important;
+}
+
+.dev-only {
+  display: none !important;
+}
+
+#roundDetailsScreen button:empty {
+  display: none !important;
+}
+
+#roundDetailsScreen button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+#roundDetailsScreen .dev-only {
+  display: none !important;
+}
+
+
+/* HOLE YARDAGES */
+.yardages-link-row {
+    width: 92%;
+    max-width: 430px;
+    margin: 10px auto 0;
+    text-align: center;
+}
+
+.yardages-link-btn {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: underline;
+    padding: 6px 8px;
+    min-height: auto;
+}
+
+.yardages-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+    z-index: 9999;
+}
+
+.yardages-popup-overlay.hidden {
+    display: none;
+}
+
+.yardages-popup-card {
+    width: min(92vw, 430px);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    background: rgba(255,255,255,.66);
+    color: #111;
+    border-radius: 10px;
+    padding: 12px 12px 10px;
+    border: 1.5px solid #ffffff;
+    box-shadow: 0 14px 32px rgba(0,0,0,.30);
+    box-sizing: border-box;
+}
+
+.yardages-popup-title {
+    margin: -18px -18px 14px;
+    padding: 14px 16px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: #fff !important;
+    background: #25a734;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.yardages-popup-section-label {
+    margin: 8px 0 6px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2f7d38;
+}
+
+.yardages-back9-label {
+    margin-top: 12px;
+}
+
+.yardages-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px 12px;
+}
+
+.yardage-item {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+}
+
+.yardage-hole-label {
+    width: 34px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    color: #111;
+    background: #ececec;
+    border: 1px solid #7c7b7b;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.yardage-input {
+    width: 60%;
+    min-height: 44px;
+    padding: 8px 10px;
+    border: 1px solid #3f3f3f;
+    border-radius: 14px;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.yardages-total-row {
+    width: 65%;
+    margin: 0 auto;
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    background: #f3f3f3;
+    border: 1px solid #545454;
+    border-radius: 4px;
+    padding: 10px 12px;
+}
+
+.yardages-popup-actions {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+#saveHoleYardagesBtn {
+    width: 71%;
+    margin: 0 auto;
+    min-height: 48px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    background: linear-gradient(180deg,#6a6a6a 0%,#1c1c1c 100%);
+    color: #fff;
+}
+
+#closeHoleYardagesBtn {
+    min-height: 42px;
+    font-size: 16px;
+}
+
+/* FORCE YARDAGE LABEL COLORS */
+#holeYardagesPopup .yardage-hole-label {
+    color: #259632 !important;
+}
