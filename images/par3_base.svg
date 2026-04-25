@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="260" viewBox="0 0 900 260">
+  <defs>
+    <filter id="softBlur">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <pattern id="fairwayStripes" width="65" height="260" patternUnits="userSpaceOnUse">
+      <rect width="32.5" height="260" fill="#84bd4c" opacity="0.42"/>
+      <rect x="32.5" width="32.5" height="260" fill="#6ea73f" opacity="0.35"/>
+    </pattern>
+    <radialGradient id="treeGrad" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#9cbf37"/>
+      <stop offset="65%" stop-color="#477821"/>
+      <stop offset="100%" stop-color="#285018"/>
+    </radialGradient>
+    <radialGradient id="greenGrad" cx="48%" cy="45%" r="62%">
+      <stop offset="0%" stop-color="#b8dc64"/>
+      <stop offset="100%" stop-color="#78ad40"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="900" height="260" fill="none"/>
+
+  <!-- rough grass / amorphic perimeter -->
+  <path d="M30,72
+           C75,20 140,30 205,34
+           C260,4 330,32 385,28
+           C445,10 520,44 575,30
+           C650,18 725,28 785,38
+           C838,48 872,75 882,112
+           C898,165 870,210 820,222
+           C745,246 680,217 615,228
+           C545,240 500,213 435,225
+           C360,238 305,212 238,222
+           C165,235 115,213 65,198
+           C18,184 2,139 14,103
+           C17,90 21,80 30,72 Z"
+        fill="#7fb34a" opacity="0.92" filter="url(#softBlur)"/>
+
+  <!-- fairway -->
+  <path d="M105,120
+           C185,76 275,92 355,96
+           C455,101 535,76 630,92
+           C694,103 725,102 770,112
+           C735,137 708,151 645,162
+           C530,183 475,155 365,166
+           C275,175 195,184 105,138 Z"
+        fill="#84bd4c" opacity="0.82"/>
+  <clipPath id="fairwayClip">
+    <path d="M105,120
+           C185,76 275,92 355,96
+           C455,101 535,76 630,92
+           C694,103 725,102 770,112
+           C735,137 708,151 645,162
+           C530,183 475,155 365,166
+           C275,175 195,184 105,138 Z"/>
+  </clipPath>
+  <rect x="90" y="70" width="700" height="120" fill="url(#fairwayStripes)" clip-path="url(#fairwayClip)" opacity="0.95"/>
+
+  <!-- green at right end -->
+  <ellipse cx="770" cy="130" rx="68" ry="48" fill="url(#greenGrad)" stroke="#689c35" stroke-width="3"/>
+  <circle cx="787" cy="126" r="3" fill="#1b1b1b"/>
+  <line x1="787" y1="126" x2="787" y2="91" stroke="#333" stroke-width="2"/>
+  <path d="M787,91 L816,101 L787,112 Z" fill="#d82020"/>
+
+  <!-- tee box -->
+  <rect x="44" y="101" width="45" height="58" rx="8" fill="#50762b" stroke="#294719" stroke-width="3"/>
+  <rect x="61" y="116" width="13" height="28" rx="2" fill="#b4d46b"/>
+  <circle cx="102" cy="130" r="10" fill="#fff" stroke="#178724" stroke-width="3"/>
+
+  <!-- foliage dots -->
+  <g opacity="0.95">
+    <circle cx="58" cy="63" r="20" fill="url(#treeGrad)"/><circle cx="99" cy="49" r="16" fill="url(#treeGrad)"/>
+    <circle cx="140" cy="45" r="21" fill="url(#treeGrad)"/><circle cx="185" cy="40" r="17" fill="url(#treeGrad)"/>
+    <circle cx="235" cy="36" r="20" fill="url(#treeGrad)"/><circle cx="290" cy="37" r="16" fill="url(#treeGrad)"/>
+    <circle cx="350" cy="34" r="20" fill="url(#treeGrad)"/><circle cx="420" cy="38" r="18" fill="url(#treeGrad)"/>
+    <circle cx="492" cy="40" r="21" fill="url(#treeGrad)"/><circle cx="560" cy="35" r="16" fill="url(#treeGrad)"/>
+    <circle cx="630" cy="38" r="20" fill="url(#treeGrad)"/><circle cx="700" cy="42" r="17" fill="url(#treeGrad)"/>
+    <circle cx="842" cy="82" r="18" fill="url(#treeGrad)"/><circle cx="855" cy="160" r="17" fill="url(#treeGrad)"/>
+
+    <circle cx="65" cy="198" r="18" fill="url(#treeGrad)"/><circle cx="118" cy="211" r="20" fill="url(#treeGrad)"/>
+    <circle cx="175" cy="215" r="17" fill="url(#treeGrad)"/><circle cx="238" cy="218" r="21" fill="url(#treeGrad)"/>
+    <circle cx="310" cy="216" r="16" fill="url(#treeGrad)"/><circle cx="380" cy="220" r="19" fill="url(#treeGrad)"/>
+    <circle cx="455" cy="222" r="17" fill="url(#treeGrad)"/><circle cx="535" cy="218" r="21" fill="url(#treeGrad)"/>
+    <circle cx="610" cy="217" r="17" fill="url(#treeGrad)"/><circle cx="690" cy="212" r="20" fill="url(#treeGrad)"/>
+    <circle cx="775" cy="207" r="18" fill="url(#treeGrad)"/><circle cx="835" cy="194" r="20" fill="url(#treeGrad)"/>
+  </g>
+</svg>

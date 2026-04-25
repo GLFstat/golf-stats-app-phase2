@@ -310,7 +310,7 @@
 
 
 
-<!-- Enhanced Stats Panel -->
+<!-- + Stats Panel -->
 <div id="enhancedStatsPanel" class="es-panel-overlay hidden">
   <div class="es-panel-sheet">
     <div class="es-panel-handle"></div>
@@ -318,7 +318,7 @@
     <div class="es-panel-header">
       <div class="es-panel-title-wrap">
         <div class="es-panel-hole">Current Hole</div>
-        <div class="es-panel-title">Enhanced Stats</div>
+        <div class="es-panel-title">Your Performance Stats</div>
       </div>
 
       <button id="closeEnhancedStats" class="es-close-btn" type="button">✕</button>
@@ -326,26 +326,31 @@
 
     <div class="es-panel-body">
       <p class="es-panel-text">
-        <strong>Add what you have time for.</strong><br>You can always add more later.
+        <div style="color:#c54c33;"><strong>Performance Stats are most accurate when entered now.</strong></div>
+    
       </p>
 
-      <div class="es-tile-grid">
-        <button class="es-tile" type="button">
-          <div class="es-tile-title">Tee Shot</div>
-          <div class="es-tile-sub">Direction &amp; Distance</div>
-        </button>
+     <div class="es-tile-grid">
+  <button id="openTeeShotStats" class="es-tile" type="button">
+    <div class="es-tile-check">✓</div>
+    <div class="es-tile-title">Tee Shot</div>
+    <div class="es-tile-sub">Track direction and distance</div>
+  </button>
 
-        <button class="es-tile" type="button">
-          <div class="es-tile-title">Approach</div>
-          <div class="es-tile-sub">Distance &amp; Result</div>
-        </button>
+<!-- Approach +Stat tile -->
+<button id="openApproachStats" class="es-tile" type="button">
+  <div class="es-tile-check">✓</div>
+  <div class="es-tile-title">Approach</div>
+  <div class="es-tile-sub">Distance, direction and finish</div>
+</button>
 
         <button class="es-tile" type="button">
           <div class="es-tile-title">Short Game</div>
           <div class="es-tile-sub">Chip, Pitch or Bunker</div>
         </button>
 
-        <button class="es-tile" type="button">
+        <button id="openPuttingStats" class="es-tile" type="button">
+          <div class="es-tile-check">✓</div>
           <div class="es-tile-title">Putting</div>
           <div class="es-tile-sub">First Putt Distance</div>
         </button>
@@ -364,6 +369,245 @@
 </div>
 
 
+<!-- Approach Panel -->
+<div id="approachPanel" class="es-panel-overlay hidden">
+  <div class="es-panel-sheet approach-sheet">
+    <div class="es-panel-header">
+      <div class="es-panel-title-wrap">
+        <div id="approachHoleLabel" class="es-panel-hole">Hole</div>
+        <div class="es-panel-title">Approach</div>
+      </div>
+
+      <button id="closeApproachPanel" class="es-close-btn" type="button">✕</button>
+    </div>
+
+    <div class="es-panel-body">
+
+      <div class="approach-section">
+        <div class="approach-label approach-main-label">Shot Distance</div>
+
+        <div id="approachChipRow" class="approach-chip-row approach-chip-row-clean">
+<button class="approach-chip-btn" type="button" data-distance="50">50</button>
+<button class="approach-chip-btn" type="button" data-distance="100">100</button>
+<button class="approach-chip-btn" type="button" data-distance="150">150</button>
+<button class="approach-chip-btn" type="button" data-distance="200">200</button>
+        </div>
+
+        <div class="approach-adjust-row">
+          <button id="approachDistanceMinus" class="approach-adjust-btn" type="button">−</button>
+          <div id="approachDistanceDisplay" class="approach-distance-display">— yds</div>
+          <button id="approachDistancePlus" class="approach-adjust-btn" type="button">+</button>
+        </div>
+      </div>
+
+      <div class="approach-section approach-result-section">
+  <div class="approach-label approach-main-label">Shot Result</div>
+
+  <div class="approach-result-table">
+    <div class="approach-row-label">Long:</div>
+    <button class="approach-result-btn" type="button" data-result="Long Left">LEFT</button>
+    <button class="approach-result-btn" type="button" data-result="Long Center">CENTER</button>
+    <button class="approach-result-btn" type="button" data-result="Long Right">RIGHT</button>
+
+    <div class="approach-row-label">Pin High:</div>
+    <button class="approach-result-btn" type="button" data-result="Pin High Left">LEFT</button>
+    <button class="approach-result-btn" type="button" data-result="Hit / Center">CENTER</button>
+    <button class="approach-result-btn" type="button" data-result="Pin High Right">RIGHT</button>
+
+    <div class="approach-row-label">Short:</div>
+    <button class="approach-result-btn" type="button" data-result="Short Left">LEFT</button>
+    <button class="approach-result-btn" type="button" data-result="Short Center">CENTER</button>
+    <button class="approach-result-btn" type="button" data-result="Short Right">RIGHT</button>
+  </div>
+</div>
+
+      <div class="approach-summary-box">
+        <div class="approach-summary-title">Quick Summary</div>
+        <div id="approachSummaryText" class="approach-summary-text">No approach saved yet.</div>
+
+        <div class="approach-map-wrap approach-map-wrap-large">
+          <img id="approachBaseImage" class="approach-base-image" src="images/Approach-BG.png" alt="">
+
+<svg id="approachOverlaySvg" class="approach-overlay-svg" viewBox="0 0 1200 360" aria-hidden="true">
+  <line x1="150" y1="20" x2="150" y2="320" class="approach-yard-line" />
+  <line x1="333" y1="20" x2="333" y2="320" class="approach-yard-line" />
+  <line x1="515" y1="20" x2="515" y2="320" class="approach-yard-line" />
+  <line x1="698" y1="20" x2="698" y2="320" class="approach-yard-line" />
+  <line id="approachHoleLine" x1="880" y1="20" x2="880" y2="320" class="approach-hole-line" />
+
+  <text x="150" y="18" class="approach-yard-label">200 yd</text>
+  <text x="333" y="18" class="approach-yard-label">150 yd</text>
+  <text x="515" y="18" class="approach-yard-label">100 yd</text>
+  <text x="698" y="18" class="approach-yard-label">50 yd</text>
+  <text x="880" y="18" class="approach-hole-label">0 yd</text>
+
+  <line id="approachFlightLine" x1="333" y1="205" x2="880" y2="150" class="approach-flight-line" />
+  <text id="approachMovingLabel" x="333" y="177" class="approach-moving-label">150 yds</text>
+  <circle id="approachStartDot" cx="333" cy="205" r="13" class="approach-start-dot" />
+  <circle id="approachEndDot" cx="880" cy="150" r="13" class="approach-end-dot" />
+</svg> 
+
+        </div>
+      </div>
+
+      <div class="es-panel-footer">
+        <button id="saveApproachStats" class="es-done-btn" type="button">Save Approach</button>
+        <button id="cancelApproachStats" class="tee-cancel-btn" type="button">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Putting Panel -->
+<div id="puttingPanel" class="es-panel-overlay hidden">
+  <div class="es-panel-sheet putting-sheet">
+    <div class="putting-header-row">
+      <div>
+        <div id="puttingHoleLabel" class="es-panel-hole">Hole</div>
+        <div class="putting-title">Putting Performance Stats</div>
+      </div>
+      <button id="closePuttingPanel" class="es-close-btn putting-close-btn" type="button">✕</button>
+    </div>
+
+    <div class="putting-card">
+      <div id="puttingStepTitle" class="putting-card-title">PUTT #1</div>
+      <div class="putting-card-body">
+        <div class="putting-label">START DISTANCE (FEET)</div>
+        <div id="puttingChipRow" class="putting-chip-row">
+          <button class="putting-chip-btn" type="button" data-distance="3">3 ft</button>
+          <button class="putting-chip-btn" type="button" data-distance="6">6 ft</button>
+          <button class="putting-chip-btn" type="button" data-distance="10">10 ft</button>
+          <button class="putting-chip-btn" type="button" data-distance="15">15 ft</button>
+          <button class="putting-chip-btn" type="button" data-distance="20">20 ft</button>
+          <button class="putting-chip-btn" type="button" data-distance="30">30+ ft</button>
+        </div>
+        <div class="putting-adjust-row">
+          <button id="puttingDistanceMinus" class="putting-adjust-btn" type="button">−</button>
+          <div id="puttingDistanceDisplay" class="putting-distance-display">3 ft</div>
+          <button id="puttingDistancePlus" class="putting-adjust-btn" type="button">+</button>
+        </div>
+        <div class="putting-label putting-result-label">RESULT</div>
+        <div class="putting-result-row">
+          <button class="putting-result-btn" type="button" data-result="Long">Long</button>
+          <button class="putting-result-btn" type="button" data-result="Short">Short</button>
+          <button class="putting-result-btn" type="button" data-result="Left">Left</button>
+          <button class="putting-result-btn" type="button" data-result="Right">Right</button>
+        </div>
+        <button id="puttingMadeBtn" class="putting-made-btn" type="button" data-result="Made">Made ✓</button>
+      </div>
+    </div>
+
+    <div class="putting-green-wrap">
+      <img id="puttingBaseImage" class="putting-base-image" src="images/Putting-BG.png" alt="Putting green">
+      <svg id="puttingOverlaySvg" class="putting-overlay-svg" viewBox="0 0 1000 760" aria-hidden="true">
+        <line x1="220" y1="120" x2="850" y2="120" class="putting-yard-line" />
+        <line x1="235" y1="175" x2="875" y2="175" class="putting-yard-line" />
+        <line x1="250" y1="225" x2="900" y2="225" class="putting-yard-line" />
+        <line x1="270" y1="305" x2="925" y2="305" class="putting-yard-line" />
+        <line x1="295" y1="395" x2="940" y2="395" class="putting-yard-line" />
+        <line x1="320" y1="500" x2="950" y2="500" class="putting-yard-line" />
+        <line x1="350" y1="635" x2="950" y2="635" class="putting-yard-line" />
+        <text x="895" y="128" class="putting-yard-label putting-zero-label">0 ft</text>
+        <text x="900" y="183" class="putting-yard-label">3 ft</text>
+        <text x="915" y="233" class="putting-yard-label">6 ft</text>
+        <text x="940" y="313" class="putting-yard-label">10 ft</text>
+        <text x="955" y="403" class="putting-yard-label">15 ft</text>
+        <text x="965" y="508" class="putting-yard-label">20 ft</text>
+        <text x="965" y="643" class="putting-yard-label">30+ ft</text>
+        <path id="puttingRollPath" class="putting-roll-path" d="M 500 635 Q 505 350 500 120" />
+        <circle id="puttingBallDot" class="putting-ball-dot" cx="500" cy="175" r="18" />
+        <rect id="puttingBallLabelBox" class="putting-ball-label-box" x="535" y="153" width="74" height="38" rx="8" />
+        <text id="puttingBallLabel" class="putting-ball-label" x="572" y="178">3 ft</text>
+      </svg>
+    </div>
+
+    <div class="putting-summary-strip">
+      <div class="putting-summary-cell"><div class="putting-summary-kicker">PUTT #1</div><div class="putting-summary-main"><span id="putt1StartSummary">3 ft</span> <span class="putting-arrow">→</span> <span id="putt1ResultSummary">---</span></div><div class="putting-summary-sub">Start / Result</div></div>
+      <div class="putting-summary-cell"><div class="putting-summary-kicker">PUTT #2</div><div class="putting-summary-main"><span id="putt2StartSummary">---</span> <span class="putting-arrow">→</span> <span id="putt2ResultSummary">---</span></div><div class="putting-summary-sub">Start / Result</div></div>
+      <div class="putting-summary-cell putting-total-cell"><div class="putting-summary-kicker">TOTAL PUTTS</div><div id="puttingTotalSummary" class="putting-total-number">0</div></div>
+    </div>
+
+    <div class="putting-footer-actions">
+      <button id="savePuttingStats" class="es-done-btn putting-save-btn" type="button">Save Putts</button>
+      <button id="cancelPuttingStats" class="tee-cancel-btn putting-cancel-btn" type="button">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Tee Shot Panel -->
+<div id="teeShotPanel" class="es-panel-overlay hidden">
+  <div class="es-panel-sheet tee-shot-sheet">
+    <div class="es-panel-header">
+      <div class="es-panel-title-wrap">
+        <div id="teeShotHoleLabel" class="es-panel-hole">Hole</div>
+        <div class="es-panel-title">Tee Shot</div>
+      </div>
+
+      <button id="closeTeeShotPanel" class="es-close-btn" type="button">✕</button>
+    </div>
+
+    <div class="es-panel-body">
+      <div class="tee-shot-section">
+        <div class="tee-shot-label">Direction</div>
+
+        <div class="tee-shot-direction-row">
+          <button id="teeDirLeft" class="tee-option-btn" type="button">Left</button>
+          <button id="teeDirCenter" class="tee-option-btn" type="button">Center</button>
+          <button id="teeDirRight" class="tee-option-btn" type="button">Right</button>
+        </div>
+      </div>
+
+      <div class="tee-shot-section">
+        <div class="tee-shot-label">Distance (approx)</div>
+
+        <div id="teeShotChipRow" class="tee-shot-chip-row">
+  <button class="tee-chip-btn" type="button" data-distance="250">250</button>
+  <button class="tee-chip-btn" type="button" data-distance="275">275</button>
+  <button class="tee-chip-btn" type="button" data-distance="300">300</button>
+  <button class="tee-chip-btn" type="button" data-distance="325">325</button>
+</div>
+
+        <div class="tee-shot-adjust-row">
+          <button id="teeDistanceMinus" class="tee-adjust-btn" type="button">−</button>
+          <div id="teeDistanceDisplay" class="tee-distance-display">— yds</div>
+          <button id="teeDistancePlus" class="tee-adjust-btn" type="button">+</button>
+        </div>
+      </div>
+
+      <div class="tee-shot-summary-box">
+        <div class="tee-shot-summary-title">Quick Summary</div>
+        <div id="teeShotSummaryText" class="tee-shot-summary-text">No tee shot saved yet.</div>
+
+        <div class="tee-shot-map-wrap">
+          <img id="teeShotBaseImage" class="tee-shot-base-image" src="images/fairways-45.png" alt="">
+
+          <svg id="teeShotOverlaySvg" class="tee-shot-overlay-svg" viewBox="0 0 900 260" aria-hidden="true">
+            <line id="teeShot100Line" x1="310" y1="40" x2="310" y2="220" class="tee-shot-yard-line" />
+            <line id="teeShot200Line" x1="565" y1="40" x2="565" y2="220" class="tee-shot-yard-line" />
+            <line id="teeShot300Line" x1="820" y1="40" x2="820" y2="220" class="tee-shot-yard-line" />
+
+            <text id="teeShot100Text" x="310" y="30" class="tee-shot-yard-label">100 yds</text>
+            <text id="teeShot200Text" x="565" y="30" class="tee-shot-yard-label">200 yds</text>
+            <text id="teeShot300Text" x="820" y="30" class="tee-shot-yard-label">300 yds</text>
+
+            <line id="teeShotFlightLine" x1="102" y1="130" x2="820" y2="130" class="tee-shot-flight-line" />
+            <circle id="teeShotEndDot" cx="820" cy="130" r="10" class="tee-shot-end-dot" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="es-panel-footer">
+        <button id="saveTeeShotStats" class="es-done-btn" type="button">Save Tee Shot</button>
+        <button id="cancelTeeShotStats" class="tee-cancel-btn" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 
 
@@ -375,33 +619,21 @@
   </div>
 </div>
 
+
+
 <!-- Stats Help Popup -->
 <div id="statsHelpPopup" class="popup-overlay">
-  <div class="help-popup-box">
-    <div class="help-popup-title">Stats Screen Help</div>
+  <div class="popup-box styled-popup-box">
+    <div class="popup-green-header">Stats Screen Help</div>
 
-    <div class="help-popup-text">
-      <p><strong>Select the hole par</strong> first.</p>
+    <div class="popup-body-text help-popup-text">
+      <p><strong>Hole Stats</strong> are the basic stats for this hole: Par, FIR, GIR, Putts, Penalty, and Score.</p>
 
-      <p>
-        Enter the stats for that hole, including
-        <strong>Putts</strong> and <strong>Score</strong>.
-      </p>
+      <p><strong>Performance Stats</strong> explain how the hole happened — Tee Shot, Approach, Short Game, Putting, and Notes.</p>
 
-      <p>
-        Check <strong>FIR</strong>, <strong>GIR</strong>,
-        <strong>U&amp;D</strong>, and <strong>SndSv</strong>
-        only if they apply to that hole.
-      </p>
+      <p>Use <strong>+Stats</strong> to add Performance Stats while the hole is fresh.</p>
 
-      <p>
-        Tap <strong>Save Hole</strong> when finished.
-        The app will automatically move to the next hole.
-      </p>
-
-      <p>
-        Use the left and right arrows only if you need to view another hole screen.
-      </p>
+      <p>Tap <strong>Save Hole</strong> when you are ready to save this hole and move to the next one.</p>
     </div>
 
     <button id="statsHelpCloseBtn" type="button">Close</button>
@@ -409,18 +641,30 @@
 </div>
 
 
+<!-- Tee Shot Validation Popup -->
+<div id="teeShotValidationPopup" class="popup-overlay" style="display:none;">
+  <div class="popup-box styled-popup-box">
+    <div class="popup-green-header">Tee Shot Incomplete</div>
+
+    <div class="popup-body-text">
+      Select a direction and distance before saving Tee Shot.
+    </div>
+
+    <button id="teeShotValidationOK" type="button">OK</button>
+  </div>
+</div>
+
 <!-- Save Confirmation Popup -->
 <div id="saveConfirmPopup" class="popup-overlay">
-  <div class="popup-box">
-    <div id="saveConfirmText">Save Hole X Stats?</div>
+  <div class="popup-box styled-popup-box">
+  <div class="popup-green-header" id="saveConfirmHeader">Save Hole</div>
+  <div id="saveConfirmText" class="popup-body-text">Save Hole X Stats?</div>
 
-    <p class="warning-text save-hole-warning">
-      Be sure you have entered <br>all this hole's stats accurately.<br>
-      You will not be able to edit this later.
-    </p>
 
-    <button id="confirmOK" type="button">OK</button>
-    <button id="confirmCancel" type="button">Cancel</button>
+
+<button id="confirmCancel" type="button">Add +Stats</button>
+<button id="confirmOK" type="button">Save Hole</button>
+<button id="confirmStay" type="button">Cancel</button>
   </div>
 </div>
 
@@ -591,6 +835,8 @@
             <div id="avgUpDownValue" class="analytics-metric-value">--</div>
           </div>
         </div>
+
+
         <!-- ========================================= -->
 <!-- FIR CHART → DOT TAP POPUP (START) -->
 <!-- ========================================= -->

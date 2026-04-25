@@ -795,6 +795,10 @@ function updateHoleScreen() {
     }
 
     updateNavButtons();
+    refreshTeeShotTile();
+    refreshApproachTileClean();
+    refreshApproachTile();
+    refreshPuttingTile();
 }
 
 function goToHole(holeNum) {
@@ -963,6 +967,49 @@ function triggerSavedFeedback() {
     }
 }
 
+
+/* Tee Shot tile saved state */
+const refreshTeeShotTile = () => {
+    const tile = document.getElementById("openTeeShotStats");
+    if (!tile) return;
+
+    const holeData = holes[currentHole - 1];
+    const hasSavedTeeShot =
+        holeData &&
+        holeData.teeShot &&
+        holeData.teeShot.direction &&
+        holeData.teeShot.distance !== null;
+
+    tile.classList.toggle("saved", !!hasSavedTeeShot);
+};
+
+
+function saveTeeShot() {
+    const holeIndex = currentHole - 1;
+
+    if (!holes[holeIndex]) {
+        holes[holeIndex] = {};
+    }
+
+    holes[holeIndex].teeShot = {
+        direction: window.teeShotDraft?.direction || "",
+        distance: window.teeShotDraft?.distance ?? null
+    };
+
+    persistActiveRound();
+
+    const teeShotPanel = document.getElementById("teeShotPanel");
+    const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
+
+    if (teeShotPanel) teeShotPanel.classList.add("hidden");
+    if (enhancedStatsPanel) enhancedStatsPanel.classList.remove("hidden");
+
+    if (typeof refreshTeeShotTile === "function") {
+        refreshTeeShotTile();
+    }
+}
+
+
 function completeHoleSave() {
     const selectedParEl = document.querySelector('input[name="holePar"]:checked');
     const puttsEl = document.getElementById("putts");
@@ -993,8 +1040,23 @@ function completeHoleSave() {
         penalty: penaltyValue,
         score: scoreValue,
         par: selectedPar,
+teeShot: (
+    window.teeShotDraft &&
+    window.teeShotDraft.direction &&
+    window.teeShotDraft.distance !== null
+) ? {
+    direction: window.teeShotDraft.direction,
+    distance: window.teeShotDraft.distance
+} : (holes[currentHole - 1]?.teeShot || null),
+        approach: holes[currentHole - 1]?.approach || null,
+        putting: holes[currentHole - 1]?.putting || null,
         saved: true
     };
+
+    if (window.teeShotDraft) {
+        window.teeShotDraft.direction = "";
+        window.teeShotDraft.distance = null;
+    }
 
     if (saveConfirmPopup) saveConfirmPopup.style.display = "none";
     if (validationPopup) validationPopup.style.display = "none";
@@ -1693,6 +1755,8 @@ function wireStaticEventListeners() {
         const statsHelpBtn = document.getElementById("statsHelpBtn");
         const statsHelpPopup = document.getElementById("statsHelpPopup");
         const statsHelpCloseBtn = document.getElementById("statsHelpCloseBtn");
+const saveConfirmStay = document.getElementById("confirmStay");
+const teeShotValidationOK = document.getElementById("teeShotValidationOK");
 
     if (statsHelpBtn && statsHelpPopup) {
         statsHelpBtn.addEventListener("click", () => {
@@ -1889,35 +1953,87 @@ if (deleteAndStartNewBtn) {
 }
 
 
-    if (saveBtn) {
-        saveBtn.addEventListener("click", () => {
-            if (holes[currentHole - 1] && holes[currentHole - 1].saved) return;
+if (saveBtn) {
+    saveBtn.addEventListener("click", () => {
+        if (holes[currentHole - 1] && holes[currentHole - 1].saved) return;
 
-            const validation = getHoleSaveValidation();
+        const validation = getHoleSaveValidation();
 
-            if (!validation.valid) {
-                pendingSaveAfterValidation = true;
-                autoSaveInProgress = false;
-                showHoleSaveValidationPopup();
-                return;
-            }
-
-            pendingSaveAfterValidation = false;
+        if (!validation.valid) {
+            pendingSaveAfterValidation = true;
             autoSaveInProgress = false;
+            showHoleSaveValidationPopup();
+            return;
+        }
 
-            const saveConfirmText = document.getElementById("saveConfirmText");
-            if (saveConfirmText) {
-                saveConfirmText.textContent = `Save Hole ${currentHole} Stats?`;
-            }
-            if (saveConfirmPopup) saveConfirmPopup.style.display = "flex";
-        });
+        pendingSaveAfterValidation = false;
+        autoSaveInProgress = false;
+
+        const saveConfirmText = document.getElementById("saveConfirmText");
+        const saveConfirmHeader = document.getElementById("saveConfirmHeader");
+
+        if (saveConfirmHeader) {
+    saveConfirmHeader.textContent = `Save Hole ${currentHole}?`;
+}
+
+if (saveConfirmText) {
+    let performanceCount = 0;
+    const currentHoleData = holes[currentHole - 1] || {};
+
+    if (
+        window.teeShotDraft &&
+        window.teeShotDraft.direction &&
+        window.teeShotDraft.distance !== null
+    ) {
+        performanceCount++;
+    } else if (currentHoleData.teeShot) {
+        performanceCount++;
     }
 
-    if (saveConfirmCancel) {
-        saveConfirmCancel.addEventListener("click", () => {
-            if (saveConfirmPopup) saveConfirmPopup.style.display = "none";
-        });
-    }
+    const countColor = performanceCount === 0 ? "#c62828" : "#2f7d38";
+    const countText = `${performanceCount} of 4`;
+
+    saveConfirmText.innerHTML =
+        `<span style="color:${countColor}; font-weight:800;">${countText} <br>Performance Stats added.</span><br>` +
+        `<span style="color:black; font-weight:500;">Add more +Stats now, <br>or save this hole and move on.</span>`;
+}
+
+        if (saveConfirmPopup) saveConfirmPopup.style.display = "flex";
+    });
+}
+
+   
+
+if (saveConfirmCancel) {
+    saveConfirmCancel.addEventListener("click", () => {
+        if (saveConfirmPopup) saveConfirmPopup.style.display = "none";
+
+        const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
+        if (enhancedStatsPanel) {
+            enhancedStatsPanel.classList.remove("hidden");
+        }
+    });
+}
+
+
+if (saveConfirmStay) {
+    saveConfirmStay.addEventListener("click", () => {
+        if (saveConfirmPopup) {
+            saveConfirmPopup.style.display = "none";
+        }
+    });
+}
+
+
+if (teeShotValidationOK) {
+    teeShotValidationOK.addEventListener("click", () => {
+        const teeShotValidationPopup = document.getElementById("teeShotValidationPopup");
+        if (teeShotValidationPopup) {
+            teeShotValidationPopup.style.display = "none";
+        }
+    });
+}
+
 
     if (validationOK) {
         validationOK.addEventListener("click", () => {
@@ -2314,6 +2430,429 @@ window.renderSavedRounds = function () {
         });
     }
 
+        const openTeeShotStatsBtn = document.getElementById("openTeeShotStats");
+    const teeShotPanel = document.getElementById("teeShotPanel");
+    const closeTeeShotPanelBtn = document.getElementById("closeTeeShotPanel");
+    const cancelTeeShotStatsBtn = document.getElementById("cancelTeeShotStats");
+    const teeShotHoleLabel = document.getElementById("teeShotHoleLabel");
+
+    const updateTeeShotHeader = () => {
+        if (!teeShotHoleLabel) return;
+
+        let displayHole = currentHole || 1;
+
+        let selectedPar = "";
+        const selectedParRadio = document.querySelector('input[name="holePar"]:checked');
+        if (selectedParRadio) selectedPar = selectedParRadio.value;
+        if (!selectedPar) selectedPar = "4";
+
+        teeShotHoleLabel.textContent = `Hole ${displayHole} • Par ${selectedPar}`;
+    };
+
+    if (openTeeShotStatsBtn && teeShotPanel && enhancedStatsPanel) {
+        openTeeShotStatsBtn.addEventListener("click", () => {
+            updateTeeShotHeader();
+            loadTeeShotForCurrentHole();
+            enhancedStatsPanel.classList.add("hidden");
+            updateTeeShotDistanceChips();
+            teeShotPanel.classList.remove("hidden");
+        });
+    }
+
+    if (closeTeeShotPanelBtn && teeShotPanel) {
+        closeTeeShotPanelBtn.addEventListener("click", () => {
+            teeShotPanel.classList.add("hidden");
+        });
+    }
+
+    if (cancelTeeShotStatsBtn && teeShotPanel && enhancedStatsPanel) {
+        cancelTeeShotStatsBtn.addEventListener("click", () => {
+            teeShotPanel.classList.add("hidden");
+            enhancedStatsPanel.classList.remove("hidden");
+        });
+    }
+
+        const teeDirLeftBtn = document.getElementById("teeDirLeft");
+    const teeDirCenterBtn = document.getElementById("teeDirCenter");
+    const teeDirRightBtn = document.getElementById("teeDirRight");
+    const teeChipButtons = document.querySelectorAll(".tee-chip-btn");
+    const teeDistanceDisplay = document.getElementById("teeDistanceDisplay");
+
+    window.teeShotDraft = window.teeShotDraft || {
+    direction: "",
+    distance: null
+    };
+
+const setTeeDirection = (direction) => {
+    window.teeShotDraft.direction = direction;
+
+    if (teeDirLeftBtn) teeDirLeftBtn.classList.remove("active");
+    if (teeDirCenterBtn) teeDirCenterBtn.classList.remove("active");
+    if (teeDirRightBtn) teeDirRightBtn.classList.remove("active");
+
+    if (direction === "left" && teeDirLeftBtn) teeDirLeftBtn.classList.add("active");
+    if (direction === "center" && teeDirCenterBtn) teeDirCenterBtn.classList.add("active");
+    if (direction === "right" && teeDirRightBtn) teeDirRightBtn.classList.add("active");
+
+    if (typeof updateTeeShotSummary === "function") {
+        updateTeeShotSummary();
+    }
+};
+
+const setTeeDistance = (distance) => {
+    window.teeShotDraft.distance = distance;
+
+    if (teeDistanceDisplay) {
+        teeDistanceDisplay.textContent = `${distance} yds`;
+    }
+
+    teeChipButtons.forEach((btn) => {
+        btn.classList.remove("active");
+        if (parseInt(btn.dataset.distance, 10) === distance) {
+            btn.classList.add("active");
+        }
+    });
+
+    if (typeof updateTeeShotSummary === "function") {
+        updateTeeShotSummary();
+    }
+};
+
+
+    const resetTeeShotDraft = () => {
+        window.teeShotDraft.direction = "";
+        window.teeShotDraft.distance = null;
+
+        if (teeDirLeftBtn) teeDirLeftBtn.classList.remove("active");
+        if (teeDirCenterBtn) teeDirCenterBtn.classList.remove("active");
+        if (teeDirRightBtn) teeDirRightBtn.classList.remove("active");
+
+        teeChipButtons.forEach((btn) => btn.classList.remove("active"));
+
+        if (teeDistanceDisplay) {
+            teeDistanceDisplay.textContent = "— yds";
+        }
+
+        if (typeof updateTeeShotSummary === "function") {
+            updateTeeShotSummary();
+        }
+    };
+
+    const loadTeeShotForCurrentHole = () => {
+        const holeData = holes[currentHole - 1];
+
+        if (holeData && holeData.teeShot) {
+            resetTeeShotDraft();
+
+            if (holeData.teeShot.direction) {
+                setTeeDirection(holeData.teeShot.direction);
+            }
+
+            if (holeData.teeShot.distance !== null && holeData.teeShot.distance !== undefined) {
+                setTeeDistance(parseInt(holeData.teeShot.distance, 10));
+            }
+
+            if (typeof updateTeeShotSummary === "function") {
+                updateTeeShotSummary();
+            }
+        } else {
+            resetTeeShotDraft();
+        }
+    };
+    
+
+    if (teeDirLeftBtn) {
+        teeDirLeftBtn.addEventListener("click", () => setTeeDirection("left"));
+    }
+
+    if (teeDirCenterBtn) {
+        teeDirCenterBtn.addEventListener("click", () => setTeeDirection("center"));
+    }
+
+    if (teeDirRightBtn) {
+        teeDirRightBtn.addEventListener("click", () => setTeeDirection("right"));
+    }
+
+    if (teeChipButtons.length) {
+        teeChipButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const distance = parseInt(btn.dataset.distance, 10);
+                if (!isNaN(distance)) setTeeDistance(distance);
+            });
+        });
+    }
+
+const teeDistanceMinusBtn = document.getElementById("teeDistanceMinus");
+const teeDistancePlusBtn = document.getElementById("teeDistancePlus");
+
+const getCurrentHoleParForTeeShot = () => {
+    const holeData = holes[currentHole - 1];
+    const selectedParEl = document.querySelector('input[name="holePar"]:checked');
+    return holeData?.par || (selectedParEl ? parseInt(selectedParEl.value, 10) : 4);
+};
+
+const clampTeeDistance = (value) => {
+    const par = getCurrentHoleParForTeeShot();
+
+    if (par === 3) {
+        return Math.max(100, Math.min(260, value));
+    }
+
+    return Math.max(100, Math.min(400, value));
+};
+
+const adjustTeeDistance = (amount) => {
+    let currentDistance = Number(window.teeShotDraft.distance);
+
+    if (!currentDistance || isNaN(currentDistance)) {
+        currentDistance = getCurrentHoleParForTeeShot() === 3 ? 200 : 275;
+    }
+
+    const nextDistance = clampTeeDistance(currentDistance + amount);
+    setTeeDistance(nextDistance);
+};
+
+const addHoldRepeat = (button, amount) => {
+    if (!button) return;
+
+    let holdTimeout = null;
+    let holdInterval = null;
+
+    const stopRepeat = () => {
+        if (holdTimeout) {
+            clearTimeout(holdTimeout);
+            holdTimeout = null;
+        }
+        if (holdInterval) {
+            clearInterval(holdInterval);
+            holdInterval = null;
+        }
+    };
+
+    button.addEventListener("click", () => {
+        adjustTeeDistance(amount);
+    });
+
+    button.addEventListener("mousedown", () => {
+        holdTimeout = setTimeout(() => {
+            holdInterval = setInterval(() => {
+                adjustTeeDistance(amount);
+            }, 70);
+        }, 400);
+    });
+
+    button.addEventListener("mouseup", stopRepeat);
+    button.addEventListener("mouseleave", stopRepeat);
+
+    button.addEventListener("touchstart", () => {
+        holdTimeout = setTimeout(() => {
+            holdInterval = setInterval(() => {
+                adjustTeeDistance(amount);
+            }, 70);
+        }, 400);
+    }, { passive: true });
+
+    button.addEventListener("touchend", stopRepeat);
+    button.addEventListener("touchcancel", stopRepeat);
+};
+
+addHoldRepeat(teeDistanceMinusBtn, -1);
+addHoldRepeat(teeDistancePlusBtn, 1);
+
+    const saveTeeShotStatsBtn = document.getElementById("saveTeeShotStats");
+    const teeShotSummaryText = document.getElementById("teeShotSummaryText");
+
+const updateTeeShotDistanceChips = () => {
+    const chipRow = document.getElementById("teeShotChipRow");
+    if (!chipRow) return;
+
+    const holeData = holes[currentHole - 1];
+    const selectedParEl = document.querySelector('input[name="holePar"]:checked');
+    const par = holeData?.par || (selectedParEl ? parseInt(selectedParEl.value, 10) : 4);
+
+    const values = par === 3
+        ? [160, 180, 200, 220]
+        : [250, 275, 300, 325];
+
+    chipRow.innerHTML = values.map(val => `
+        <button class="tee-chip-btn" type="button" data-distance="${val}">
+            ${val}
+        </button>
+    `).join("");
+
+    const newButtons = chipRow.querySelectorAll(".tee-chip-btn");
+
+    newButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            setTeeDistance(parseInt(btn.dataset.distance, 10));
+        });
+    });
+};
+
+
+const getCurrentHoleYardage = () => {
+    try {
+        const saved = localStorage.getItem(HOLE_YARDAGES_KEY);
+        if (!saved) return null;
+
+        const yardages = JSON.parse(saved);
+        if (!Array.isArray(yardages)) return null;
+
+        const yds = parseInt(yardages[currentHole - 1], 10);
+        return yds > 0 ? yds : null;
+    } catch (err) {
+        console.error("Could not read hole yardage", err);
+        return null;
+    }
+};
+
+
+const updateTeeShotSummary = () => {
+    if (!teeShotSummaryText) return;
+
+    const direction = window.teeShotDraft.direction;
+    const distance = window.teeShotDraft.distance;
+
+    const baseImage = document.getElementById("teeShotBaseImage");
+    const flightLine = document.getElementById("teeShotFlightLine");
+    const endDot = document.getElementById("teeShotEndDot");
+
+    const line100 = document.getElementById("teeShot100Line");
+    const line200 = document.getElementById("teeShot200Line");
+    const line300 = document.getElementById("teeShot300Line");
+
+    const text100 = document.getElementById("teeShot100Text");
+    const text200 = document.getElementById("teeShot200Text");
+    const text300 = document.getElementById("teeShot300Text");
+
+    const holeData = holes[currentHole - 1];
+    const selectedParEl = document.querySelector('input[name="holePar"]:checked');
+    const par = holeData?.par || (selectedParEl ? parseInt(selectedParEl.value, 10) : 4);
+    const isPar3 = par === 3;
+
+    const actualHoleYardage = isPar3 && typeof getCurrentHoleYardage === "function"
+        ? getCurrentHoleYardage()
+        : null;
+
+    if (baseImage) {
+        baseImage.src = isPar3
+            ? "images/fairways-3.png"
+            : "images/fairways-45.png";
+    }
+
+    const x1 = 115;
+    const y1 = 130;
+
+    let mark1;
+    let mark2;
+    let mark3;
+    let label1;
+    let label2;
+    let label3;
+    let yardsAtFinalMarker;
+    let maxDist;
+
+    if (isPar3 && actualHoleYardage) {
+    mark1 = 300;
+    mark2 = 515;
+    mark3 = 735;
+
+        label1 = `${Math.round(actualHoleYardage * 0.33)} yds`;
+        label2 = `${Math.round(actualHoleYardage * 0.66)} yds`;
+        label3 = `${actualHoleYardage} yds`;
+
+        yardsAtFinalMarker = actualHoleYardage;
+        maxDist = actualHoleYardage + 40;
+    } else if (isPar3) {
+        mark1 = 220;
+        mark2 = 430;
+        mark3 = 610;
+
+        label1 = "75 yds";
+        label2 = "150 yds";
+        label3 = "225 yds";
+
+        yardsAtFinalMarker = 225;
+        maxDist = 260;
+    } else {
+        mark1 = 250;
+        mark2 = 450;
+        mark3 = 650;
+
+        label1 = "100 yds";
+        label2 = "200 yds";
+        label3 = "300 yds";
+
+        yardsAtFinalMarker = 300;
+        maxDist = 350;
+    }
+
+    if (line100) { line100.setAttribute("x1", mark1); line100.setAttribute("x2", mark1); }
+    if (line200) { line200.setAttribute("x1", mark2); line200.setAttribute("x2", mark2); }
+    if (line300) { line300.setAttribute("x1", mark3); line300.setAttribute("x2", mark3); }
+
+    if (text100) { text100.setAttribute("x", mark1); text100.setAttribute("y", "-32"); text100.textContent = label1; }
+    if (text200) { text200.setAttribute("x", mark2); text200.setAttribute("y", "-32"); text200.textContent = label2; }
+    if (text300) { text300.setAttribute("x", mark3); text300.setAttribute("y", "-32"); text300.textContent = label3; }
+
+    if (direction && distance !== null) {
+        const prettyDirection =
+            direction.charAt(0).toUpperCase() + direction.slice(1);
+
+        teeShotSummaryText.textContent = `${prettyDirection} • ${distance} yds`;
+
+        const d = Math.max(0, Math.min(maxDist, distance));
+        const scaleWidth = mark3 - x1;
+        const x2 = x1 + (d / yardsAtFinalMarker) * scaleWidth;
+
+        let y2 = y1;
+        if (direction === "left") y2 = 92;
+        if (direction === "right") y2 = 168;
+
+        if (flightLine) {
+            flightLine.setAttribute("x1", x1);
+            flightLine.setAttribute("y1", y1);
+            flightLine.setAttribute("x2", x2);
+            flightLine.setAttribute("y2", y2);
+        }
+
+        if (endDot) {
+            endDot.setAttribute("cx", x2);
+            endDot.setAttribute("cy", y2);
+        }
+    } else {
+        teeShotSummaryText.textContent = actualHoleYardage
+            ? `Par 3 target: ${actualHoleYardage} yds`
+            : "No tee shot saved yet.";
+
+        if (flightLine) {
+            flightLine.setAttribute("x1", x1);
+            flightLine.setAttribute("y1", y1);
+            flightLine.setAttribute("x2", x1);
+            flightLine.setAttribute("y2", y1);
+        }
+
+        if (endDot) {
+            endDot.setAttribute("cx", x1);
+            endDot.setAttribute("cy", y1);
+        }
+    }
+};
+
+if (saveTeeShotStatsBtn && teeShotPanel) {
+    saveTeeShotStatsBtn.addEventListener("click", () => {
+        if (!window.teeShotDraft.direction || window.teeShotDraft.distance === null) {
+            const teeShotValidationPopup = document.getElementById("teeShotValidationPopup");
+            if (teeShotValidationPopup) {
+                teeShotValidationPopup.style.display = "flex";
+            }
+            return;
+        }
+
+        saveTeeShot();
+    });
+}
+
     if (enhancedStatsDoneBtn && enhancedStatsPanel) {
         enhancedStatsDoneBtn.addEventListener("click", () => {
             enhancedStatsPanel.classList.add("hidden");
@@ -2357,6 +2896,23 @@ window.renderSavedRounds = function () {
         // Do not auto-overwrite tee yardage field here
     };
 
+
+const updateYardageMismatchState = () => {
+    if (!teeYardageField) return;
+
+    const teeValue = parseInt(teeYardageField.value, 10) || 0;
+    const yardages = getHoleYardages();
+    const holeTotal = yardages.reduce((sum, value) => sum + (parseInt(value, 10) || 0), 0);
+
+    if (teeValue > 0 && holeTotal > 0 && teeValue !== holeTotal) {
+        teeYardageField.classList.add("yardage-mismatch");
+    } else {
+        teeYardageField.classList.remove("yardage-mismatch");
+    }
+};
+
+
+
     const loadHoleYardages = () => {
         let saved = [];
 
@@ -2376,7 +2932,8 @@ window.renderSavedRounds = function () {
         }
 
         updateHoleYardagesTotal();
-    };
+        updateYardageMismatchState();
+        };
 
 if (addHoleYardagesBtn && holeYardagesPopup) {
     addHoleYardagesBtn.addEventListener("click", () => {
@@ -2399,9 +2956,12 @@ if (addHoleYardagesBtn && holeYardagesPopup) {
     });
 }
 
-    document.querySelectorAll(".yardage-input").forEach(input => {
-        input.addEventListener("input", updateHoleYardagesTotal);
+document.querySelectorAll(".yardage-input").forEach(input => {
+    input.addEventListener("input", () => {
+        updateHoleYardagesTotal();
+        updateYardageMismatchState();
     });
+});
 
     if (closeHoleYardagesBtn && holeYardagesPopup) {
         closeHoleYardagesBtn.addEventListener("click", () => {
@@ -2554,4 +3114,759 @@ window.addEventListener("load", () => {
 
 }
 
+
+/* ========================================
+   APPROACH +STATS
+======================================== */
+
+let approachHoldTimer = null;
+let approachPressActive = false;
+
+let approachDraft = {
+    base: null,
+    distance: null,
+    result: null
+};
+
+// These match the fixed ruler lines in the Approach SVG.
+// 200 yds = x 150, 150 yds = x 333, 100 yds = x 515, 50 yds = x 698, 0 yds = x 880.
+// Distance runs left/right toward the red 0-yard line. Direction runs above/below that line.
+const APPROACH_HOLE_X = 880;
+const APPROACH_HOLE_Y = 150;
+const APPROACH_BALL_Y = 205;
+const APPROACH_PIXELS_PER_YARD = 3.65;
+const APPROACH_RESULT_DISTANCE_OFFSET = 78;
+const APPROACH_RESULT_DIRECTION_OFFSET = 62;
+
+function getApproachPanel() {
+    return document.getElementById("approachPanel");
+}
+
+function resetApproachDraft() {
+    approachDraft = {
+        base: null,
+        distance: null,
+        result: null
+    };
+}
+
+function getApproachXFromDistance(distance) {
+    const safeDistance = Math.max(0, Math.min(220, Number(distance || 0)));
+    return APPROACH_HOLE_X - (safeDistance * APPROACH_PIXELS_PER_YARD);
+}
+
+function openApproachStats() {
+    const panel = getApproachPanel();
+    const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
+
+    if (!panel) return;
+
+    loadApproachForCurrentHole();
+    updateApproachHoleLabel();
+
+    if (enhancedStatsPanel) enhancedStatsPanel.classList.add("hidden");
+    panel.classList.remove("hidden");
+
+    setTimeout(updateApproachDisplay, 30);
+}
+
+function closeApproachStats() {
+    stopApproachHold();
+
+    const panel = getApproachPanel();
+    const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
+
+    if (panel) panel.classList.add("hidden");
+    if (enhancedStatsPanel) enhancedStatsPanel.classList.remove("hidden");
+}
+
+function updateApproachHoleLabel() {
+    const label = document.getElementById("approachHoleLabel");
+    if (!label) return;
+
+    const selectedPar = document.querySelector('input[name="holePar"]:checked');
+    const par = holes[currentHole - 1]?.par || selectedPar?.value || "—";
+
+    label.textContent = `HOLE ${currentHole} • PAR ${par}`;
+}
+
+function setApproachBase(value) {
+    const distance = Number(value);
+
+    approachDraft.base = distance;
+    approachDraft.distance = distance;
+
+    document.querySelectorAll(".approach-chip-btn").forEach(btn => {
+        btn.classList.toggle(
+            "active",
+            Number(btn.dataset.distance) === distance
+        );
+    });
+
+    updateApproachDisplay();
+}
+
+function adjustApproachDistance(change) {
+    if (!approachDraft.distance) {
+        setApproachBase(150);
+    }
+
+    approachDraft.distance = Number(approachDraft.distance || 150) + change;
+
+    if (approachDraft.distance < 1) approachDraft.distance = 1;
+    if (approachDraft.distance > 220) approachDraft.distance = 220;
+
+    // Once the user fine-tunes away from a preset, no fixed distance chip should remain highlighted.
+    document.querySelectorAll(".approach-chip-btn").forEach(btn => {
+        btn.classList.toggle(
+            "active",
+            Number(btn.dataset.distance) === Number(approachDraft.distance)
+        );
+    });
+
+    updateApproachDisplay();
+}
+
+function getApproachResultParts(resultValue) {
+    const result = String(resultValue || "").toLowerCase();
+
+    let distanceAxis = "pinHigh";
+    if (result.includes("short")) distanceAxis = "short";
+    if (result.includes("long")) distanceAxis = "long";
+
+    let directionAxis = "center";
+    if (result.includes("left")) directionAxis = "left";
+    if (result.includes("right")) directionAxis = "right";
+
+    return { distanceAxis, directionAxis };
+}
+
+function getApproachEndPoint() {
+    // Endpoint mapping:
+    // Short / Pin High / Long = distance axis, so x moves before/on/past the red 0-yard line.
+    // Left / Center / Right = direction axis, so y moves off target while still keeping the correct distance.
+    let x = APPROACH_HOLE_X;
+    let y = APPROACH_HOLE_Y;
+
+    const { distanceAxis, directionAxis } = getApproachResultParts(approachDraft.result);
+
+    if (distanceAxis === "short") x -= APPROACH_RESULT_DISTANCE_OFFSET;
+    if (distanceAxis === "long") x += APPROACH_RESULT_DISTANCE_OFFSET;
+
+    if (directionAxis === "left") y -= APPROACH_RESULT_DIRECTION_OFFSET;
+    if (directionAxis === "right") y += APPROACH_RESULT_DIRECTION_OFFSET;
+
+    return { x, y };
+}
+
+
+function updateApproachDisplay() {
+    const distanceDisplay = document.getElementById("approachDistanceDisplay");
+    const movingLabel = document.getElementById("approachMovingLabel");
+    const flightLine = document.getElementById("approachFlightLine");
+    const startDot = document.getElementById("approachStartDot");
+    const endDot = document.getElementById("approachEndDot");
+
+    const distance = approachDraft.distance || approachDraft.base || 0;
+    const ballX = getApproachXFromDistance(distance);
+    const endPoint = getApproachEndPoint();
+
+    if (distanceDisplay) {
+        distanceDisplay.textContent = distance ? `${distance} yds` : "— yds";
+    }
+
+    if (movingLabel) {
+        movingLabel.setAttribute("x", ballX);
+        movingLabel.setAttribute("y", APPROACH_BALL_Y - 28);
+        movingLabel.textContent = distance ? `${distance} yds` : "";
+    }
+
+    if (startDot) {
+        startDot.setAttribute("cx", ballX);
+        startDot.setAttribute("cy", APPROACH_BALL_Y);
+    }
+
+    if (endDot) {
+        endDot.setAttribute("cx", endPoint.x);
+        endDot.setAttribute("cy", endPoint.y);
+    }
+
+    if (flightLine) {
+        flightLine.setAttribute("x1", ballX);
+        flightLine.setAttribute("y1", APPROACH_BALL_Y);
+        flightLine.setAttribute("x2", endPoint.x);
+        flightLine.setAttribute("y2", endPoint.y);
+    }
+
+    updateApproachSummary();
+}
+
+function setApproachResult(value) {
+    approachDraft.result = value;
+
+    document.querySelectorAll(".approach-result-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.result === value);
+    });
+
+    updateApproachDisplay();
+}
+
+function updateApproachSummary() {
+    const box = document.getElementById("approachSummaryText");
+    if (!box) return;
+
+    const distance = approachDraft.distance || approachDraft.base;
+    const parts = [];
+
+    if (distance) parts.push(`${distance} yds`);
+    parts.push(approachDraft.result || "Result not set");
+
+    box.textContent = parts.join(" • ");
+}
+
+function saveApproachStats() {
+    const holeData = holes[currentHole - 1] || {};
+
+    holeData.approach = {
+        base: approachDraft.base,
+        distance: approachDraft.distance,
+        result: approachDraft.result
+    };
+
+    holes[currentHole - 1] = holeData;
+
+    if (typeof persistActiveRound === "function") {
+        persistActiveRound();
+    }
+
+    refreshApproachTile();
+    closeApproachStats();
+}
+
+function loadApproachForCurrentHole() {
+    resetApproachDraft();
+
+    const holeData = holes[currentHole - 1];
+
+    document.querySelectorAll(".approach-chip-btn").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    document.querySelectorAll(".approach-result-btn").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    if (holeData && holeData.approach) {
+        const a = holeData.approach;
+
+        approachDraft.base = Number(a.base || a.distance || 0) || null;
+        approachDraft.distance = Number(a.distance || a.base || 0) || null;
+        approachDraft.result = a.result || null;
+
+        document.querySelectorAll(".approach-chip-btn").forEach(btn => {
+            btn.classList.toggle(
+                "active",
+                Number(btn.dataset.distance) === Number(approachDraft.base)
+            );
+        });
+
+        if (approachDraft.result) {
+            document.querySelectorAll(".approach-result-btn").forEach(btn => {
+                btn.classList.toggle(
+                    "active",
+                    btn.dataset.result === approachDraft.result
+                );
+            });
+        }
+    }
+
+    updateApproachDisplay();
+}
+
+function refreshApproachTile() {
+    const tile = document.getElementById("openApproachStats");
+    if (!tile) return;
+
+    const holeData = holes[currentHole - 1];
+    tile.classList.toggle("saved", !!(holeData && holeData.approach));
+}
+
+// Compatibility alias for the existing updateHoleScreen() call.
+function refreshApproachTileClean() {
+    refreshApproachTile();
+}
+
+function startApproachHold(change) {
+    stopApproachHold();
+
+    approachPressActive = true;
+    adjustApproachDistance(change);
+
+    approachHoldTimer = setInterval(() => {
+        if (!approachPressActive) {
+            stopApproachHold();
+            return;
+        }
+
+        adjustApproachDistance(change);
+    }, 80);
+}
+
+function stopApproachHold() {
+    approachPressActive = false;
+
+    if (!approachHoldTimer) return;
+
+    clearInterval(approachHoldTimer);
+    approachHoldTimer = null;
+}
+
+function wireApproachButton(btn, change) {
+    if (!btn) return;
+
+    // Pointer events handle both mouse and touch. Do not also wire touchstart/mousedown,
+    // or one press can fire more than once on some devices.
+    btn.addEventListener("pointerdown", e => {
+        e.preventDefault();
+        startApproachHold(change);
+    });
+}
+
+/* Wire buttons */
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("openApproachStats")
+        ?.addEventListener("click", openApproachStats);
+
+    document.getElementById("closeApproachPanel")
+        ?.addEventListener("click", closeApproachStats);
+
+    document.getElementById("cancelApproachStats")
+        ?.addEventListener("click", closeApproachStats);
+
+    document.getElementById("saveApproachStats")
+        ?.addEventListener("click", saveApproachStats);
+
+    document.querySelectorAll(".approach-chip-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            setApproachBase(Number(btn.dataset.distance));
+        });
+    });
+
+    document.querySelectorAll(".approach-result-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            setApproachResult(btn.dataset.result);
+        });
+    });
+
+    wireApproachButton(document.getElementById("approachDistanceMinus"), -1);
+    wireApproachButton(document.getElementById("approachDistancePlus"), 1);
+
+    [
+        "pointerup",
+        "pointercancel",
+        "pointerleave",
+        "touchend",
+        "touchcancel",
+        "mouseup",
+        "mouseleave",
+        "blur"
+    ].forEach(evt => {
+        window.addEventListener(evt, stopApproachHold);
+        document.addEventListener(evt, stopApproachHold);
+    });
+
+    updateApproachDisplay();
+});
+
+
+
 // Service Worker DISABLED
+/* =====================================================
+   PUTTING +STATS PANEL — PHASE 2
+===================================================== */
+let puttingHoldTimer = null;
+let puttingPressActive = false;
+let puttingDraft = {
+    activePutt: 1,
+    putts: [
+        { start: 3, result: null, leave: null },
+        { start: null, result: null, leave: null },
+        { start: null, result: null, leave: null }
+    ]
+};
+
+const PUTTING_HOLE_POINT = { x: 500, y: 120 };
+const PUTTING_DISTANCE_Y = {
+    0: 120,
+    3: 175,
+    6: 225,
+    10: 305,
+    15: 395,
+    20: 500,
+    30: 635
+};
+
+function getPuttingPanel() {
+    return document.getElementById("puttingPanel");
+}
+
+function resetPuttingDraft() {
+    puttingDraft = {
+        activePutt: 1,
+        putts: [
+            { start: 3, result: null, leave: null },
+            { start: null, result: null, leave: null },
+            { start: null, result: null, leave: null }
+        ]
+    };
+}
+
+function getActivePuttingEntry() {
+    return puttingDraft.putts[Math.max(0, puttingDraft.activePutt - 1)];
+}
+
+function getPuttingYFromFeet(feet) {
+    const value = Math.max(0, Math.min(30, Number(feet) || 0));
+    const stops = [0, 3, 6, 10, 15, 20, 30];
+
+    for (let i = 0; i < stops.length - 1; i++) {
+        const a = stops[i];
+        const b = stops[i + 1];
+        if (value >= a && value <= b) {
+            const pct = (value - a) / (b - a);
+            return PUTTING_DISTANCE_Y[a] + ((PUTTING_DISTANCE_Y[b] - PUTTING_DISTANCE_Y[a]) * pct);
+        }
+    }
+
+    return PUTTING_DISTANCE_Y[30];
+}
+
+function getPuttingLeaveDistance(startFeet, result) {
+    const start = Number(startFeet) || 3;
+
+    if (result === "Made") return 0;
+    if (start <= 3) return 2;
+    if (start <= 6) return 3;
+    if (start <= 10) return 3;
+    if (start <= 15) return 4;
+    if (start <= 20) return 5;
+    return 8;
+}
+
+function getPuttingFinishPoint(entry) {
+    const start = Number(entry.start) || 3;
+    const result = entry.result || null;
+    const leave = getPuttingLeaveDistance(start, result);
+
+    if (result === "Made") {
+        return { x: PUTTING_HOLE_POINT.x, y: PUTTING_HOLE_POINT.y, label: "Made", leave };
+    }
+
+    const y = getPuttingYFromFeet(leave);
+    let x = PUTTING_HOLE_POINT.x;
+
+    if (result === "Left") x -= 70;
+    if (result === "Right") x += 70;
+    if (result === "Long") return { x, y: PUTTING_HOLE_POINT.y - 38, label: `${leave} ft`, leave };
+    if (result === "Short") return { x, y, label: `${leave} ft`, leave };
+
+    return { x: PUTTING_HOLE_POINT.x, y: getPuttingYFromFeet(start), label: `${start} ft`, leave: null };
+}
+
+function updatePuttingHoleLabel() {
+    const label = document.getElementById("puttingHoleLabel");
+    if (!label) return;
+
+    let parText = "";
+    const selectedPar = document.querySelector('input[name="holePar"]:checked');
+    if (selectedPar && selectedPar.value) parText = ` • PAR ${selectedPar.value}`;
+
+    label.textContent = `HOLE ${currentHole}${parText}`;
+}
+
+function openPuttingStats() {
+    const panel = getPuttingPanel();
+    if (!panel) return;
+
+    loadPuttingForCurrentHole();
+    updatePuttingHoleLabel();
+    panel.classList.remove("hidden");
+    setTimeout(() => updatePuttingDisplay(true), 35);
+}
+
+function closePuttingStats() {
+    stopPuttingHold();
+    const panel = getPuttingPanel();
+    if (panel) panel.classList.add("hidden");
+}
+
+function setPuttingDistance(value) {
+    const entry = getActivePuttingEntry();
+    entry.start = Math.max(1, Math.min(60, Number(value) || 3));
+    entry.result = null;
+    entry.leave = null;
+    updatePuttingDisplay(true);
+}
+
+function adjustPuttingDistance(change) {
+    const entry = getActivePuttingEntry();
+    entry.start = Math.max(1, Math.min(60, Number(entry.start || 3) + change));
+    entry.result = null;
+    entry.leave = null;
+    updatePuttingDisplay(true);
+}
+
+function setPuttingResult(result) {
+    const entry = getActivePuttingEntry();
+    entry.result = result;
+    entry.leave = getPuttingLeaveDistance(entry.start, result);
+
+    // If this putt is made, STOP here and clear any future putts
+    if (result === "Made") {
+        for (let i = puttingDraft.activePutt; i < puttingDraft.putts.length; i++) {
+            if (i > puttingDraft.activePutt - 1) {
+                puttingDraft.putts[i].start = null;
+                puttingDraft.putts[i].result = null;
+                puttingDraft.putts[i].leave = null;
+            }
+        }
+
+        updatePuttingDisplay(true);
+        return;
+    }
+
+    // Missed putt: move to next putt only if there is room
+    if (puttingDraft.activePutt < 3) {
+        const nextEntry = puttingDraft.putts[puttingDraft.activePutt];
+        if (nextEntry) {
+            nextEntry.start = entry.leave;
+            nextEntry.result = null;
+            nextEntry.leave = null;
+        }
+
+        puttingDraft.activePutt += 1;
+    }
+
+    updatePuttingDisplay(true);
+}
+
+function updatePuttingChipStates() {
+    const entry = getActivePuttingEntry();
+    const activeDistance = Number(entry.start || 3);
+
+    document.querySelectorAll(".putting-chip-btn").forEach(btn => {
+        btn.classList.toggle("active", Number(btn.dataset.distance) === activeDistance);
+    });
+
+    document.querySelectorAll(".putting-result-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.result === entry.result);
+    });
+
+    const madeBtn = document.getElementById("puttingMadeBtn");
+    if (madeBtn) madeBtn.classList.toggle("active", entry.result === "Made");
+}
+
+function updatePuttingDisplay(animate = false) {
+    const stepTitle = document.getElementById("puttingStepTitle");
+    const distanceDisplay = document.getElementById("puttingDistanceDisplay");
+    const ball = document.getElementById("puttingBallDot");
+    const label = document.getElementById("puttingBallLabel");
+    const labelBox = document.getElementById("puttingBallLabelBox");
+    const path = document.getElementById("puttingRollPath");
+
+    const entry = getActivePuttingEntry();
+    const start = Number(entry.start || 3);
+    const startPoint = { x: PUTTING_HOLE_POINT.x, y: getPuttingYFromFeet(start) };
+    const finishPoint = getPuttingFinishPoint(entry);
+    const showPoint = entry.result ? finishPoint : startPoint;
+
+    if (stepTitle) stepTitle.textContent = `PUTT #${puttingDraft.activePutt}`;
+    if (distanceDisplay) distanceDisplay.textContent = `${start} ft`;
+
+    updatePuttingChipStates();
+
+    if (path) {
+        const midX = (startPoint.x + showPoint.x) / 2;
+        const midY = (startPoint.y + showPoint.y) / 2;
+        const curveX = midX + ((showPoint.x - startPoint.x) * 0.12);
+        path.setAttribute("d", `M ${startPoint.x} ${startPoint.y} Q ${curveX} ${midY} ${showPoint.x} ${showPoint.y}`);
+    }
+
+    if (ball) {
+        if (animate && entry.result) {
+            ball.setAttribute("cx", startPoint.x);
+            ball.setAttribute("cy", startPoint.y);
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    ball.setAttribute("cx", showPoint.x);
+                    ball.setAttribute("cy", showPoint.y);
+                });
+            });
+        } else {
+            ball.setAttribute("cx", showPoint.x);
+            ball.setAttribute("cy", showPoint.y);
+        }
+    }
+
+    const labelText = entry.result === "Made" ? "Made" : (entry.result ? `${entry.leave} ft` : `${start} ft`);
+    const labelX = showPoint.x + 72;
+    const labelY = showPoint.y - 4;
+
+    if (label) {
+        label.textContent = labelText;
+        label.setAttribute("x", labelX + 37);
+        label.setAttribute("y", labelY + 18);
+    }
+
+    if (labelBox) {
+        const w = labelText.length > 4 ? 92 : 74;
+        labelBox.setAttribute("x", labelX);
+        labelBox.setAttribute("y", labelY);
+        labelBox.setAttribute("width", w);
+    }
+
+    updatePuttingSummary();
+}
+
+function updatePuttingSummary() {
+    const putt1 = puttingDraft.putts[0];
+    const putt2 = puttingDraft.putts[1];
+    const madeIndex = puttingDraft.putts.findIndex(p => p && p.result === "Made");
+    const completed = puttingDraft.putts.filter(p => p && p.result).length;
+    const total = madeIndex >= 0 ? madeIndex + 1 : completed;
+
+    const p1Start = document.getElementById("putt1StartSummary");
+    const p1Result = document.getElementById("putt1ResultSummary");
+    const p2Start = document.getElementById("putt2StartSummary");
+    const p2Result = document.getElementById("putt2ResultSummary");
+    const totalEl = document.getElementById("puttingTotalSummary");
+
+    if (p1Start) p1Start.textContent = putt1?.start ? `${putt1.start} ft` : "---";
+    if (p1Result) {
+        p1Result.textContent = putt1?.result || "---";
+        p1Result.classList.toggle("miss", !!putt1?.result && putt1.result !== "Made");
+    }
+    if (p2Start) p2Start.textContent = putt2?.start ? `${putt2.start} ft` : "---";
+    if (p2Result) {
+        p2Result.textContent = putt2?.result || "---";
+        p2Result.classList.toggle("miss", !!putt2?.result && putt2.result !== "Made");
+    }
+    if (totalEl) totalEl.textContent = total || 0;
+}
+
+function savePuttingStats() {
+    const completed = puttingDraft.putts.filter(p => p && p.result);
+    if (!completed.length) return;
+
+    if (!holes[currentHole - 1]) holes[currentHole - 1] = {};
+
+    holes[currentHole - 1].putting = {
+        activePutt: puttingDraft.activePutt,
+        putts: puttingDraft.putts.map(p => ({
+            start: p.start,
+            result: p.result,
+            leave: p.leave
+        }))
+    };
+
+    const madeIndex = puttingDraft.putts.findIndex(p => p && p.result === "Made");
+    const totalPutts = madeIndex >= 0 ? madeIndex + 1 : completed.length;
+    const puttsInput = document.getElementById("putts");
+    if (puttsInput && totalPutts > 0) {
+        puttsInput.value = totalPutts;
+        clearValidationHighlightFromElement(puttsInput.closest(".stat-counter"));
+    }
+
+    if (roundStarted) persistActiveRound();
+    refreshPuttingTile();
+    closePuttingStats();
+}
+
+function loadPuttingForCurrentHole() {
+    resetPuttingDraft();
+
+    const holeData = holes[currentHole - 1];
+    if (holeData && holeData.putting && Array.isArray(holeData.putting.putts)) {
+        puttingDraft.putts = holeData.putting.putts.map(p => ({
+            start: p.start ?? null,
+            result: p.result ?? null,
+            leave: p.leave ?? null
+        }));
+
+        while (puttingDraft.putts.length < 3) {
+            puttingDraft.putts.push({ start: null, result: null, leave: null });
+        }
+
+        const firstOpen = puttingDraft.putts.findIndex(p => !p.result);
+        puttingDraft.activePutt = firstOpen === -1 ? Math.min(3, puttingDraft.putts.length) : firstOpen + 1;
+        if (!puttingDraft.putts[puttingDraft.activePutt - 1].start) {
+            puttingDraft.putts[puttingDraft.activePutt - 1].start = 3;
+        }
+    }
+
+    updatePuttingDisplay(false);
+}
+
+function refreshPuttingTile() {
+    const tile = document.getElementById("openPuttingStats");
+    if (!tile) return;
+
+    const holeData = holes[currentHole - 1];
+    tile.classList.toggle("saved", !!(holeData && holeData.putting));
+}
+
+function startPuttingHold(change) {
+    stopPuttingHold();
+    puttingPressActive = true;
+    adjustPuttingDistance(change);
+
+    puttingHoldTimer = setInterval(() => {
+        if (!puttingPressActive) {
+            stopPuttingHold();
+            return;
+        }
+        adjustPuttingDistance(change);
+    }, 90);
+}
+
+function stopPuttingHold() {
+    puttingPressActive = false;
+    if (!puttingHoldTimer) return;
+    clearInterval(puttingHoldTimer);
+    puttingHoldTimer = null;
+}
+
+function wirePuttingHoldButton(btn, change) {
+    if (!btn) return;
+    btn.addEventListener("pointerdown", e => {
+        e.preventDefault();
+        startPuttingHold(change);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("openPuttingStats")?.addEventListener("click", openPuttingStats);
+    document.getElementById("closePuttingPanel")?.addEventListener("click", closePuttingStats);
+    document.getElementById("cancelPuttingStats")?.addEventListener("click", closePuttingStats);
+    document.getElementById("savePuttingStats")?.addEventListener("click", savePuttingStats);
+
+    document.querySelectorAll(".putting-chip-btn").forEach(btn => {
+        btn.addEventListener("click", () => setPuttingDistance(Number(btn.dataset.distance)));
+    });
+
+    document.querySelectorAll(".putting-result-btn").forEach(btn => {
+        btn.addEventListener("click", () => setPuttingResult(btn.dataset.result));
+    });
+
+    document.getElementById("puttingMadeBtn")?.addEventListener("click", () => setPuttingResult("Made"));
+
+    wirePuttingHoldButton(document.getElementById("puttingDistanceMinus"), -1);
+    wirePuttingHoldButton(document.getElementById("puttingDistancePlus"), 1);
+
+    ["pointerup", "pointercancel", "pointerleave", "touchend", "touchcancel", "mouseup", "mouseleave", "blur"].forEach(evt => {
+        window.addEventListener(evt, stopPuttingHold);
+        document.addEventListener(evt, stopPuttingHold);
+    });
+
+    refreshPuttingTile();
+});

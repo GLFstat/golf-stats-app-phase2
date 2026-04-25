@@ -569,8 +569,8 @@ header h1 {
 }
 
 .es-tile {
-    background: rgba(230,242,231,.88);
-    border: 1px solid #9ec7a2;
+    background: #178724;
+    border: 1px solid #ffffff;
     border-radius: 13px;
     padding: 10px;
     text-align: left;
@@ -590,14 +590,15 @@ header h1 {
 
 .es-tile-title {
     font-size: 16px;
-    font-weight: 800;
+    font-weight: 650;
     line-height: 1.1;
+    color: #caffd1;
 }
 
 .es-tile-sub {
     font-size: 12px;
     line-height: 1.2;
-    color: #35523a;
+    color: #ffffff;
 }
 
 .es-panel-footer {
@@ -612,6 +613,142 @@ header h1 {
     font-weight: 800;
     background: linear-gradient(180deg,#6a6a6a 0%,#1c1c1c 100%);
     color: #fff;
+}
+
+
+
+/* TEE SHOT PANEL */
+.tee-shot-sheet {
+    width: 88%;
+    max-width: 405px;
+}
+
+.tee-shot-section {
+    margin-top: 12px;
+}
+
+.tee-shot-label {
+    font-size: 14px;
+    font-weight: 800;
+    color: #1f1f1f;
+    margin-bottom: 7px;
+}
+
+.tee-shot-direction-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.tee-option-btn {
+    min-height: 46px;
+    border-radius: 12px;
+    border: 1px solid #cfcfcf;
+    background: #ffffff;
+    color: #1f1f1f;
+    font-size: 16px;
+    font-weight: 700;
+    box-shadow: none;
+}
+
+.tee-option-btn.active {
+    background: #178724;
+    border-color: #0f5c18;
+    color: #ffffff;
+}
+
+.tee-shot-chip-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.tee-chip-btn {
+    min-height: 42px;
+    border-radius: 12px;
+    border: 1px solid #cfcfcf;
+    background: #ffffff;
+    color: #1f1f1f;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: none;
+}
+
+.tee-chip-btn.active {
+    background: #178724;
+    border-color: #0f5c18;
+    color: #ffffff;
+}
+
+.tee-shot-adjust-row {
+    margin-top: 9px;
+    display: grid;
+    grid-template-columns: 54px 1fr 54px;
+    gap: 8px;
+    align-items: center;
+}
+
+.tee-adjust-btn {
+    min-height: 46px;
+    border-radius: 12px;
+    border: 1px solid #cfcfcf;
+    background: #ffffff;
+    color: #1f1f1f;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: none;
+}
+
+.tee-distance-display {
+    min-height: 46px;
+    border-radius: 12px;
+    border: 1px solid #cfcfcf;
+    background: #f3f3f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #1f1f1f;
+    padding: 0 10px;
+}
+
+.tee-shot-summary-box {
+    margin-top: 12px;
+    border: 1px solid #d8d8d8;
+    border-radius: 12px;
+    background: rgba(255,255,255,.72);
+    padding: 10px;
+}
+
+.tee-shot-summary-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #2f7d38;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 4px;
+}
+
+.tee-shot-summary-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.25;
+}
+
+.tee-cancel-btn {
+    width: 100%;
+    min-height: 42px;
+    border-radius: 12px;
+    border: 1px solid #cfcfcf;
+    background: #ffffff;
+    color: #1f1f1f;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 8px;
+    box-shadow: none;
 }
 
 
@@ -794,7 +931,9 @@ header h1 {
 
 #confirmOK,
 #confirmCancel,
+#confirmStay,
 #validationOK,
+#teeShotValidationOK,
 #keepCurrentRoundBtn,
 #deleteAndStartNewBtn {
     padding: 14px 28px;
@@ -1150,6 +1289,28 @@ header h1 {
 #roundDetailsScreen input {
     color: white !important;
 }
+
+
+
+#teeYardage.yardage-mismatch {
+  border: 2px solid #d93025 !important;
+  box-shadow: 0 0 0 0 rgba(217, 48, 37, 0.75);
+  animation: yardagePulse 1.2s infinite;
+}
+
+@keyframes yardagePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(217, 48, 37, 0.75);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(217, 48, 37, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(217, 48, 37, 0);
+  }
+}
+
+
 
 
 /* HOLE YARDAGES POPUP COLOR FIX */
@@ -2550,4 +2711,1107 @@ header h1 {
 /* FORCE YARDAGE LABEL COLORS */
 #holeYardagesPopup .yardage-hole-label {
     color: #259632 !important;
+}
+
+
+/* STANDARD WHITE POPUP STYLE */
+.styled-popup-box {
+    background: #ffffff;
+    color: #111;
+    border-radius: 14px;
+    overflow: hidden;
+    padding: 0 0 18px;
+}
+
+.popup-green-header {
+    display: block;
+    width: 100%;
+    background: #178724;
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 800;
+    text-align: center;
+    padding: 14px 16px;
+    margin: 0 0 16px 0;
+    box-sizing: border-box;
+}
+
+.popup-body-text {
+    padding: 0 18px;
+    font-size: 17px;
+    line-height: 1.35;
+    font-weight: 700;
+    text-align: center;
+}
+
+
+/* TEE SHOT VISUAL  */
+
+.tee-shot-preview-svg {
+    width: 100%;
+    height: 72px;
+    margin-top: 8px;
+    display: block;
+}
+
+.tee-shot-fairway-line {
+    stroke: rgba(0, 0, 0, 0.18);
+    stroke-width: 2;
+    stroke-dasharray: 5 5;
+}
+
+.tee-shot-start-dot {
+    fill: #178724;
+}
+
+.tee-shot-preview-path {
+    fill: none;
+    stroke: #178724;
+    stroke-width: 5;
+    stroke-linecap: round;
+    opacity: 0.95;
+}
+
+.tee-shot-preview-path.empty {
+    opacity: 0.18;
+}
+
+
+
+.tee-shot-map-wrap {
+    position: relative;
+    width: 100%;
+    height: 170px;
+    margin-top: 10px;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #f7f7f7;
+}
+
+.tee-shot-base-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+.tee-shot-overlay-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.tee-shot-yard-line {
+    stroke: rgba(255, 255, 255, 0.9);
+    stroke-width: 4;
+    stroke-dasharray: 10 8;
+}
+
+.tee-shot-yard-label {
+    fill: #111;
+    font-size: 24px;
+    font-weight: 800;
+    text-anchor: middle;
+}
+
+.tee-shot-flight-line {
+    stroke: #ffe600;
+    stroke-width: 7;
+    stroke-linecap: round;
+}
+
+.tee-shot-end-dot {
+    fill: #ffe600;
+}
+/* Tee Shot tile saved state */
+.es-tile {
+    position: relative;
+}
+
+#openTeeShotStats .es-tile-check {
+    position: absolute;
+    top: 7px;
+    right: 9px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #178724;
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 22px;
+    text-align: center;
+    visibility: hidden;
+    opacity: 0;
+}
+
+#openTeeShotStats.saved {
+    opacity: 0.62;
+    filter: grayscale(0.25);
+}
+
+#openTeeShotStats.saved .es-tile-check {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Hide +Stats tile checkmarks */
+.es-tile-check {
+  display: none !important;
+}
+
+/* Saved state for Tee Shot and Approach tiles */
+#openTeeShotStats.saved,
+#openApproachStats.saved {
+  opacity: 0.62;
+  filter: grayscale(0.25);
+}
+
+
+.es-tile-check {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+
+/* APPROACH PANEL FIX */
+
+#approachPanel {
+  z-index: 9999;
+  background: rgba(0,0,0,0.22);
+}
+
+#approachPanel .es-panel-sheet {
+  background: rgba(243,243,240,.96);
+  color: #1f1f1f;
+  max-height: 82vh;
+  overflow-y: auto;
+}
+
+#approachPanel .approach-section,
+#approachPanel .approach-summary-box,
+#approachPanel .approach-label,
+#approachPanel .approach-distance-display,
+#approachPanel .approach-summary-text {
+  color: #1f1f1f;
+}
+
+.approach-chip-btn,
+.approach-option-btn,
+.approach-adjust-btn {
+  background: #ffffff;
+  color: #1f1f1f;
+  border: 1px solid #cfcfcf;
+  border-radius: 12px;
+  min-height: 42px;
+  font-weight: 800;
+}
+
+.approach-chip-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.approach-three-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.approach-adjust-row {
+  display: grid;
+  grid-template-columns: 54px 1fr 54px;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.approach-map-wrap {
+  position: relative;
+  width: 100%;
+  height: 170px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.approach-base-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.approach-overlay-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#openTeeShotStats .es-tile-check,
+#openApproachStats .es-tile-check {
+  display: none !important;
+}
+
+
+/* ========================================
+   APPROACH — CLEAN PANEL
+======================================== */
+
+.approach-sheet {
+  max-height: 86vh;
+  overflow-y: auto;
+}
+
+.approach-section {
+  margin-top: 12px;
+}
+
+.approach-label {
+  font-size: 17px;
+  font-weight: 900;
+  color: #1f1f1f;
+  margin-bottom: 8px;
+}
+
+.approach-chip-row-clean {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.approach-chip-row-clean .approach-chip-btn {
+  min-height: 38px;
+  padding: 4px 0;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+.approach-result-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.approach-result-btn {
+  min-height: 48px;
+  border-radius: 12px;
+  border: 1px solid #cfcfcf;
+  background: #ffffff;
+  color: #1f1f1f;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: none;
+}
+
+.approach-result-btn.active,
+.approach-chip-btn.active {
+  background: #178724;
+  border-color: #0f5c18;
+  color: #ffffff;
+}
+
+.approach-map-wrap-large {
+  height: 235px;
+}
+
+.approach-summary-box {
+  margin-top: 14px;
+}
+
+.approach-summary-title {
+  color: #2f7d38;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.approach-summary-text {
+  color: #222;
+  font-size: 16px;
+  font-weight: 800;
+  margin: 6px 0 10px;
+}
+
+
+
+/* APPROACH — COMPACT RESULT GRID */
+
+.approach-result-grid {
+  gap: 6px;
+}
+
+.approach-result-btn {
+  min-height: 38px;
+  padding: 4px 2px;
+  font-size: 12px;
+  border-radius: 10px;
+  line-height: 1.1;
+}
+
+.approach-section .approach-label {
+  margin-bottom: 6px;
+}
+
+.approach-section {
+  margin-top: 10px;
+}
+
+
+/* APPROACH / TEE SUMMARY BOX INTEGRATION */
+
+.approach-summary-box,
+.tee-shot-summary-box {
+  padding: 10px 10px 14px;
+}
+
+.approach-summary-box .approach-map-wrap,
+.tee-shot-summary-box .tee-shot-map-wrap,
+.tee-shot-summary-box .tee-map-wrap,
+.tee-shot-summary-box img,
+.approach-summary-box img {
+  margin-top: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.approach-summary-box .approach-map-wrap {
+  height: 210px;
+}
+
+
+/* APPROACH — TIGHT TABLE RESULT LAYOUT */
+
+.approach-main-label {
+  font-size: 20px;
+  font-weight: 900;
+  text-align: center;
+  margin: 8px 0 8px;
+}
+
+.approach-result-table {
+  display: grid;
+  grid-template-columns: 78px repeat(3, 1fr);
+  gap: 6px;
+  align-items: center;
+}
+
+.approach-row-label {
+  text-align: right;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1f1f1f;
+  padding-right: 4px;
+}
+
+.approach-result-table .approach-result-btn {
+  min-height: 38px;
+  padding: 3px 2px;
+  font-size: 12px;
+  font-weight: 900;
+  border-radius: 10px;
+}
+
+#saveApproachStats {
+  font-size: 22px;
+}
+
+#saveApproachStats::after {
+  content: "";
+}
+
+
+/* APPROACH — HEADER / SUMMARY / LABEL FIXES */
+
+#approachHoleLabel {
+  font-size: 13px;
+  font-weight: 900;
+  color: #2f7d38;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  text-align: left;
+}
+
+.approach-row-label {
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.approach-result-table {
+  grid-template-columns: 86px repeat(3, 1fr);
+}
+
+.approach-summary-box {
+  background: #ffffff !important;
+  border-radius: 14px;
+  padding: 10px 10px 12px;
+  margin-top: 14px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.approach-summary-title {
+  margin-top: 0;
+}
+
+.approach-summary-text {
+  margin-bottom: 8px;
+}
+
+.approach-summary-box .approach-map-wrap {
+  background: transparent;
+  margin-top: 6px;
+  border-radius: 10px;
+}
+
+
+/* APPROACH GRAPHIC SIZE FIX */
+
+.approach-summary-box .approach-map-wrap,
+.approach-map-wrap,
+.approach-map-wrap-large {
+  height: 165px !important;   /* smaller box = less blank card space */
+  padding: 0 !important;
+}
+
+.approach-base-image {
+  width: 109%;
+  height: 100%;
+  object-fit: cover;          /* fills box larger */
+  object-position: center;
+  display: block;
+  margin-right: 0 !important;
+}
+
+.approach-summary-box {
+  padding-bottom: 10px !important;
+}
+
+
+/* APPROACH — DISTANCE FIELD + GRAPHIC ALIGNMENT FIX */
+
+#approachDistanceDisplay {
+  background: #ffffff !important;
+  border: 1px solid #cfcfcf !important;
+  border-radius: 12px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 900;
+  color: #1f1f1f !important;
+}
+
+.approach-map-wrap {
+  overflow: hidden;
+}
+
+/* Keep the SVG distance/red lines locked in place.
+   Move ONLY the background graphic right so the cup/hole sits under the red 0-yard line. */
+.approach-base-image {
+  transform: translateX(-4.35%) scale(1.08) !important;
+  transform-origin: center center;
+}
+
+.approach-overlay-svg {
+  transform: none !important;
+  transform-origin: center center;
+}
+
+.approach-summary-box .approach-map-wrap,
+.approach-map-wrap,
+.approach-map-wrap-large {
+  height: 180px !important;
+}
+
+
+
+/* APPROACH SVG OVERLAY */
+
+#approachOverlaySvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.approach-flight-line {
+  stroke: #f4ff2d !important;
+  stroke-width: 10 !important;
+  stroke-linecap: round;
+  opacity: 1 !important;
+}
+
+.approach-marker-line {
+  stroke: rgba(0,0,0,0.55) !important;
+  stroke-width: 3 !important;
+  stroke-dasharray: 8 8;
+}
+
+.approach-marker-line.target {
+  stroke: rgba(215,25,32,0.8) !important;
+  stroke-width: 4 !important;
+}
+
+.approach-marker-label {
+  fill: #111 !important;
+  font-size: 28px !important;
+  font-weight: 900;
+  text-anchor: middle;
+}
+
+.approach-start-dot {
+  fill: #111 !important;
+  stroke: #fff;
+  stroke-width: 4;
+}
+
+.approach-end-dot {
+  fill: #d71920 !important;
+  stroke: #fff;
+  stroke-width: 5;
+}
+
+
+
+/* APPROACH — STRONGER DASHED DISTANCE LINES */
+
+.approach-marker-line {
+  stroke: rgba(0,0,0,0.9) !important;
+  stroke-width: 4 !important;
+  stroke-dasharray: 10 7 !important;
+}
+
+.approach-marker-line.target {
+  stroke: rgba(215,25,32,0.95) !important;
+  stroke-width: 5 !important;
+}
+
+.approach-marker-label {
+  fill: #000 !important;
+  font-size: 32px !important;
+  font-weight: 900 !important;
+}
+
+
+/* APPROACH — YARDAGE RULER OVERLAY */
+
+.approach-start-line {
+  stroke: rgba(255,255,255,0.95) !important;
+  stroke-width: 4 !important;
+  stroke-dasharray: 9 7 !important;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.8));
+}
+
+.approach-start-label {
+  fill: #272626 !important;
+  font-size: 30px !important;
+  font-weight: 900 !important;
+  text-anchor: middle;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.9));
+}
+
+.approach-hole-line {
+  stroke: rgba(215,25,32,0.95) !important;
+  stroke-width: 5 !important;
+  stroke-dasharray: 10 7 !important;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.55));
+}
+
+.approach-hole-label {
+  fill: #d71920 !important;
+  font-size: 30px !important;
+  font-weight: 900 !important;
+  text-anchor: middle;
+}
+
+.approach-start-dot {
+  fill: #ffffff !important;
+  stroke: #111 !important;
+  stroke-width: 4 !important;
+}
+
+.approach-end-dot {
+  fill: #ffffff !important;
+  stroke: #2f2f2f !important;
+  stroke-width: 5 !important;
+}
+
+/* ========================================
+   APPROACH +STATS RULER VISUALS
+======================================== */
+
+#approachOverlaySvg {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none !important;
+    z-index: 20 !important;
+    overflow: visible !important;
+}
+
+.approach-yard-line {
+    stroke: rgba(255,255,255,0.98) !important;
+    stroke-width: 6 !important;
+    stroke-dasharray: 14 10 !important;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.65));
+}
+
+.approach-hole-line {
+    stroke: #e00000 !important;
+    stroke-width: 7 !important;
+    stroke-dasharray: 14 10 !important;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.55));
+}
+
+.approach-yard-label,
+.approach-hole-label {
+    font-size: 34px !important;
+    font-weight: 900 !important;
+    text-anchor: middle;
+    paint-order: stroke;
+    stroke: rgba(255,255,255,0.65);
+    stroke-width: 2px;
+}
+
+.approach-yard-label {
+    fill: #111 !important;
+}
+
+.approach-hole-label {
+    fill: #e00000 !important;
+}
+
+.approach-moving-label {
+    font-size: 36px !important;
+    font-weight: 900 !important;
+    text-anchor: middle;
+    fill: #ffffff !important;
+    paint-order: stroke;
+    stroke: rgba(0,0,0,0.55);
+    stroke-width: 4px;
+}
+
+.approach-flight-line {
+    stroke: #f4ff2d !important;
+    stroke-width: 9 !important;
+    stroke-linecap: round;
+    opacity: 1 !important;
+}
+
+.approach-start-dot,
+.approach-end-dot {
+    fill: #ffffff !important;
+    stroke: #111 !important;
+    stroke-width: 5 !important;
+}
+
+.approach-adjust-btn {
+    touch-action: none;
+    user-select: none;
+}
+
+
+
+/* ========================================
+   APPROACH +STATS LABEL POSITION FIX
+======================================== */
+
+.approach-map-wrap {
+    overflow: visible !important;
+}
+
+.approach-overlay-svg {
+    overflow: visible !important;
+}
+
+.approach-yard-label,
+.approach-hole-label {
+    transform: translateY(-58px);
+}
+
+.approach-yard-line,
+.approach-hole-line {
+    transform: translateY(-18px);
+}
+
+
+
+/* ========================================
+   APPROACH +STATS FINAL POLISH — 2026-04-24
+======================================== */
+.approach-map-wrap,
+.approach-map-wrap-large {
+    overflow: visible !important;
+}
+
+#approachOverlaySvg {
+    overflow: visible !important;
+    transform: translateX(10px);
+}
+
+.approach-yard-label,
+.approach-hole-label {
+    transform: translateY(-66px) !important;
+}
+
+.approach-yard-line,
+.approach-hole-line {
+    transform: translateY(-24px) !important;
+}
+
+.approach-flight-line {
+    transition: x1 0.12s ease, y1 0.12s ease, x2 0.12s ease, y2 0.12s ease;
+}
+
+.approach-start-dot,
+.approach-end-dot,
+.approach-moving-label {
+    transition: cx 0.12s ease, cy 0.12s ease, x 0.12s ease, y 0.12s ease;
+}
+
+/* =====================================================
+   PUTTING +STATS PANEL — MOBILE FIRST
+===================================================== */
+#puttingPanel {
+    z-index: 10002;
+}
+
+#puttingPanel .putting-sheet {
+    width: 94%;
+    max-width: 430px;
+    max-height: 94vh;
+    margin-bottom: 12px;
+    overflow-y: auto;
+    background: rgba(255,255,255,0.96);
+    border-radius: 18px;
+    padding: 10px 12px 12px;
+    box-sizing: border-box;
+}
+
+.putting-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    text-align: left;
+    margin-bottom: 8px;
+}
+
+.putting-title {
+    color: #111;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.putting-close-btn {
+    color: #111;
+    font-size: 38px;
+    line-height: 1;
+    padding: 0 2px;
+}
+
+.putting-card {
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.10);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.putting-card-title {
+    background: linear-gradient(180deg,#185d1f 0%,#0f4d17 100%);
+    color: #fff;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+    padding: 10px 10px;
+    text-align: center;
+}
+
+.putting-card-body {
+    padding: 12px 12px 10px;
+}
+
+.putting-label {
+    color: #27313d;
+    font-size: 14px;
+    font-weight: 900;
+    text-align: left;
+    margin-bottom: 8px;
+}
+
+.putting-chip-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.putting-chip-btn,
+.putting-result-btn,
+.putting-adjust-btn {
+    background: #fff;
+    color: #1d2733;
+    border: 1px solid #d7dddd;
+    border-radius: 8px;
+    min-height: 43px;
+    font-size: 15px;
+    font-weight: 800;
+    box-shadow: none;
+}
+
+.putting-chip-btn.active,
+.putting-result-btn.active,
+.putting-made-btn.active {
+    border-color: #176222;
+    background: #18772c;
+    color: #fff;
+}
+
+.putting-adjust-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 70px;
+    gap: 0;
+    align-items: center;
+    margin: 2px auto 12px;
+    width: 86%;
+    border: 1px solid #d7dddd;
+    border-radius: 9px;
+    overflow: hidden;
+}
+
+.putting-adjust-btn {
+    border: none;
+    border-radius: 0;
+    min-height: 47px;
+    font-size: 30px;
+}
+
+.putting-distance-display {
+    min-height: 47px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #176222;
+    font-size: 24px;
+    font-weight: 900;
+    border-left: 1px solid #e5e8e8;
+    border-right: 1px solid #e5e8e8;
+}
+
+.putting-result-label {
+    margin-top: 0;
+}
+
+.putting-result-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.putting-made-btn {
+    display: block;
+    width: 48%;
+    min-height: 45px;
+    margin: 0 auto;
+    background: #fff;
+    color: #1d2733;
+    border: 1px solid #d7dddd;
+    border-radius: 9px;
+    font-size: 18px;
+    font-weight: 900;
+    box-shadow: none;
+}
+
+.putting-green-wrap {
+    position: relative;
+    width: 100%;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0 auto 8px;
+}
+
+.putting-base-image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.putting-overlay-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.putting-yard-line {
+    stroke: rgba(255,255,255,0.85);
+    stroke-width: 2.2;
+    stroke-dasharray: 8 7;
+}
+
+.putting-yard-label {
+    font-family: Arial, sans-serif;
+    font-size: 25px;
+    font-weight: 900;
+    fill: #1e2834;
+    dominant-baseline: middle;
+}
+
+.putting-zero-label {
+    fill: #176222;
+}
+
+.putting-roll-path {
+    fill: none;
+    stroke: rgba(255,255,255,0.95);
+    stroke-width: 8;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 4px rgba(0,0,0,0.25));
+    transition: d 0.28s ease;
+}
+
+.putting-ball-dot {
+    fill: #f5f5f5;
+    stroke: #cfd3d6;
+    stroke-width: 3;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
+    transition: cx 0.65s cubic-bezier(.16,.8,.25,1), cy 0.65s cubic-bezier(.16,.8,.25,1);
+}
+
+.putting-ball-label-box {
+    fill: rgba(0,0,0,0.78);
+    transition: x 0.65s cubic-bezier(.16,.8,.25,1), y 0.65s cubic-bezier(.16,.8,.25,1);
+}
+
+.putting-ball-label {
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    fill: #fff;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    transition: x 0.65s cubic-bezier(.16,.8,.25,1), y 0.65s cubic-bezier(.16,.8,.25,1);
+}
+
+.putting-summary-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr 0.72fr;
+    gap: 0;
+    border: 1px solid #dadede;
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.putting-summary-cell {
+    padding: 8px 7px;
+    border-right: 1px solid #dadede;
+    text-align: center;
+    min-width: 0;
+}
+
+.putting-summary-cell:last-child {
+    border-right: none;
+}
+
+.putting-summary-kicker {
+    color: #176222;
+    font-size: 11px;
+    font-weight: 900;
+    text-align: left;
+    margin-bottom: 3px;
+}
+
+.putting-summary-main {
+    color: #111;
+    font-size: 15px;
+    font-weight: 900;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.putting-summary-sub {
+    color: #283442;
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 3px;
+}
+
+#putt1ResultSummary.miss,
+#putt2ResultSummary.miss {
+    color: #c40000;
+}
+
+.putting-arrow {
+    margin: 0 4px;
+}
+
+.putting-total-cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.putting-total-number {
+    color: #176222;
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.putting-footer-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.putting-save-btn {
+    width: 100%;
+    min-height: 58px;
+    font-size: 26px;
+    border-radius: 13px;
+}
+
+.putting-cancel-btn {
+    width: 100%;
+    min-height: 48px;
+    font-size: 20px;
+    margin: 0;
+    border-radius: 12px;
+}
+
+@media (max-width: 390px) {
+    .putting-title { font-size: 21px; }
+    .putting-chip-row { gap: 4px; }
+    .putting-chip-btn { font-size: 13px; min-height: 39px; }
+    .putting-result-btn { font-size: 14px; }
+    .putting-adjust-row { width: 92%; }
+    .putting-summary-main { font-size: 13px; }
+}
+
+#openPuttingStats.saved {
+  opacity: 0.62;
+  filter: grayscale(0.25);
+}
+
+#openPuttingStats .es-tile-check {
+  display: none !important;
 }
