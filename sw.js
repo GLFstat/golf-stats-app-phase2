@@ -1,4 +1,4 @@
-const APP_VERSION = "10000";
+const APP_VERSION = "2.0426-PH2";
 const CACHE_NAME = `golf-stats-${APP_VERSION}`;
 
 const BASE_PATH = self.location.pathname.replace(/\/sw\.js$/, "");

@@ -1,8 +1,8 @@
 {
   "name": "Golf Stats Tracker",
   "short_name": "Stracker",
-  "start_url": "/golf-stats-app/index.html",
-  "scope": "/golf-stats-app/",
+  "start_url": "/golf-stats-app-phase2/index.html",
+  "scope": "/golf-stats-app-phase2/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",
