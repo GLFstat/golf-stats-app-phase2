@@ -1,5 +1,9 @@
 
+
 const DEV_MODE = false; // 🔥 set to true when you want cheat buttons back
+
+// Keeps ARF hidden after user chooses Delete and Start New, until Start Round is actually tapped.
+let suppressResumePanelUntilStart = false;
 
 
 // ===== Mobile touch handling for counter buttons =====
@@ -109,7 +113,9 @@ function loadDemoRound() {
     postRoundReturnTarget = "nineteenth";
     roundFinalized = false;
 
+    if (roundStarted || anyHoleSaved() || roundJustCompleted || postRoundMode) {
     persistActiveRound();
+}
 
     if (typeof updateCoursePar === "function") updateCoursePar();
     if (typeof updateRoundDetailCompletion === "function") updateRoundDetailCompletion();
@@ -157,7 +163,12 @@ document.addEventListener("DOMContentLoaded", () => {
     updateResumePanel();
     updatePostRoundUI();
     checkForActiveRoundOnLoad();
+
 });
+
+
+let returnToSavePopupAfterStats = false;
+
 
 
 // ===== Speaker Toggle =====
@@ -207,6 +218,46 @@ function getRoundDetails() {
     };
 }
 
+
+function getCurrentHoleYardage() {
+    try {
+        const saved = localStorage.getItem("strackerPhase2HoleYardages");
+        if (!saved) return null;
+
+        const yardages = JSON.parse(saved);
+        if (!Array.isArray(yardages)) return null;
+
+        const yds = parseInt(yardages[currentHole - 1], 10);
+        return yds > 0 ? yds : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function getTeeShotRemainingYardage() {
+    const holeYardage = getCurrentHoleYardage();
+    if (!holeYardage) return null;
+
+    const holeData = holes[currentHole - 1];
+    const savedDistance = holeData && holeData.teeShot
+        ? Number(holeData.teeShot.distance)
+        : null;
+
+    const draftDistance =
+        typeof teeShotDraft !== "undefined" && teeShotDraft
+            ? Number(teeShotDraft.distance)
+            : null;
+
+    const teeDist = savedDistance || draftDistance;
+
+    if (!teeDist) return null;
+
+    const remaining = holeYardage - teeDist;
+    return remaining > 0 ? remaining : 0;
+}
+
+
+
 function hasMeaningfulRoundDetails(details = {}) {
     const meaningfulFields = [
         "roundType",
@@ -242,19 +293,28 @@ function setRoundDetails(details = {}) {
 }
 
 function hideResumePanel() {
-    if (resumeRoundPanel) {
-        resumeRoundPanel.classList.add("hidden");
-    }
+    if (!resumeRoundPanel) return;
+
+    resumeRoundPanel.classList.add("hidden");
+    resumeRoundPanel.style.setProperty("display", "none", "important");
+    resumeRoundPanel.style.setProperty("visibility", "hidden", "important");
+    resumeRoundPanel.style.setProperty("opacity", "0", "important");
+    resumeRoundPanel.setAttribute("aria-hidden", "true");
 }
 
 function updateResumePanel() {
     if (!resumeRoundPanel) return;
 
+    if (suppressResumePanelUntilStart && !roundStarted && !anyHoleSaved()) {
+        hideResumePanel();
+        return;
+    }
+
     const saved = getParsedActiveRound();
 
     // 🚫 HARD STOP — no saved object at all
     if (!saved) {
-        resumeRoundPanel.classList.add("hidden");
+        hideResumePanel();
         return;
     }
 
@@ -265,11 +325,12 @@ function updateResumePanel() {
 
     // 🚫 NO REAL DETAILS ENTERED
     const details = saved.roundDetails || {};
-    const hasRealDetails = Object.values(details).some(v => String(v || "").trim() !== "");
+    // Do NOT count the auto-filled Date as a real active round.
+    const hasRealDetails = hasMeaningfulRoundDetails(details);
 
     // 🚫 NOTHING MEANINGFUL → HIDE ARF
     if (savedHoleCount === 0 && !hasRealDetails) {
-        resumeRoundPanel.classList.add("hidden");
+        hideResumePanel();
         return;
     }
 
@@ -299,6 +360,10 @@ function updateResumePanel() {
         }
     }
 
+    resumeRoundPanel.style.removeProperty("display");
+    resumeRoundPanel.style.removeProperty("visibility");
+    resumeRoundPanel.style.removeProperty("opacity");
+    resumeRoundPanel.removeAttribute("aria-hidden");
     resumeRoundPanel.classList.remove("hidden");
 }
 
@@ -321,7 +386,24 @@ function showRoundDetailsScreen() {
     if (roundDetailsScreen) roundDetailsScreen.style.display = "flex";
     if (appContainer) appContainer.style.display = "none";
     if (nineteenthHoleScreen) nineteenthHoleScreen.classList.add("hidden");
-    updateResumePanel();
+
+    const saved = getParsedActiveRound();
+    const savedHoleCount = saved && Array.isArray(saved.holes)
+        ? saved.holes.filter(h => h && h.saved).length
+        : 0;
+    const savedHasRealDetails = saved && hasMeaningfulRoundDetails(saved.roundDetails || {});
+    const savedNeedsResumePanel =
+        !!saved &&
+        (savedHoleCount > 0 || savedHasRealDetails || saved.roundJustCompleted || saved.postRoundMode);
+
+    if (suppressResumePanelUntilStart && !roundStarted && !anyHoleSaved()) {
+        hideResumePanel();
+    } else if (savedNeedsResumePanel || roundStarted || anyHoleSaved() || roundJustCompleted || postRoundMode) {
+        updateResumePanel();
+    } else {
+        hideResumePanel();
+    }
+
     updatePostRoundUI();
     window.scrollTo(0, 0);
 }
@@ -677,9 +759,14 @@ function wireRoundDetailListeners() {
                 roundDateField.dataset.autofilled = "false";
                 updateRoundDateDisplay();
             }
-
-            persistActiveRound();
-            updateResumePanel();
+            // Only persist Round Details once a real round exists.
+            // This prevents ARF from reappearing while filling a clean new round.
+            if (roundStarted || anyHoleSaved() || roundJustCompleted || postRoundMode) {
+                persistActiveRound();
+                updateResumePanel();
+            } else {
+                hideResumePanel();
+            }
 
             updatePostRoundUI();
         };
@@ -799,6 +886,8 @@ function updateHoleScreen() {
     refreshApproachTileClean();
     refreshApproachTile();
     refreshPuttingTile();
+    refreshShortGameTile();
+    refreshNotesTile();
 }
 
 function goToHole(holeNum) {
@@ -1050,6 +1139,8 @@ teeShot: (
 } : (holes[currentHole - 1]?.teeShot || null),
         approach: holes[currentHole - 1]?.approach || null,
         putting: holes[currentHole - 1]?.putting || null,
+        shortGame: holes[currentHole - 1]?.shortGame || null,
+        notes: holes[currentHole - 1]?.notes || null,
         saved: true
     };
 
@@ -1271,11 +1362,37 @@ if (summaryCourseNameEl) {
 }
 
 
+function getCurrentSummaryHighlightHole() {
+    // Highlight the hole the user should be playing NEXT.
+    // This avoids the summary getting stuck on Hole 1 if currentHole has not
+    // been re-synced yet after reload/resume or after saving a hole.
+    if (Array.isArray(playOrder) && playOrder.length === 18) {
+        const nextUnplayedHole = playOrder.find(holeNum => {
+            const holeData = holes[holeNum - 1];
+            return !(holeData && holeData.saved);
+        });
+
+        if (nextUnplayedHole) {
+            return nextUnplayedHole;
+        }
+    }
+
+    if (typeof syncCurrentHoleFromIndex === "function") {
+        syncCurrentHoleFromIndex();
+    }
+
+    return currentHole;
+}
+
 function viewSummary(e, returnTarget = "app") {
     if (e) e.preventDefault();
+
+    const summaryHighlightHole =
+        returnTarget === "app" ? getCurrentSummaryHighlightHole() : currentHole;
+
     showSummaryForRound(
         holes,
-        currentHole,
+        summaryHighlightHole,
         returnTarget,
         getFieldValue("courseName")
     );
@@ -1756,6 +1873,11 @@ function wireStaticEventListeners() {
         const statsHelpPopup = document.getElementById("statsHelpPopup");
         const statsHelpCloseBtn = document.getElementById("statsHelpCloseBtn");
 const saveConfirmStay = document.getElementById("confirmStay");
+
+document.getElementById("saveConfirmClose")?.addEventListener("click", () => {
+    document.getElementById("saveConfirmPopup").style.display = "none";
+});
+
 const teeShotValidationOK = document.getElementById("teeShotValidationOK");
 
     if (statsHelpBtn && statsHelpPopup) {
@@ -1940,19 +2062,92 @@ if (keepCurrentRoundBtn) {
     });
 }
 
-if (deleteAndStartNewBtn) {
-    deleteAndStartNewBtn.addEventListener("click", () => {
-        hideDeleteRoundPopup();
 
-        clearActiveRoundStorage();
-        removeFromStorage(ROUND_BG_INDEX_KEY);
-        localStorage.removeItem(HOLE_YARDAGES_KEY);
-        resetForBrandNewRound();
-        showRoundDetailsScreen();
+function forceClearRoundDetailsForm() {
+    const ids = [
+        "roundType",
+        "courseName",
+        "startingHole",
+        "teeSlope",
+        "teeRating",
+        "teeYardage",
+        "frontPar",
+        "backPar",
+        "coursePar"
+    ];
+
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        el.value = "";
+
+        if (el.tagName === "SELECT") {
+            el.selectedIndex = 0;
+        }
     });
+
+    if (roundDateField) {
+        roundDateField.value = "";
+        roundDateField.dataset.autofilled = "true";
+    }
+
+    document.querySelectorAll(".yardage-input").forEach(input => {
+        input.value = "";
+    });
+
+    const yardageTotal = document.getElementById("holeYardagesTotal");
+    if (yardageTotal) yardageTotal.textContent = "0";
+
+    setAutofilledTodayDate();
+    clearAllValidationHighlights();
+    updateCoursePar();
+    updateParRowState();
+    updateRoundDetailCompletion();
+    updateRoundDateDisplay();
 }
 
+function startCleanNewRoundNow(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof e.stopImmediatePropagation === "function") {
+            e.stopImmediatePropagation();
+        }
+    }
 
+    suppressResumePanelUntilStart = true;
+
+    hideDeleteRoundPopup();
+    hideResumePanel();
+
+    clearActiveRoundStorage();
+    removeFromStorage(ROUND_BG_INDEX_KEY);
+    localStorage.removeItem(HOLE_YARDAGES_KEY);
+
+    resetCurrentRound();
+
+    suppressResumePanelUntilStart = true;
+
+    forceClearRoundDetailsForm();
+    hideResumePanel();
+
+    if (appContainer) appContainer.style.display = "none";
+    if (nineteenthHoleScreen) nineteenthHoleScreen.classList.add("hidden");
+    if (roundDetailsScreen) roundDetailsScreen.style.display = "flex";
+
+    requestAnimationFrame(() => {
+        suppressResumePanelUntilStart = true;
+        forceClearRoundDetailsForm();
+        hideResumePanel();
+        window.scrollTo(0, 0);
+    });
+
+    return false;
+}
+if (deleteAndStartNewBtn) {
+    deleteAndStartNewBtn.addEventListener("click", startCleanNewRoundNow);
+}
 if (saveBtn) {
     saveBtn.addEventListener("click", () => {
         if (holes[currentHole - 1] && holes[currentHole - 1].saved) return;
@@ -1980,18 +2175,68 @@ if (saveConfirmText) {
     let performanceCount = 0;
     const currentHoleData = holes[currentHole - 1] || {};
 
-    if (
-        window.teeShotDraft &&
+// Tee Shot
+if (
+    (window.teeShotDraft &&
         window.teeShotDraft.direction &&
-        window.teeShotDraft.distance !== null
-    ) {
-        performanceCount++;
-    } else if (currentHoleData.teeShot) {
-        performanceCount++;
-    }
+        window.teeShotDraft.distance !== null) ||
+    currentHoleData.teeShot
+) {
+    performanceCount++;
+}
 
-    const countColor = performanceCount === 0 ? "#c62828" : "#2f7d38";
-    const countText = `${performanceCount} of 4`;
+// Approach
+if (
+    (window.approachDraft &&
+        window.approachDraft.distance !== null &&
+        window.approachDraft.result) ||
+    currentHoleData.approach
+) {
+    performanceCount++;
+}
+
+// Putting
+if (
+    (window.puttingDraft && window.puttingDraft.putts && window.puttingDraft.putts.length > 0) ||
+    currentHoleData.putting
+) {
+    performanceCount++;
+}
+
+// Short Game
+if (
+    (window.shortGameDraft &&
+        window.shortGameDraft.type &&
+        window.shortGameDraft.distance !== null &&
+        window.shortGameDraft.result) ||
+    currentHoleData.shortGame
+) {
+    performanceCount++;
+}
+
+// Notes
+const notesText = window.notesDraft ? String(window.notesDraft.text || "").trim() : "";
+const notesTags = window.notesDraft && Array.isArray(window.notesDraft.tags) ? window.notesDraft.tags : [];
+if (
+    (notesText || notesTags.length > 0) ||
+    (currentHoleData.notes &&
+        ((Array.isArray(currentHoleData.notes.tags) && currentHoleData.notes.tags.length > 0) ||
+         String(currentHoleData.notes.text || "").trim() !== ""))
+) {
+    performanceCount++;
+}
+
+const countColors = [
+  "#c62828", // 0 red
+  "#d96b1a", // 1 orange-red
+  "#9da61a", // 2 olive
+  "#4f9a2a", // 3 greenish
+  "#2f7d38", // 4 green
+  "#1f6f2f"  // 5 strong green
+];
+
+const countColor = countColors[performanceCount] || "#c62828";
+const countText = `${performanceCount} of 5`;
 
     saveConfirmText.innerHTML =
         `<span style="color:${countColor}; font-weight:800;">${countText} <br>Performance Stats added.</span><br>` +
@@ -2006,6 +2251,8 @@ if (saveConfirmText) {
 
 if (saveConfirmCancel) {
     saveConfirmCancel.addEventListener("click", () => {
+        returnToSavePopupAfterStats = true;
+
         if (saveConfirmPopup) saveConfirmPopup.style.display = "none";
 
         const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
@@ -2099,6 +2346,8 @@ if (teeShotValidationOK) {
     const startRoundBtn = document.getElementById("startRoundBtn");
    if (startRoundBtn) {
     startRoundBtn.addEventListener("click", () => {
+        suppressResumePanelUntilStart = false;
+
         updateCoursePar();
         updateParRowState();
 
@@ -2129,6 +2378,7 @@ if (teeShotValidationOK) {
             advanceRoundBackground();
         }
 
+        suppressResumePanelUntilStart = false;
         roundStarted = true;
         roundFinalized = false;
         persistActiveRound();
@@ -2401,7 +2651,8 @@ window.renderSavedRounds = function () {
     const openEnhancedStatsBtn = document.getElementById("openEnhancedStats");
     const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
     const closeEnhancedStatsBtn = document.getElementById("closeEnhancedStats");
-    const enhancedStatsDoneBtn = document.getElementById("enhancedStatsDone");
+    const enhancedStatsDoneBtn = document.getElementById("doneEnhancedStats");
+    const cancelEnhancedStatsBtn = document.getElementById("cancelEnhancedStats");
 
     if (openEnhancedStatsBtn && enhancedStatsPanel) {
         const updateEnhancedStatsHeader = () => {
@@ -2420,6 +2671,11 @@ window.renderSavedRounds = function () {
 
         openEnhancedStatsBtn.addEventListener("click", () => {
             updateEnhancedStatsHeader();
+            refreshTeeShotTile();
+            refreshApproachTile();
+            refreshPuttingTile();
+            refreshShortGameTile();
+            refreshNotesTile();
             enhancedStatsPanel.classList.remove("hidden");
         });
     }
@@ -2429,6 +2685,27 @@ window.renderSavedRounds = function () {
             enhancedStatsPanel.classList.add("hidden");
         });
     }
+if (enhancedStatsDoneBtn && enhancedStatsPanel) {
+    enhancedStatsDoneBtn.addEventListener("click", () => {
+        enhancedStatsPanel.classList.add("hidden");
+
+        if (returnToSavePopupAfterStats && saveConfirmPopup) {
+            returnToSavePopupAfterStats = false;
+            saveConfirmPopup.style.display = "flex";
+setTimeout(() => {
+    if (saveBtn) saveBtn.click();
+}, 0);
+        }
+    });
+}
+
+
+if (cancelEnhancedStatsBtn && enhancedStatsPanel) {
+    cancelEnhancedStatsBtn.addEventListener("click", () => {
+        enhancedStatsPanel.classList.add("hidden");
+    });
+}
+
 
         const openTeeShotStatsBtn = document.getElementById("openTeeShotStats");
     const teeShotPanel = document.getElementById("teeShotPanel");
@@ -2612,52 +2889,76 @@ const adjustTeeDistance = (amount) => {
     setTeeDistance(nextDistance);
 };
 
+
+/* ========================================
+   SAFE TEE SHOT +/- HOLD HANDLING
+   Tap = 1 yard
+   Hold = repeats safely
+======================================== */
+
+let teeHoldTimer = null;
+let teeHoldActive = false;
+
+const stopTeeHoldRepeat = () => {
+    teeHoldActive = false;
+
+    if (teeHoldTimer) {
+        clearInterval(teeHoldTimer);
+        teeHoldTimer = null;
+    }
+};
+
 const addHoldRepeat = (button, amount) => {
     if (!button) return;
 
-    let holdTimeout = null;
-    let holdInterval = null;
+    button.style.touchAction = "none";
 
-    const stopRepeat = () => {
-        if (holdTimeout) {
-            clearTimeout(holdTimeout);
-            holdTimeout = null;
-        }
-        if (holdInterval) {
-            clearInterval(holdInterval);
-            holdInterval = null;
-        }
-    };
+    button.addEventListener("pointerdown", e => {
+        e.preventDefault();
+        e.stopPropagation();
 
-    button.addEventListener("click", () => {
+        stopTeeHoldRepeat();
+
+        teeHoldActive = true;
         adjustTeeDistance(amount);
+
+        teeHoldTimer = setInterval(() => {
+            if (!teeHoldActive) {
+                stopTeeHoldRepeat();
+                return;
+            }
+
+            adjustTeeDistance(amount);
+        }, 90);
+
+        if (button.setPointerCapture && e.pointerId != null) {
+            try {
+                button.setPointerCapture(e.pointerId);
+            } catch (err) {
+                // Safe no-op if browser refuses capture
+            }
+        }
     });
 
-    button.addEventListener("mousedown", () => {
-        holdTimeout = setTimeout(() => {
-            holdInterval = setInterval(() => {
-                adjustTeeDistance(amount);
-            }, 70);
-        }, 400);
+    [
+        "pointerup",
+        "pointercancel",
+        "pointerleave",
+        "lostpointercapture"
+    ].forEach(evt => {
+        button.addEventListener(evt, stopTeeHoldRepeat);
     });
-
-    button.addEventListener("mouseup", stopRepeat);
-    button.addEventListener("mouseleave", stopRepeat);
-
-    button.addEventListener("touchstart", () => {
-        holdTimeout = setTimeout(() => {
-            holdInterval = setInterval(() => {
-                adjustTeeDistance(amount);
-            }, 70);
-        }, 400);
-    }, { passive: true });
-
-    button.addEventListener("touchend", stopRepeat);
-    button.addEventListener("touchcancel", stopRepeat);
 };
 
 addHoldRepeat(teeDistanceMinusBtn, -1);
 addHoldRepeat(teeDistancePlusBtn, 1);
+
+window.addEventListener("blur", stopTeeHoldRepeat);
+document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopTeeHoldRepeat();
+});
+
+
 
     const saveTeeShotStatsBtn = document.getElementById("saveTeeShotStats");
     const teeShotSummaryText = document.getElementById("teeShotSummaryText");
@@ -2730,7 +3031,8 @@ const updateTeeShotSummary = () => {
     const par = holeData?.par || (selectedParEl ? parseInt(selectedParEl.value, 10) : 4);
     const isPar3 = par === 3;
 
-    const actualHoleYardage = isPar3 && typeof getCurrentHoleYardage === "function"
+    const actualHoleYardage =
+    typeof getCurrentHoleYardage === "function"
         ? getCurrentHoleYardage()
         : null;
 
@@ -2799,7 +3101,14 @@ const updateTeeShotSummary = () => {
         const prettyDirection =
             direction.charAt(0).toUpperCase() + direction.slice(1);
 
-        teeShotSummaryText.textContent = `${prettyDirection} • ${distance} yds`;
+        const remainingToHole =
+    actualHoleYardage && distance
+        ? Math.max(0, actualHoleYardage - distance)
+        : null;
+
+    teeShotSummaryText.textContent = remainingToHole !== null
+        ? `${prettyDirection} • ${distance} yds • ${remainingToHole} yds to hole`
+        : `${prettyDirection} • ${distance} yds`;
 
         const d = Math.max(0, Math.min(maxDist, distance));
         const scaleWidth = mark3 - x1;
@@ -3012,6 +3321,8 @@ if (!savedRoundForYardages) {
     loadHoleYardages();
 }
 
+}
+
 
 // ===== Window Events =====
 window.addEventListener("resize", adjustSummaryHeight);
@@ -3112,7 +3423,7 @@ window.addEventListener("load", () => {
     }
 });
 
-}
+
 
 
 /* ========================================
@@ -3155,6 +3466,19 @@ function getApproachXFromDistance(distance) {
     return APPROACH_HOLE_X - (safeDistance * APPROACH_PIXELS_PER_YARD);
 }
 
+
+function updateApproachDistanceToHoleLabel() {
+    const label = document.getElementById("approachDistanceToHoleLabel");
+    if (!label) return;
+
+    const remaining = getTeeShotRemainingYardage();
+
+    label.innerHTML = remaining !== null
+    ? `<span class="approach-yardage-number">${remaining}</span> yds to Hole`
+    : "—";
+}
+
+
 function openApproachStats() {
     const panel = getApproachPanel();
     const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
@@ -3163,6 +3487,7 @@ function openApproachStats() {
 
     loadApproachForCurrentHole();
     updateApproachHoleLabel();
+    updateApproachDistanceToHoleLabel();
 
     if (enhancedStatsPanel) enhancedStatsPanel.classList.add("hidden");
     panel.classList.remove("hidden");
@@ -3378,7 +3703,11 @@ function loadApproachForCurrentHole() {
                 );
             });
         }
-    }
+
+ } else {
+    // No saved approach yet.
+    // Leave Approach yardage field blank/user-controlled.
+}
 
     updateApproachDisplay();
 }
@@ -3870,3 +4199,737 @@ document.addEventListener("DOMContentLoaded", () => {
 
     refreshPuttingTile();
 });
+
+
+
+
+// ===== Short Game +Stats =====
+window.shortGameDraft = window.shortGameDraft || {
+    type: null,
+    lie: null,
+    distance: null,
+    result: null
+};
+
+let shortGameHoldTimer = null;
+let shortGamePressActive = false;
+
+function resetShortGameDraft() {
+    window.shortGameDraft = {
+        type: null,
+        lie: null,
+        distance: 30,
+        result: null
+    };
+}
+
+function getShortGamePanel() {
+    return document.getElementById("shortGamePanel");
+}
+
+function updateShortGameHoleLabel() {
+    const label = document.getElementById("shortGameHoleLabel");
+    if (!label) return;
+
+    let parText = "";
+    const selectedPar = document.querySelector('input[name="holePar"]:checked');
+    if (selectedPar && selectedPar.value) parText = ` • PAR ${selectedPar.value}`;
+
+    label.textContent = `HOLE ${currentHole}${parText}`;
+}
+
+function setShortGameButtonState(selector, dataName, value) {
+    document.querySelectorAll(selector).forEach(btn => {
+        btn.classList.toggle("active", String(btn.dataset[dataName]) === String(value));
+    });
+}
+
+function updateShortGameDisplay(animate = true) {
+    const draft = window.shortGameDraft || {};
+    const display = document.getElementById("shortGameDistanceDisplay");
+    const summary = document.getElementById("shortGameSummaryText");
+
+    const distance = Number(draft.distance || 30);
+    if (display) display.textContent = `${distance} yds`;
+
+    setShortGameButtonState(".shortgame-type-btn", "type", draft.type);
+    setShortGameButtonState(".shortgame-lie-btn", "lie", draft.lie);
+    setShortGameButtonState(".shortgame-distance-btn", "distance", distance);
+    setShortGameButtonState(".shortgame-result-btn", "result", draft.result);
+
+    if (summary) {
+        const parts = [];
+        if (draft.type) parts.push(draft.type);
+        if (draft.lie) parts.push(draft.lie);
+        if (distance) parts.push(`${distance} yds`);
+        if (draft.result) parts.push(draft.result);
+        summary.textContent = parts.length ? parts.join(" • ") : "No short game shot saved yet.";
+        
+    }
+
+    updateShortGameGraphic(animate);
+}
+
+function getShortGameStartPoint() {
+    const draft = window.shortGameDraft || {};
+    const lie = String(draft.lie || "").toLowerCase();
+
+    if (lie === "bunker") {
+        return { x: 250, y: 370 };
+    }
+
+    if (lie === "rough" || lie === "trouble") {
+        return { x: 720, y: 55 };
+    }
+
+    if (lie === "fringe") {
+        return { x: 520, y: 300 };
+    }
+
+    return { x: 430, y: 430 };
+}
+
+function getShortGameEndPoint() {
+    const result = window.shortGameDraft?.result || "";
+    const points = {
+        "Holed": { x: 715, y: 250 },
+        "Inside 3 ft": { x: 695, y: 262 },
+        "3-6 ft": { x: 670, y: 282 },
+        "Inside 6 ft": { x: 670, y: 282 },
+        "6-10 ft": { x: 640, y: 310 },
+        "Inside 10 ft": { x: 640, y: 310 },
+        "10+ ft": { x: 590, y: 352 },
+        "Short": { x: 610, y: 390 },
+        "Long": { x: 765, y: 188 },
+        "Left": { x: 620, y: 235 },
+        "Right": { x: 800, y: 278 }
+    };
+
+    return points[result] || { x: 695, y: 262 };
+}
+
+function updateShortGameGraphic(animate = true) {
+    const path = document.getElementById("shortGameFlightPath");
+    const startDot = document.getElementById("shortGameStartDot");
+    const ball = document.getElementById("shortGameBallDot");
+    if (!path || !startDot || !ball) return;
+
+    const start = getShortGameStartPoint();
+    const end = getShortGameEndPoint();
+    const cx = (start.x + end.x) / 2;
+    const cy = Math.min(start.y, end.y) - 115;
+
+    path.setAttribute("d", `M ${start.x} ${start.y} Q ${cx} ${cy} ${end.x} ${end.y}`);
+    startDot.setAttribute("cx", start.x);
+    startDot.setAttribute("cy", start.y);
+    ball.setAttribute("cx", end.x);
+    ball.setAttribute("cy", end.y);
+
+    if (animate) {
+        ball.classList.remove("sg-animate");
+        // Force reflow so quick result taps re-run the bounce.
+        ball.getBoundingClientRect();
+        ball.classList.add("sg-animate");
+    }
+}
+
+function loadShortGameForCurrentHole() {
+    resetShortGameDraft();
+
+    const holeData = holes[currentHole - 1];
+    if (holeData && holeData.shortGame) {
+        window.shortGameDraft = {
+            type: holeData.shortGame.type || null,
+            lie: holeData.shortGame.lie || null,
+            distance: Number(holeData.shortGame.distance || 30),
+            result: holeData.shortGame.result || null
+        };
+    }
+
+    updateShortGameDisplay(false);
+}
+
+function openShortGameStats() {
+    const panel = getShortGamePanel();
+    if (!panel) return;
+
+    const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
+    if (enhancedStatsPanel) enhancedStatsPanel.classList.add("hidden");
+
+    loadShortGameForCurrentHole();
+    updateShortGameHoleLabel();
+    panel.classList.remove("hidden");
+
+    // Keep the top of the Short Game panel reachable after opening on phone/PWA.
+    panel.scrollTop = 0;
+    const body = panel.querySelector(".es-panel-body");
+    if (body) body.scrollTop = 0;
+    window.scrollTo(0, 0);
+
+    setTimeout(() => {
+        panel.scrollTop = 0;
+        if (body) body.scrollTop = 0;
+        updateShortGameGraphic(true);
+    }, 35);
+}
+
+function closeShortGameStats(returnToStats = false) {
+    stopShortGameHold();
+    const panel = getShortGamePanel();
+    if (panel) panel.classList.add("hidden");
+
+    if (returnToStats) {
+        const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
+        if (enhancedStatsPanel) enhancedStatsPanel.classList.remove("hidden");
+    }
+}
+
+function setShortGameType(value) {
+    window.shortGameDraft.type = value;
+    if ((value === "Bunker" || value === "Sand") && !window.shortGameDraft.lie) {
+        window.shortGameDraft.lie = "Bunker";
+    }
+    updateShortGameDisplay(true);
+}
+
+function setShortGameLie(value) {
+    window.shortGameDraft.lie = value;
+    if (value === "Bunker" && !window.shortGameDraft.type) {
+        window.shortGameDraft.type = "Sand";
+    }
+    updateShortGameDisplay(true);
+}
+
+function setShortGameDistance(value) {
+    window.shortGameDraft.distance = Math.max(1, Math.min(80, Number(value) || 30));
+    updateShortGameDisplay(true);
+}
+
+function adjustShortGameDistance(change) {
+    setShortGameDistance(Number(window.shortGameDraft.distance || 30) + change);
+}
+
+function setShortGameResult(value) {
+    window.shortGameDraft.result = value;
+    updateShortGameDisplay(true);
+}
+
+function saveShortGameStats() {
+    const draft = window.shortGameDraft || {};
+    if (!draft.type || !draft.distance || !draft.result) {
+        const summary = document.getElementById("shortGameSummaryText");
+        if (summary) {
+            summary.textContent = "Choose Shot Type, Distance, and Result before saving.";
+        }
+        return;
+    }
+
+    if (!holes[currentHole - 1]) holes[currentHole - 1] = {};
+
+    holes[currentHole - 1].shortGame = {
+        type: draft.type,
+        lie: draft.lie || "",
+        distance: Number(draft.distance || 0),
+        result: draft.result
+    };
+
+    if (roundStarted || anyHoleSaved()) persistActiveRound();
+
+    refreshShortGameTile();
+    closeShortGameStats();
+
+    const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
+    if (enhancedStatsPanel) enhancedStatsPanel.classList.remove("hidden");
+}
+
+function refreshShortGameTile() {
+    const tile = document.getElementById("openShortGameStats");
+    if (!tile) return;
+
+    const holeData = holes[currentHole - 1];
+    tile.classList.toggle("saved", !!(holeData && holeData.shortGame));
+}
+
+function startShortGameHold(change) {
+    stopShortGameHold();
+    shortGamePressActive = true;
+    adjustShortGameDistance(change);
+
+    shortGameHoldTimer = setInterval(() => {
+        if (!shortGamePressActive) {
+            stopShortGameHold();
+            return;
+        }
+        adjustShortGameDistance(change);
+    }, 90);
+}
+
+function stopShortGameHold() {
+    shortGamePressActive = false;
+    if (!shortGameHoldTimer) return;
+
+    clearInterval(shortGameHoldTimer);
+    shortGameHoldTimer = null;
+}
+
+function wireShortGameHoldButton(btn, change) {
+    if (!btn) return;
+    btn.addEventListener("pointerdown", e => {
+        e.preventDefault();
+        startShortGameHold(change);
+    });
+}
+
+
+// ===== Notes +Stats =====
+window.notesDraft = window.notesDraft || {
+    tags: [],
+    text: ""
+};
+
+function getNotesPanel() {
+    return document.getElementById("notesPanel");
+}
+
+function updateNotesHoleLabel() {
+    const label = document.getElementById("notesHoleLabel");
+    if (!label) return;
+
+    let parText = "";
+    const selectedPar = document.querySelector('input[name="holePar"]:checked');
+    if (selectedPar && selectedPar.value) parText = ` • PAR ${selectedPar.value}`;
+
+    label.textContent = `HOLE ${currentHole}${parText}`;
+}
+
+function loadNotesForCurrentHole() {
+    const holeData = holes[currentHole - 1];
+    const saved = holeData && holeData.notes ? holeData.notes : null;
+
+    window.notesDraft = {
+        tags: saved && Array.isArray(saved.tags) ? [...saved.tags] : [],
+        text: saved ? String(saved.text || "") : ""
+    };
+
+    const textArea = document.getElementById("holeNotesText");
+    if (textArea) textArea.value = window.notesDraft.text;
+
+    updateNotesDisplay();
+}
+
+function updateNotesDisplay() {
+    const tags = window.notesDraft?.tags || [];
+    document.querySelectorAll(".notes-tag-btn").forEach(btn => {
+        btn.classList.toggle("active", tags.includes(btn.dataset.tag));
+    });
+
+    const textArea = document.getElementById("holeNotesText");
+    const charCount = document.getElementById("notesCharCount");
+    if (textArea && charCount) {
+        charCount.textContent = `${textArea.value.length} / 500`;
+    }
+}
+
+function openNotesStats() {
+    const panel = getNotesPanel();
+    if (!panel) return;
+
+    const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
+    if (enhancedStatsPanel) enhancedStatsPanel.classList.add("hidden");
+
+    loadNotesForCurrentHole();
+    updateNotesHoleLabel();
+    panel.classList.remove("hidden");
+
+    const textArea = document.getElementById("holeNotesText");
+    if (textArea) setTimeout(() => textArea.focus(), 50);
+}
+
+function closeNotesStats(returnToStats = false) {
+    const panel = getNotesPanel();
+    if (panel) panel.classList.add("hidden");
+
+    if (returnToStats) {
+        const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
+        if (enhancedStatsPanel) enhancedStatsPanel.classList.remove("hidden");
+    }
+}
+
+function toggleNotesTag(tag) {
+    const tags = window.notesDraft.tags || [];
+    if (tags.includes(tag)) {
+        window.notesDraft.tags = tags.filter(t => t !== tag);
+    } else {
+        window.notesDraft.tags = [...tags, tag];
+    }
+    updateNotesDisplay();
+}
+
+function saveNotesStats() {
+    const textArea = document.getElementById("holeNotesText");
+    const text = textArea ? String(textArea.value || "").trim() : "";
+    const tags = window.notesDraft.tags || [];
+
+    if (!text && tags.length === 0) {
+        closeNotesStats();
+        return;
+    }
+
+    if (!holes[currentHole - 1]) holes[currentHole - 1] = {};
+
+    holes[currentHole - 1].notes = {
+        tags: [...tags],
+        text
+    };
+
+    window.notesDraft.text = text;
+
+    if (roundStarted || anyHoleSaved()) persistActiveRound();
+
+    refreshNotesTile();
+    closeNotesStats();
+
+    const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
+    if (enhancedStatsPanel) enhancedStatsPanel.classList.remove("hidden");
+}
+
+function refreshNotesTile() {
+    const tile = document.getElementById("openNotesStats");
+    if (!tile) return;
+
+    const note = holes[currentHole - 1]?.notes;
+    const hasNotes = !!(note && ((Array.isArray(note.tags) && note.tags.length > 0) || String(note.text || "").trim() !== ""));
+    tile.classList.toggle("saved", hasNotes);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("openShortGameStats")?.addEventListener("click", openShortGameStats);
+    document.getElementById("closeShortGamePanel")?.addEventListener("click", closeShortGameStats);
+    document.getElementById("cancelShortGameStats")?.addEventListener("click", () => closeShortGameStats(true));
+    document.getElementById("saveShortGameStats")?.addEventListener("click", saveShortGameStats);
+
+    document.querySelectorAll(".shortgame-type-btn").forEach(btn => {
+        btn.addEventListener("click", () => setShortGameType(btn.dataset.type));
+    });
+
+    document.querySelectorAll(".shortgame-lie-btn").forEach(btn => {
+        btn.addEventListener("click", () => setShortGameLie(btn.dataset.lie));
+    });
+
+    document.querySelectorAll(".shortgame-distance-btn").forEach(btn => {
+        btn.addEventListener("click", () => setShortGameDistance(Number(btn.dataset.distance)));
+    });
+
+    document.querySelectorAll(".shortgame-result-btn").forEach(btn => {
+        btn.addEventListener("click", () => setShortGameResult(btn.dataset.result));
+    });
+
+    wireShortGameHoldButton(document.getElementById("shortGameDistanceMinus"), -1);
+    wireShortGameHoldButton(document.getElementById("shortGameDistancePlus"), 1);
+
+    ["pointerup", "pointercancel", "pointerleave", "touchend", "mouseup", "blur"].forEach(evt => {
+        window.addEventListener(evt, stopShortGameHold, { passive: true });
+    });
+
+    document.getElementById("openNotesStats")?.addEventListener("click", openNotesStats);
+    document.getElementById("closeNotesPanel")?.addEventListener("click", closeNotesStats);
+    document.getElementById("cancelNotesStats")?.addEventListener("click", () => closeNotesStats(true));
+    document.getElementById("saveNotesStats")?.addEventListener("click", saveNotesStats);
+
+    document.querySelectorAll(".notes-tag-btn").forEach(btn => {
+        btn.addEventListener("click", () => toggleNotesTag(btn.dataset.tag));
+    });
+
+    const textArea = document.getElementById("holeNotesText");
+    if (textArea) {
+        textArea.addEventListener("input", () => {
+            window.notesDraft.text = textArea.value;
+            updateNotesDisplay();
+        });
+    }
+});
+
+
+
+// ===== Short Game trajectory override: mockup-based start, carry, rollout =====
+// Added after original functions so these definitions take precedence.
+const SHORT_GAME_LEAVE_VALUES_OVERRIDE = ["Inside 3 ft", "Inside 6 ft", "Inside 10 ft", "3-6 ft", "6-10 ft", "10+ ft"];
+
+function updateShortGameDisplay(animate = true) {
+    const draft = window.shortGameDraft || {};
+    const display = document.getElementById("shortGameDistanceDisplay");
+    const summary = document.getElementById("shortGameSummaryText");
+    const distance = Number(draft.distance || 30);
+
+    if (display) display.textContent = `${distance} yds`;
+
+    setShortGameButtonState(".shortgame-type-btn", "type", draft.type);
+    setShortGameButtonState(".shortgame-lie-btn", "lie", draft.lie);
+    setShortGameButtonState(".shortgame-distance-btn", "distance", distance);
+
+    document.querySelectorAll(".shortgame-result-btn").forEach(btn => {
+        const value = String(btn.dataset.result || "");
+        btn.classList.toggle("active", value === String(draft.leave || "") || value === String(draft.result || ""));
+    });
+
+    if (summary) {
+        const parts = [];
+        if (draft.type) parts.push(draft.type);
+        if (draft.lie) parts.push(draft.lie);
+        if (distance) parts.push(`${distance} yds`);
+        if (draft.leave) parts.push(draft.leave);
+        if (draft.result) parts.push(draft.result);
+        summary.textContent = parts.length ? parts.join(" • ") : "No short game shot saved yet.";
+    }
+
+    updateShortGameGraphic(animate);
+}
+
+function ensureShortGameRollPath(anchorEl) {
+    let el = document.getElementById("shortGameRollPath");
+    if (el) return el;
+    if (!anchorEl || !anchorEl.parentNode) return null;
+
+    el = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    el.setAttribute("id", "shortGameRollPath");
+    el.setAttribute("fill", "none");
+    el.setAttribute("stroke", "#ffffff");
+    el.setAttribute("stroke-width", "6");
+    el.setAttribute("stroke-linecap", "round");
+    el.setAttribute("stroke-dasharray", "9 11");
+    el.setAttribute("opacity", "0.96");
+    anchorEl.parentNode.insertBefore(el, anchorEl.nextSibling);
+    return el;
+}
+
+function resetShortGameDraft() {
+    window.shortGameDraft = {
+        type: null,
+        lie: null,
+        distance: 30,
+        leave: null,
+        result: null
+    };
+}
+
+function getShortGameStartPoint() {
+    const lie = window.shortGameDraft?.lie || "";
+    const points = {
+        Fairway: { x: 410, y: 520 },
+        // Rough start point moved up and slightly right into the dark rough.
+        Rough: { x: 850, y: 315 },
+        Bunker: { x: 170, y: 370 },
+        Sand: { x: 170, y: 370 },
+        Fringe: { x: 540, y: 305 }
+    };
+    return points[lie] || { x: 410, y: 520 };
+}
+
+function getShortGameCupPoint() {
+    return { x: 520, y: 235 };
+}
+
+function getShortGameLeaveRadius() {
+    const leave = window.shortGameDraft?.leave || "Inside 6 ft";
+    if (leave === "Inside 3 ft" || leave === "3-6 ft") return 24;
+    if (leave === "Inside 10 ft" || leave === "6-10 ft" || leave === "10+ ft") return 68;
+    return 42;
+}
+
+function getShortGameEndPoint() {
+    const draft = window.shortGameDraft || {};
+    const result = draft.result || "";
+    const cup = getShortGameCupPoint();
+    const start = getShortGameStartPoint();
+    const radius = getShortGameLeaveRadius();
+
+    if (result === "Holed") return { ...cup };
+
+    const dx = start.x - cup.x;
+    const dy = start.y - cup.y;
+    const len = Math.max(1, Math.hypot(dx, dy));
+    const ux = dx / len;
+    const uy = dy / len;
+
+    if (result === "Short") return { x: cup.x + ux * radius, y: cup.y + uy * radius };
+    if (result === "Long") return { x: cup.x - ux * radius, y: cup.y - uy * radius };
+    if (result === "Left") return { x: cup.x - radius, y: cup.y + 2 };
+    if (result === "Right") return { x: cup.x + radius, y: cup.y + 2 };
+
+    return start;
+}
+
+function getShortGameLandingPoint(start, end) {
+    const draft = window.shortGameDraft || {};
+    if (!draft.result) return { ...start };
+
+    const rollBack = ({ Chip: 78, Pitch: 50, Sand: 30, Bunker: 30 }[draft.type]) || 54;
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const len = Math.max(1, Math.hypot(dx, dy));
+    const usableRoll = Math.min(rollBack, len * 0.33);
+
+    return {
+        x: end.x - (dx / len) * usableRoll,
+        y: end.y - (dy / len) * usableRoll
+    };
+}
+
+function getShortGameCarryControlPoint(start, landing) {
+    const type = window.shortGameDraft?.type || "Chip";
+    const lift = ({ Chip: 95, Pitch: 125, Sand: 150, Bunker: 150 }[type]) || 110;
+    return {
+        x: (start.x + landing.x) / 2,
+        y: Math.min(start.y, landing.y) - lift
+    };
+}
+
+function setShortGameBallPosition(ball, point) {
+    if (!ball || !point) return;
+    ball.setAttribute("cx", point.x);
+    ball.setAttribute("cy", point.y);
+}
+
+function animateShortGameBall(ball, carryPath, rollPath, start, end) {
+    if (!ball || !carryPath || !rollPath) return;
+
+    if (window.shortGameAnimationFrame) {
+        cancelAnimationFrame(window.shortGameAnimationFrame);
+        window.shortGameAnimationFrame = null;
+    }
+
+    const carryLength = Math.max(1, carryPath.getTotalLength ? carryPath.getTotalLength() : 1);
+    const rollLength = Math.max(1, rollPath.getTotalLength ? rollPath.getTotalLength() : 1);
+    const totalLength = carryLength + rollLength;
+    const duration = 760;
+    const startTime = performance.now();
+    const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+
+    function step(now) {
+        const raw = Math.min(1, (now - startTime) / duration);
+        const t = easeOutCubic(raw);
+        const travelled = t * totalLength;
+        const point = travelled <= carryLength
+            ? carryPath.getPointAtLength(travelled)
+            : rollPath.getPointAtLength(Math.min(rollLength, travelled - carryLength));
+
+        setShortGameBallPosition(ball, point);
+
+        if (raw < 1) {
+            window.shortGameAnimationFrame = requestAnimationFrame(step);
+        } else {
+            setShortGameBallPosition(ball, end);
+            window.shortGameAnimationFrame = null;
+        }
+    }
+
+    setShortGameBallPosition(ball, start);
+    window.shortGameAnimationFrame = requestAnimationFrame(step);
+}
+
+function updateShortGameGraphic(animate = true) {
+    const flightPath = document.getElementById("shortGameFlightPath");
+    const startDot = document.getElementById("shortGameStartDot");
+    const ball = document.getElementById("shortGameBallDot");
+    if (!flightPath || !startDot || !ball) return;
+
+    const rollPath = ensureShortGameRollPath(flightPath);
+    const draft = window.shortGameDraft || {};
+    const start = getShortGameStartPoint();
+    const end = getShortGameEndPoint();
+    const landing = getShortGameLandingPoint(start, end);
+    const control = getShortGameCarryControlPoint(start, landing);
+    const hasFinalResult = !!draft.result;
+
+    flightPath.setAttribute("d", hasFinalResult
+        ? `M ${start.x} ${start.y} Q ${control.x} ${control.y} ${landing.x} ${landing.y}`
+        : `M ${start.x} ${start.y} Q ${control.x} ${control.y} ${start.x} ${start.y}`
+    );
+
+    if (rollPath) {
+        rollPath.setAttribute("d", hasFinalResult
+            ? `M ${landing.x} ${landing.y} L ${end.x} ${end.y}`
+            : `M ${start.x} ${start.y} L ${start.x} ${start.y}`
+        );
+    }
+
+    startDot.setAttribute("cx", start.x);
+    startDot.setAttribute("cy", start.y);
+
+    if (hasFinalResult && animate) {
+        animateShortGameBall(ball, flightPath, rollPath, start, end);
+    } else {
+        setShortGameBallPosition(ball, hasFinalResult ? end : start);
+    }
+}
+
+function loadShortGameForCurrentHole() {
+    resetShortGameDraft();
+    const holeData = holes[currentHole - 1];
+    if (holeData && holeData.shortGame) {
+        window.shortGameDraft = {
+            type: holeData.shortGame.type || null,
+            lie: holeData.shortGame.lie || null,
+            distance: Number(holeData.shortGame.distance || 30),
+            leave: holeData.shortGame.leave || null,
+            result: holeData.shortGame.result || null
+        };
+    }
+    updateShortGameDisplay(false);
+}
+
+function setShortGameType(value) {
+    window.shortGameDraft.type = value;
+    if ((value === "Bunker" || value === "Sand") && !window.shortGameDraft.lie) {
+        window.shortGameDraft.lie = "Bunker";
+    }
+    updateShortGameDisplay(false);
+}
+
+function setShortGameLie(value) {
+    window.shortGameDraft.lie = value;
+    if (value === "Bunker" && !window.shortGameDraft.type) {
+        window.shortGameDraft.type = "Sand";
+    }
+    updateShortGameDisplay(false);
+}
+
+function setShortGameDistance(value) {
+    window.shortGameDraft.distance = Math.max(1, Math.min(80, Number(value) || 30));
+    updateShortGameDisplay(false);
+}
+
+function setShortGameResult(value) {
+    if (SHORT_GAME_LEAVE_VALUES_OVERRIDE.includes(value)) {
+        window.shortGameDraft.leave = value;
+        updateShortGameDisplay(false);
+        return;
+    }
+    window.shortGameDraft.result = value;
+    updateShortGameDisplay(true);
+}
+
+function saveShortGameStats() {
+    const draft = window.shortGameDraft || {};
+    if (!draft.type || !draft.lie || !draft.distance || !draft.result) {
+        const summary = document.getElementById("shortGameSummaryText");
+        if (summary) summary.textContent = "Choose Shot Type, Lie/Situation, Distance, and Result before saving.";
+        return;
+    }
+
+    if (!holes[currentHole - 1]) holes[currentHole - 1] = {};
+    holes[currentHole - 1].shortGame = {
+        type: draft.type,
+        lie: draft.lie || "",
+        distance: Number(draft.distance || 0),
+        leave: draft.leave || "",
+        result: draft.result
+    };
+
+    if (roundStarted || anyHoleSaved()) persistActiveRound();
+    refreshShortGameTile();
+    closeShortGameStats();
+
+    const enhancedStatsPanel = document.getElementById("enhancedStatsPanel");
+    if (enhancedStatsPanel) enhancedStatsPanel.classList.remove("hidden");
+}

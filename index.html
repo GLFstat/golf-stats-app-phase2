@@ -12,7 +12,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
   <title>Golf Stats Tracker</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=yardages-fix-1">
   <link rel="stylesheet" href="clubhouse.css">
 </head>
 <body>
@@ -49,7 +49,7 @@
       </div>
     </div>
 
-    <div class="round-form">
+    <div class="round-form" autocomplete="off">
 
       <div class="form-row detail-row required-row date-display-row" id="row-roundDate">
         <div class="form-group full-width">
@@ -74,7 +74,7 @@
       <div class="form-row detail-row required-row" id="row-courseName">
         <div class="form-group full-width">
           <label for="courseName">Course Name</label>
-          <input type="text" id="courseName">
+          <input type="text" id="courseName" autocomplete="off">
         </div>
       </div>
 
@@ -116,30 +116,30 @@
       <div class="form-row detail-row recommended-row" id="row-teeInfo">
  <div class="form-group">
   <label for="teeRating">Rating</label>
-  <input type="text" id="teeRating" placeholder="00.0">
+  <input type="text" id="teeRating" placeholder="00.0" autocomplete="off">
 </div>
 <div class="form-group">
   <label for="teeSlope">Slope</label>
-  <input type="number" id="teeSlope" placeholder="000">
+  <input type="number" id="teeSlope" placeholder="000" autocomplete="off">
 </div>
         <div class="form-group">
           <label for="teeYardage">Yardage</label>
-          <input type="number" id="teeYardage" placeholder="0000">
+          <input type="number" id="teeYardage" placeholder="0000" autocomplete="off">
         </div>
       </div>
 
       <div class="form-row detail-row required-row" id="row-coursePars">
         <div class="form-group">
           <label for="frontPar">Front 9 Par</label>
-          <input type="number" id="frontPar" name="frontPar" min="0" max="99">
+          <input type="number" id="frontPar" name="frontPar" min="0" max="99" autocomplete="off">
         </div>
         <div class="form-group">
           <label for="backPar">Back 9 Par</label>
-          <input type="number" id="backPar" name="backPar" min="0" max="99">
+          <input type="number" id="backPar" name="backPar" min="0" max="99" autocomplete="off">
         </div>
         <div class="form-group">
           <label for="coursePar">Course Par</label>
-          <input type="number" id="coursePar" name="coursePar" readonly>
+          <input type="number" id="coursePar" name="coursePar" readonly autocomplete="off">
         </div>
       </div>
 
@@ -152,7 +152,13 @@
 
 <div id="holeYardagesPopup" class="yardages-popup-overlay hidden">
   <div class="yardages-popup-card">
-    <h2 class="yardages-popup-title">Hole Yardages</h2>
+    
+<div class="yardages-popup-title">
+  <span>Hole Yardages</span>
+  <button id="closeHoleYardagesBtn" class="popup-circle-close" type="button" aria-label="Close Hole Yardages">×</button>
+</div>
+
+    <button id="closeHoleYardagesBtn" class="popup-header-close popup-close-check" type="button" aria-label="Close Hole Yardages">✓</button>
 
     <div class="yardages-popup-section-label">FRONT 9</div>
 
@@ -187,9 +193,10 @@
       <span id="holeYardagesTotal">0</span>
     </div>
 
-    <div class="yardages-popup-actions">
-      <button id="saveHoleYardagesBtn" type="button">Save Yardages</button>
-    </div>
+<div class="yardages-popup-actions">
+  <button id="saveHoleYardagesBtn" type="button">Save Yardages</button>
+  <button id="cancelHoleYardagesBtn" type="button">Cancel</button>
+</div>
   </div>
 </div>
 
@@ -350,7 +357,8 @@
   <div class="es-tile-sub">Distance, direction and finish</div>
 </button>
 
-        <button class="es-tile" type="button">
+        <button id="openShortGameStats" class="es-tile" type="button">
+          <div class="es-tile-check">✓</div>
           <div class="es-tile-title">Short Game</div>
           <div class="es-tile-sub">Chip, Pitch or Bunker</div>
         </button>
@@ -361,15 +369,17 @@
           <div class="es-tile-sub">First Putt Distance</div>
         </button>
 
-        <button class="es-tile es-tile-wide" type="button">
+        <button id="openNotesStats" class="es-tile es-tile-wide" type="button">
+          <div class="es-tile-check">✓</div>
           <div class="es-tile-title">Notes</div>
           <div class="es-tile-sub">Lie, Wind, Trouble, Anything Else</div>
         </button>
       </div>
 
-      <div class="es-panel-footer">
-        <button id="enhancedStatsDone" class="es-done-btn" type="button">Done</button>
-      </div>
+    <div class="es-panel-footer">
+      <button id="doneEnhancedStats" class="es-done-btn" type="button">Done</button>
+      <button id="cancelEnhancedStats" class="es-done-btn es-cancel-btn" type="button">Cancel</button>
+    </div>
     </div>
   </div>
 </div>
@@ -390,7 +400,9 @@
     <div class="es-panel-body">
 
       <div class="approach-section">
-        <div class="approach-label approach-main-label">Shot Distance</div>
+        <div class="approach-label approach-main-label">
+  Shot Distance: <span id="approachDistanceToHoleLabel">—</span>
+</div>
 
         <div id="approachChipRow" class="approach-chip-row approach-chip-row-clean">
 <button class="approach-chip-btn" type="button" data-distance="50">50</button>
@@ -543,6 +555,126 @@
 </div>
 
 
+<!-- Short Game Panel -->
+<div id="shortGamePanel" class="es-panel-overlay hidden shortgame-overlay">
+  <div class="es-panel-sheet shortgame-sheet">
+    <div class="shortgame-header-row">
+      <div>
+        <div id="shortGameHoleLabel" class="shortgame-hole-label-top">HOLE</div>
+        <div class="shortgame-title">Short Game</div>
+      </div>
+      <button id="closeShortGamePanel" class="shortgame-close-btn" type="button" aria-label="Close Short Game">×</button>
+    </div>
+
+    <div class="es-panel-body shortgame-body">
+      <div class="shortgame-section shortgame-section-tight">
+        <div class="shortgame-label">Shot Type</div>
+        <div class="shortgame-chip-row shortgame-three">
+          <button class="shortgame-type-btn" type="button" data-type="Chip">Chip</button>
+          <button class="shortgame-type-btn" type="button" data-type="Pitch">Pitch</button>
+          <button class="shortgame-type-btn" type="button" data-type="Sand">Sand</button>
+        </div>
+      </div>
+
+      <div class="shortgame-section">
+        <div class="shortgame-label">Lie / Situation</div>
+        <div class="shortgame-chip-row shortgame-lie-grid">
+          <button class="shortgame-lie-btn" type="button" data-lie="Fairway">Fairway</button>
+          <button class="shortgame-lie-btn" type="button" data-lie="Rough">Rough</button>
+          <button class="shortgame-lie-btn" type="button" data-lie="Bunker">Bunker</button>
+          <button class="shortgame-lie-btn" type="button" data-lie="Fringe">Fringe</button>
+        </div>
+      </div>
+
+      <div class="shortgame-section">
+        <div class="shortgame-label">Distance to Hole</div>
+        <div class="shortgame-distance-row">
+          <button class="shortgame-distance-btn" type="button" data-distance="10">10'</button>
+          <button id="shortGameDistancePlus" class="shortgame-adjust-btn" type="button">+</button>
+          <div id="shortGameDistanceDisplay" class="shortgame-distance-display">30 yds</div>
+          <button id="shortGameDistanceMinus" class="shortgame-adjust-btn" type="button">−</button>
+          <button class="shortgame-distance-btn" type="button" data-distance="50">50</button>
+        </div>
+      </div>
+
+      <div class="shortgame-section">
+        <div class="shortgame-label">Result / Leave</div>
+        <div class="shortgame-result-top-row">
+          <button class="shortgame-result-btn" type="button" data-result="Inside 3 ft">Inside 3 ft</button>
+          <button class="shortgame-result-btn" type="button" data-result="Inside 6 ft">Inside 6 ft</button>
+          <button class="shortgame-result-btn" type="button" data-result="Inside 10 ft">Inside 10 ft</button>
+        </div>
+        <div class="shortgame-result-bottom-row">
+          <button class="shortgame-result-btn" type="button" data-result="Short">Short</button>
+          <button class="shortgame-result-btn" type="button" data-result="Long">Long</button>
+          <button class="shortgame-result-btn" type="button" data-result="Holed">Holed</button>
+          <button class="shortgame-result-btn" type="button" data-result="Left">Left</button>
+          <button class="shortgame-result-btn" type="button" data-result="Right">Right</button>
+        </div>
+      </div>
+
+      <div class="shortgame-summary-box">
+        <div class="shortgame-summary-title">Quick Summary</div>
+        <div id="shortGameSummaryText" class="shortgame-summary-text">No short game shot saved yet.</div>
+
+        <div class="shortgame-map-wrap">
+          <img id="shortGameBaseImage" class="shortgame-base-image" src="images/short-game-bg.png" alt="Short game green">
+          <svg id="shortGameOverlaySvg" class="shortgame-overlay-svg" viewBox="0 0 1000 620" aria-hidden="true">
+            <path id="shortGameFlightPath" class="shortgame-flight-path" d="M 260 500 Q 450 240 700 255" />
+            <circle id="shortGameStartDot" class="shortgame-start-dot" cx="260" cy="500" r="13" />
+            <circle id="shortGameBallDot" class="shortgame-ball-dot" cx="700" cy="255" r="14" />
+            <circle id="shortGameHoleDot" class="shortgame-hole-dot" cx="715" cy="250" r="10" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="es-panel-footer shortgame-footer">
+        <button id="saveShortGameStats" class="es-done-btn" type="button">Save Short Game</button>
+        <button id="cancelShortGameStats" class="tee-cancel-btn" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Notes Panel -->
+<div id="notesPanel" class="es-panel-overlay hidden">
+  <div class="es-panel-sheet notes-sheet">
+    <div class="es-panel-header">
+      <div class="es-panel-title-wrap">
+        <div id="notesHoleLabel" class="es-panel-hole">Hole</div>
+        <div class="es-panel-title">Notes</div>
+      </div>
+      <button id="closeNotesPanel" class="es-close-btn" type="button">✕</button>
+    </div>
+
+    <div class="es-panel-body">
+      <div class="notes-helper-text">
+        Capture coach/recruiting context that numbers miss: club choice, wind, lie, decision, trouble, or mental reset.
+      </div>
+
+      <div class="notes-chip-row">
+        <button class="notes-tag-btn" type="button" data-tag="Club">Club</button>
+        <button class="notes-tag-btn" type="button" data-tag="Wind">Wind</button>
+        <button class="notes-tag-btn" type="button" data-tag="Lie">Lie</button>
+        <button class="notes-tag-btn" type="button" data-tag="Strategy">Strategy</button>
+        <button class="notes-tag-btn" type="button" data-tag="Trouble">Trouble</button>
+        <button class="notes-tag-btn" type="button" data-tag="Mental">Mental</button>
+      </div>
+
+      <textarea id="holeNotesText" class="notes-textarea" rows="5" maxlength="500" placeholder="Example: 54° from heavy rough, landed soft to 4 ft. Smart miss below the hole."></textarea>
+      <div id="notesCharCount" class="notes-char-count">0 / 500</div>
+
+      <div class="es-panel-footer">
+        <button id="saveNotesStats" class="es-done-btn" type="button">Save Notes</button>
+        <button id="cancelNotesStats" class="tee-cancel-btn" type="button">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
 <!-- Tee Shot Panel -->
 <div id="teeShotPanel" class="es-panel-overlay hidden">
   <div class="es-panel-sheet tee-shot-sheet">
@@ -642,7 +774,7 @@
       <p>Tap <strong>Save Hole</strong> when you are ready to save this hole and move to the next one.</p>
     </div>
 
-    <button id="statsHelpCloseBtn" type="button">Close</button>
+    <button id="statsHelpCloseBtn" class="popup-header-close popup-close-check" type="button" aria-label="Close Stats Help">✓</button>
   </div>
 </div>
 
@@ -656,13 +788,14 @@
       Select a direction and distance before saving Tee Shot.
     </div>
 
-    <button id="teeShotValidationOK" type="button">OK</button>
+    <button id="teeShotValidationOK" class="popup-header-close popup-close-check" type="button" aria-label="Close Tee Shot Incomplete">✓</button>
   </div>
 </div>
 
 <!-- Save Confirmation Popup -->
 <div id="saveConfirmPopup" class="popup-overlay">
   <div class="popup-box styled-popup-box">
+    <button id="saveConfirmClose" class="popup-circle-close" type="button">×</button>
   <div class="popup-green-header" id="saveConfirmHeader">Save Hole</div>
   <div id="saveConfirmText" class="popup-body-text">Save Hole X Stats?</div>
 
@@ -670,15 +803,16 @@
 
 <button id="confirmCancel" type="button">Add +Stats</button>
 <button id="confirmOK" type="button">Save Hole</button>
-<button id="confirmStay" type="button">Cancel</button>
+<button id="confirmStay" class="popup-header-close popup-close-check" type="button" aria-label="Close Save Confirmation">Cancel</button>
   </div>
 </div>
 
 <!-- Validation Popup -->
 <div id="validationPopup" class="popup-overlay">
-  <div class="popup-box">
-    <div id="validationText"></div>
-    <button id="validationOK" type="button">OK</button>
+  <div class="popup-box styled-popup-box">
+    <div class="popup-green-header">Missing Required Stats</div>
+    <button id="validationOK" class="popup-header-close popup-close-check" type="button" aria-label="Close Missing Required Stats">✓</button>
+    <div id="validationText" class="popup-body-text"></div>
   </div>
 </div>
 
@@ -693,15 +827,14 @@
 
 <!-- Round Complete Modal -->
 <div id="roundCompleteModal" class="popup-overlay">
-  <div class="popup-box">
-    <div id="roundCompleteText" style="font-size:22px; font-weight:bold; margin-bottom:16px;"></div>
-
-    <div id="roundCompleteSubtext" style="font-size:16px; line-height:1.4; margin-bottom:20px;"></div>
-
+  <div class="popup-box styled-popup-box">
+    <div class="popup-green-header">Round Complete</div>
+    <button id="roundCompleteCloseBtn" class="popup-header-close popup-close-check" type="button" aria-label="Go to Round Wrap-up">✓</button>
+    <div id="roundCompleteText" class="popup-body-text round-complete-main-text"></div>
+    <div id="roundCompleteSubtext" class="popup-body-text round-complete-sub-text"></div>
     <div class="round-complete-buttons">
       <button id="roundCompleteSummaryBtn" type="button">View Summary</button>
       <button id="roundCompleteDetailsBtn" type="button">Round Details</button>
-      <button id="roundCompleteCloseBtn" type="button">Go to Round Wrap-up</button>
     </div>
   </div>
 </div>
@@ -924,14 +1057,12 @@
 
 <!-- Final Closure Popup -->
 <div id="finalClosurePopup" class="popup-overlay">
-  <div class="popup-box">
-    <div id="finalClosureTitle" style="font-size:22px; font-weight:bold; margin-bottom:16px;">
-      Round Complete
-    </div>
-    <div id="finalClosureText" style="font-size:16px; line-height:1.5; margin-bottom:20px;">
+  <div class="popup-box styled-popup-box">
+    <div class="popup-green-header" id="finalClosureTitle">Round Complete</div>
+    <button id="finalClosureBtn" class="popup-header-close popup-close-check" type="button" aria-label="Close Round Complete">✓</button>
+    <div id="finalClosureText" class="popup-body-text final-closure-text">
       Awesome. Complete stats make your analysis more accurate and more useful to coaches and recruiters. Keep up the good work!
     </div>
-    <button id="finalClosureBtn" type="button">See You on the Next Round</button>
   </div>
 </div>
 
@@ -970,16 +1101,15 @@
 </div>
 
 <div id="deleteRoundPopup" class="popup-overlay hidden">
-  <div class="popup-box">
-    <h2>Start New Round?</h2>
-    <p class="warning-text">
+  <div class="popup-box styled-popup-box">
+    <div class="popup-green-header">Start New Round?</div>
+    <button id="keepCurrentRoundBtn" class="popup-header-close popup-close-check" type="button" aria-label="Keep Current Round">✓</button>
+    <p class="warning-text popup-body-text">
       Are you sure you want to start a new round?<br><br>
       There is an active round in progress.<br>
       All data from that round will be deleted.
     </p>
-
     <div class="popup-actions">
-      <button id="keepCurrentRoundBtn" type="button">Keep Current Round</button>
       <button id="deleteAndStartNewBtn" type="button">Delete and Start New</button>
     </div>
   </div>

@@ -465,7 +465,9 @@ header h1 {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.25);
+    box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.38),
+    0 5px 12px rgba(0,0,0,0.40);
 }
 
 .es-btn .plus {
@@ -1318,7 +1320,7 @@ header h1 {
 #holeYardagesPopup label,
 
 #holeYardagesPopup input,
-/* #holeYardagesPopup button,*/
+
 #holeYardagesPopup span,
 #holeYardagesPopup div {
     color: #111 !important;
@@ -2607,17 +2609,7 @@ header h1 {
     box-sizing: border-box;
 }
 
-.yardages-popup-title {
-    margin: -18px -18px 14px;
-    padding: 14px 16px;
-    text-align: center;
-    font-size: 24px;
-    font-weight: 600;
-    color: #fff !important;
-    background: #25a734;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
+
 .yardages-popup-section-label {
     margin: 8px 0 6px;
     font-size: 15px;
@@ -2685,28 +2677,15 @@ header h1 {
     padding: 10px 12px;
 }
 
-.yardages-popup-actions {
-    margin-top: 14px;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-}
 
-#saveHoleYardagesBtn {
-    width: 71%;
-    margin: 0 auto;
-    min-height: 48px;
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: 600;
-    background: linear-gradient(180deg,#6a6a6a 0%,#1c1c1c 100%);
-    color: #fff;
-}
 
-#closeHoleYardagesBtn {
-    min-height: 42px;
-    font-size: 16px;
-}
+
+
+
+
+
+
+
 
 /* FORCE YARDAGE LABEL COLORS */
 #holeYardagesPopup .yardage-hole-label {
@@ -2973,10 +2952,22 @@ header h1 {
 }
 
 .approach-label {
-  font-size: 17px;
-  font-weight: 900;
-  color: #1f1f1f;
+  font-size: 13px;
+  font-weight: 600;
+  color: #181818;
   margin-bottom: 8px;
+}
+
+
+#approachDistanceToHoleLabel {
+    font-size: 17px;
+    font-weight: 500;
+    opacity: 0.8;
+    color: #1f853a;
+}
+
+.approach-yardage-number {
+    font-weight: 800;
 }
 
 .approach-chip-row-clean {
@@ -3814,4 +3805,1147 @@ header h1 {
 
 #openPuttingStats .es-tile-check {
   display: none !important;
+}
+
+/* ========================================
+   PERF STAT POPUP FOOTER BUTTON POLISH ONLY
+   Save + Cancel side-by-side, no JS changes
+======================================== */
+
+#teeShotPanel .es-panel-footer,
+#approachPanel .es-panel-footer,
+.putting-footer-actions {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+  align-items: center !important;
+  margin-top: 10px !important;
+}
+
+#teeShotPanel .es-done-btn,
+#teeShotPanel .tee-cancel-btn,
+#approachPanel .es-done-btn,
+#approachPanel .tee-cancel-btn,
+#savePuttingStats,
+#cancelPuttingStats {
+  width: 100% !important;
+  min-height: 46px !important;
+  margin: 0 !important;
+  padding: 10px 8px !important;
+  font-size: 15px !important;
+  line-height: 1.05 !important;
+  white-space: nowrap !important;
+  border-radius: 12px !important;
+  box-sizing: border-box !important;
+}
+
+#saveTeeShotStats,
+#saveApproachStats,
+#savePuttingStats {
+  font-weight: 800 !important;
+}
+
+#cancelTeeShotStats,
+#cancelApproachStats,
+#cancelPuttingStats {
+  font-weight: 800 !important;
+}
+
+/* ========================================
+   MAIN PERFORMANCE STATS PANEL
+   Done + Cancel on one row
+======================================== */
+
+#enhancedStatsPanel .es-panel-footer {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+  align-items: center !important;
+}
+
+#enhancedStatsPanel .es-done-btn,
+#enhancedStatsPanel .es-cancel-btn,
+#enhancedStatsPanel #closeEnhancedStatsFooter,
+#enhancedStatsPanel #cancelEnhancedStats {
+  width: 100% !important;
+  min-height: 46px !important;
+  margin: 0 !important;
+  padding: 10px 8px !important;
+  font-size: 15px !important;
+  line-height: 1.05 !important;
+  white-space: nowrap !important;
+  border-radius: 12px !important;
+  box-sizing: border-box !important;
+}
+
+#cancelEnhancedStats {
+  background: #ffffff !important;
+  color: #1f1f1f !important;
+  border: 1px solid #cfcfcf !important;
+  box-shadow: none !important;
+}
+
+
+/* ========================================
+   PERFORMANCE PANEL FOOTER FORCE VISIBLE
+======================================== */
+
+#enhancedStatsPanel .es-panel-sheet {
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: 82vh !important;
+}
+
+#enhancedStatsPanel .es-panel-body {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  min-height: 0 !important;
+}
+
+#enhancedStatsPanel .es-panel-footer {
+  flex: 0 0 auto !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+  margin-top: 12px !important;
+  padding-top: 8px !important;
+}
+
+#enhancedStatsPanel .es-panel-footer > * {
+  display: block !important;
+  width: 100% !important;
+}
+
+.yardages-popup-title span {
+    color: #fff !important;
+}
+
+/* =========================================================
+   ADD HOLE YARDAGES POPUP — FINAL OVERRIDE
+   ========================================================= */
+
+#holeYardagesPopup .yardages-popup-card {
+    overflow: hidden;
+    
+    
+}
+
+#holeYardagesPopup .yardages-popup-title {
+    position: relative !important;
+    display: block !important;
+    width: auto !important;
+    box-sizing: border-box !important;
+    margin: -18px -18px 18px -18px !important;
+    padding: 16px 64px 16px 64px !important;
+    text-align: center !important;
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    background: #228b22 !important;
+    border-top-left-radius: 14px !important;
+    border-top-right-radius: 14px !important;
+    
+}
+
+#holeYardagesPopup .yardages-popup-title span {
+    color: #ffffff !important;
+}
+
+#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    border-radius: 50% !important;
+    border: none !important;
+    background: #ffffff !important;
+    color: #178724 !important;
+    font-size: 36px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2) !important;
+    z-index: 5 !important;
+}
+
+
+#holeYardagesPopup #saveHoleYardagesBtn,
+#holeYardagesPopup #cancelHoleYardagesBtn {
+    width: 100% !important;
+    margin: 0 !important;
+    min-height: 48px !important;
+    border-radius: 8px !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    box-sizing: border-box !important;
+}
+
+#holeYardagesPopup #saveHoleYardagesBtn {
+    background: linear-gradient(180deg,#6a6a6a 0%,#1c1c1c 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #111111 !important;
+}
+
+#holeYardagesPopup #cancelHoleYardagesBtn {
+    display: block !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+    border: 1.5px solid #111111 !important;
+}
+
+/* =========================================================
+   ADD HOLE YARDAGES POPUP — HEADER/ACTIONS FINAL FIX
+   stacked ✓ + thinner X, centered title, side-by-side actions
+   ========================================================= */
+
+#holeYardagesPopup.yardages-popup-overlay {
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#holeYardagesPopup .yardages-popup-card {
+    position: relative !important;
+    width: min(92vw, 430px) !important;
+    max-height: calc(100vh - 36px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 0 12px 14px !important;
+    border-radius: 18px !important;
+    background: #ffffff !important;
+}
+
+#holeYardagesPopup .yardages-popup-title {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: calc(100% + 24px) !important;
+    min-height: 66px !important;
+    margin: 0 -12px 16px -12px !important;
+    padding: 14px 74px 14px 74px !important;
+    box-sizing: border-box !important;
+    background: #178724 !important;
+    color: #ffffff !important;
+    border-radius: 18px 18px 0 0 !important;
+    text-align: center !important;
+}
+
+#holeYardagesPopup .yardages-popup-title-text,
+#holeYardagesPopup .yardages-popup-title span.yardages-popup-title-text {
+    display: block !important;
+    width: 100% !important;
+    color: #ffffff !important;
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+}
+
+#holeYardagesPopup .yardages-popup-header-icons {
+    position: absolute !important;
+    top: 8px !important;
+    right: 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 4px !important;
+    width: 36px !important;
+    z-index: 10 !important;
+    pointer-events: none !important;
+}
+
+#holeYardagesPopup .yardages-popup-check,
+#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    max-width: 30px !important;
+    max-height: 30px !important;
+    border-radius: 999px !important;
+    border: 2px solid #ffffff !important;
+    background: #ffffff !important;
+    color: #178724 !important;
+    box-shadow: 0 2px 7px rgba(0,0,0,.20) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    line-height: 1 !important;
+}
+
+#holeYardagesPopup .yardages-popup-check {
+    font-size: 19px !important;
+    font-weight: 800 !important;
+}
+
+#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close {
+    position: static !important;
+    transform: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 25px !important;
+    font-weight: 300 !important;
+    cursor: pointer !important;
+    z-index: 11 !important;
+    pointer-events: auto !important;
+}
+
+#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close::before {
+    content: none !important;
+}
+
+#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close:active {
+    transform: scale(.96) !important;
+}
+
+#holeYardagesPopup .yardages-popup-actions {
+    margin: 14px auto 0 !important;
+    width: min(94%, 430px) !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    align-items: center !important;
+}
+
+#holeYardagesPopup #saveHoleYardagesBtn,
+#holeYardagesPopup #cancelHoleYardagesBtn {
+    width: 100% !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+    font-size: 18px !important;
+}
+
+#holeYardagesPopup #saveHoleYardagesBtn,
+#holeYardagesPopup #cancelHoleYardagesBtn {
+    width: 100% !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+    padding: 10px 8px !important;
+    border-radius: 10px !important;
+    font-size: 17px !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+    box-sizing: border-box !important;
+}
+
+#holeYardagesPopup #saveHoleYardagesBtn {
+    background: linear-gradient(180deg,#666666 0%,#1b1b1b 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #111111 !important;
+}
+
+#holeYardagesPopup #cancelHoleYardagesBtn {
+    display: block !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+    border: 1px solid #656565 !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,.32) !important;
+}
+
+
+
+/* FIX: Hole Yardages popup close button - show only the X circle */
+#holeYardagesPopup .popup-header-check,
+#holeYardagesPopup .yardages-popup-check,
+#holeYardagesPopup .popup-check-circle {
+  display: none !important;
+}
+
+#holeYardagesPopup .popup-circle-close {
+  position: absolute !important;
+  top: 58px !important;
+  right: 22px !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  color: #228b22 !important;
+  border: none !important;
+  font-size: 28px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.22) !important;
+}
+
+
+/* FORCE: thinner Cancel text */
+#holeYardagesPopup #cancelHoleYardagesBtn,
+#cancelHoleYardagesBtn span,
+#cancelHoleYardagesBtn {
+  font-family: Arial, sans-serif !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+}
+
+/* FORCE move Yardages close button lower */
+#holeYardagesPopup .yardages-popup-card .popup-circle-close,
+#holeYardagesPopup .popup-circle-close {
+  top: 100px !important;
+  transform: none !important;
+}
+
+/* FINAL FIX: Hole Yardages header */
+#holeYardagesPopup .yardages-popup-title {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 86px !important;
+  padding: 0 76px !important;
+  background: #228b22 !important;
+  color: #fff !important;
+  box-sizing: border-box !important;
+}
+
+#holeYardagesPopup .yardages-popup-title span {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  color: #fff !important;
+  font-size: 28px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+}
+
+#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close {
+  position: absolute !important;
+  right: 14px !important;
+  top: 30% !important;
+  transform: translateY(-50%) !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background: #fff !important;
+  color: #228b22 !important;
+  border: none !important;
+  font-size: 30px !important;
+  font-weight: 300 !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: 0 3px 8px rgba(0,0,0,.22) !important;
+}
+
+/* Hide accidental extra check circle in this popup header */
+#holeYardagesPopup .popup-header-check,
+#holeYardagesPopup .yardages-popup-check,
+#holeYardagesPopup .popup-check-circle,
+#holeYardagesPopup .header-check-circle {
+  display: none !important;
+}
+
+
+
+/* SAVE HOLE CONFIRM POPUP BUTTON POLISH */
+
+#saveConfirmPopup #confirmOK {
+  background: #178724 !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+#saveConfirmPopup #confirmCancel {
+  background: linear-gradient(180deg,#5f5f5f 0%, #1c1c1c 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+#saveConfirmPopup #confirmStay {
+  background: #ffffff !important;
+  color: #222222 !important;
+  border: 1px solid #b8b8b8 !important;
+  box-shadow: 0 3px 8px rgba(0,0,0,.12) !important;
+}
+
+
+
+/* ========================================
+   +STATS SAVED TILE VISIBILITY FIX
+   Makes saved Performance Stats obvious after refresh/resume.
+======================================== */
+.es-tile .es-tile-check {
+    position: absolute !important;
+    top: 7px !important;
+    right: 9px !important;
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    color: #178724 !important;
+    font-size: 17px !important;
+    font-weight: 900 !important;
+    line-height: 24px !important;
+    text-align: center !important;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.28) !important;
+}
+
+#openTeeShotStats.saved,
+#openApproachStats.saved,
+#openPuttingStats.saved {
+    opacity: 0.68 !important;
+    filter: grayscale(0.28) !important;
+    border: 2px solid #ffffff !important;
+}
+
+#openTeeShotStats.saved .es-tile-check,
+#openApproachStats.saved .es-tile-check,
+#openPuttingStats.saved .es-tile-check {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+
+/* ================= Short Game +Stats Panel ================= */
+.shortgame-sheet,
+.notes-sheet {
+    width: 88%;
+    max-width: 405px;
+}
+
+.shortgame-section {
+    margin-top: 11px;
+}
+
+.shortgame-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #1f1f1f;
+    margin-bottom: 6px;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.shortgame-chip-row {
+    display: grid;
+    gap: 7px;
+}
+
+.shortgame-three {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.shortgame-four {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.shortgame-five {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.shortgame-type-btn,
+.shortgame-lie-btn,
+.shortgame-distance-btn,
+.shortgame-result-btn,
+.notes-tag-btn {
+    min-height: 40px;
+    border-radius: 12px;
+    border: 1px solid #cfcfcf;
+    background: #ffffff;
+    color: #1f1f1f;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: none;
+    padding: 6px 5px;
+}
+
+.shortgame-type-btn.active,
+.shortgame-lie-btn.active,
+.shortgame-distance-btn.active,
+.shortgame-result-btn.active,
+.notes-tag-btn.active {
+    background: #178724;
+    border-color: #0f5c18;
+    color: #ffffff;
+}
+
+.shortgame-adjust-row {
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: 54px 1fr 54px;
+    gap: 8px;
+    align-items: center;
+}
+
+.shortgame-adjust-btn {
+    min-height: 44px;
+    border-radius: 12px;
+    border: 1px solid #cfcfcf;
+    background: #ffffff;
+    color: #1f1f1f;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    box-shadow: none;
+}
+
+.shortgame-distance-display {
+    min-height: 44px;
+    border-radius: 12px;
+    border: 1px solid #cfcfcf;
+    background: #f3f3f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+    color: #1f1f1f;
+}
+
+.shortgame-result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+}
+
+.shortgame-summary-box {
+    margin-top: 12px;
+    border: 1px solid #d8d8d8;
+    border-radius: 12px;
+    background: rgba(255,255,255,.72);
+    padding: 10px;
+}
+
+.shortgame-summary-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #2f7d38;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 4px;
+}
+
+.shortgame-summary-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.25;
+    min-height: 18px;
+}
+
+.shortgame-map-wrap {
+    position: relative;
+    width: 100%;
+    margin: 8px auto 0;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,.12);
+}
+
+.shortgame-base-image {
+    width: 100%;
+    display: block;
+}
+
+.shortgame-overlay-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.shortgame-flight-path {
+    fill: none;
+    stroke: #ffd21a;
+    stroke-width: 7;
+    stroke-linecap: round;
+    stroke-dasharray: 14 12;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,.35));
+}
+
+.shortgame-start-dot {
+    fill: #111;
+    stroke: #ffffff;
+    stroke-width: 4;
+}
+
+.shortgame-ball-dot {
+    fill: #ffffff;
+    stroke: #111;
+    stroke-width: 3;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,.35));
+}
+
+.shortgame-hole-dot {
+    fill: #111;
+    stroke: #ffffff;
+    stroke-width: 3;
+}
+
+.shortgame-ball-dot.sg-animate {
+    animation: shortGameDropBounce 0.85s ease;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@keyframes shortGameDropBounce {
+    0% {
+        opacity: 0;
+        transform: translateY(-70px) scale(0.88);
+    }
+    45% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    62% {
+        transform: translateY(-16px) scale(0.96);
+    }
+    76% {
+        transform: translateY(0) scale(1);
+    }
+    88% {
+        transform: translateY(-7px) scale(0.98);
+    }
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* ================= Notes +Stats Panel ================= */
+.notes-helper-text {
+    font-size: 13px;
+    line-height: 1.3;
+    color: #333;
+    text-align: left;
+    background: rgba(255,255,255,.75);
+    border: 1px solid #dddddd;
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.notes-chip-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    margin-bottom: 10px;
+}
+
+.notes-textarea {
+    width: 100%;
+    min-height: 126px;
+    box-sizing: border-box;
+    border-radius: 13px;
+    border: 1px solid #cfcfcf;
+    background: #ffffff;
+    color: #1f1f1f;
+    font-size: 16px;
+    line-height: 1.35;
+    padding: 10px;
+    resize: vertical;
+    font-family: Arial, sans-serif;
+}
+
+.notes-char-count {
+    text-align: right;
+    font-size: 12px;
+    font-weight: 700;
+    color: #555;
+    margin-top: 4px;
+}
+
+.es-tile.saved .es-tile-sub {
+    color: #ffffff;
+}
+
+
+/* ========================================
+   SHORT GAME + NOTES SAVED TILE OVERRIDES
+======================================== */
+#openTeeShotStats.saved,
+#openApproachStats.saved,
+#openPuttingStats.saved,
+#openShortGameStats.saved,
+#openNotesStats.saved {
+    opacity: 0.68 !important;
+    filter: grayscale(0.28) !important;
+    border: 2px solid #ffffff !important;
+}
+
+#openTeeShotStats.saved .es-tile-check,
+#openApproachStats.saved .es-tile-check,
+#openPuttingStats.saved .es-tile-check,
+#openShortGameStats.saved .es-tile-check,
+#openNotesStats.saved .es-tile-check {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+
+/* ========================================
+   SHORT GAME PANEL VIEWPORT / SCROLL FIX
+   Keeps the top of the Short Game panel reachable on phones.
+======================================== */
+#shortGamePanel.es-panel-overlay {
+    align-items: flex-start !important;
+    justify-content: center !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: calc(env(safe-area-inset-top) + 8px) 0 calc(env(safe-area-inset-bottom) + 18px) 0 !important;
+    box-sizing: border-box !important;
+}
+
+#shortGamePanel .shortgame-sheet {
+    margin: 0 auto 18px auto !important;
+    max-height: none !important;
+    height: auto !important;
+    display: block !important;
+    box-sizing: border-box !important;
+}
+
+#shortGamePanel .es-panel-body {
+    overflow: visible !important;
+    max-height: none !important;
+    padding-bottom: 8px !important;
+}
+
+#shortGamePanel .es-panel-footer {
+    position: static !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    margin-top: 12px !important;
+}
+
+/* =========================================================
+   Short Game Panel Refresh — compact image-matched layout
+========================================================= */
+#shortGamePanel.shortgame-overlay {
+    align-items: flex-start !important;
+    justify-content: center !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    background: rgba(0,0,0,.12) !important;
+    padding: calc(env(safe-area-inset-top) + 6px) 0 calc(env(safe-area-inset-bottom) + 18px) !important;
+    box-sizing: border-box !important;
+}
+
+#shortGamePanel .shortgame-sheet {
+    width: min(96vw, 430px) !important;
+    max-width: 430px !important;
+    margin: 0 auto 18px auto !important;
+    padding: 14px 14px 16px !important;
+    border-radius: 18px !important;
+    background: rgba(246,246,244,.90) !important;
+    box-shadow: 0 8px 26px rgba(0,0,0,.28) !important;
+    box-sizing: border-box !important;
+}
+
+.shortgame-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+    text-align: left;
+}
+
+.shortgame-hole-label-top {
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: .04em;
+    color: #2f7d38;
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+
+.shortgame-title {
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+    color: #1f1f1f;
+}
+
+.shortgame-close-btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #1f1f1f;
+    width: 36px;
+    height: 36px;
+    line-height: 31px;
+    font-size: 42px;
+    font-weight: 300;
+    padding: 0;
+    box-shadow: none;
+}
+
+#shortGamePanel .shortgame-body {
+    margin-top: 0 !important;
+    overflow: visible !important;
+    max-height: none !important;
+    padding-bottom: 0 !important;
+}
+
+#shortGamePanel .shortgame-section {
+    margin-top: 13px !important;
+}
+
+#shortGamePanel .shortgame-section-tight {
+    margin-top: 8px !important;
+}
+
+#shortGamePanel .shortgame-label {
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    color: #1f1f1f !important;
+    margin: 0 0 8px !important;
+    text-align: left !important;
+    text-transform: uppercase !important;
+    letter-spacing: .07em !important;
+}
+
+#shortGamePanel .shortgame-chip-row {
+    display: grid !important;
+    gap: 8px !important;
+}
+
+#shortGamePanel .shortgame-three {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+#shortGamePanel .shortgame-lie-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    padding: 0 34px !important;
+}
+
+#shortGamePanel .shortgame-distance-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1.55fr 1fr 1fr !important;
+    gap: 8px !important;
+    align-items: center !important;
+}
+
+#shortGamePanel .shortgame-type-btn,
+#shortGamePanel .shortgame-lie-btn,
+#shortGamePanel .shortgame-distance-btn,
+#shortGamePanel .shortgame-result-btn,
+#shortGamePanel .shortgame-adjust-btn,
+#shortGamePanel .shortgame-distance-display {
+    min-height: 46px !important;
+    border-radius: 13px !important;
+    border: 1px solid #d2d2d2 !important;
+    background: rgba(255,255,255,.96) !important;
+    color: #1f1f1f !important;
+    font-size: 16px !important;
+    font-weight: 900 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12) !important;
+    padding: 6px 8px !important;
+    white-space: nowrap !important;
+}
+
+#shortGamePanel .shortgame-type-btn {
+    min-height: 48px !important;
+    font-size: 17px !important;
+}
+
+#shortGamePanel .shortgame-adjust-btn {
+    font-size: 30px !important;
+    line-height: 1 !important;
+}
+
+#shortGamePanel .shortgame-distance-display {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 19px !important;
+}
+
+#shortGamePanel .shortgame-result-top-row,
+#shortGamePanel .shortgame-result-bottom-row {
+    display: grid !important;
+    gap: 8px !important;
+}
+
+#shortGamePanel .shortgame-result-top-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+#shortGamePanel .shortgame-result-bottom-row {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    margin-top: 8px !important;
+}
+
+#shortGamePanel .shortgame-result-btn {
+    font-size: 14px !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+}
+
+#shortGamePanel .shortgame-type-btn.active,
+#shortGamePanel .shortgame-lie-btn.active,
+#shortGamePanel .shortgame-distance-btn.active,
+#shortGamePanel .shortgame-result-btn.active {
+    background: #178724 !important;
+    border-color: #0f5c18 !important;
+    color: #ffffff !important;
+}
+
+#shortGamePanel .shortgame-summary-box {
+    margin-top: 13px !important;
+    border-radius: 14px !important;
+    background: rgba(255,255,255,.88) !important;
+    border: 1px solid rgba(0,0,0,.10) !important;
+    padding: 10px 10px 12px !important;
+}
+
+#shortGamePanel .shortgame-summary-title {
+    font-size: 15px !important;
+    color: #2f7d38 !important;
+    margin-bottom: 6px !important;
+}
+
+#shortGamePanel .shortgame-summary-text {
+    font-size: 16px !important;
+    font-weight: 900 !important;
+    color: #252525 !important;
+    min-height: 20px !important;
+}
+
+#shortGamePanel .shortgame-map-wrap {
+    margin-top: 10px !important;
+    border-radius: 14px !important;
+    border: 1px solid rgba(0,0,0,.12) !important;
+    background: #fff !important;
+}
+
+#shortGamePanel .shortgame-footer {
+    position: static !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    margin-top: 14px !important;
+}
+
+@media (max-width: 390px) {
+    #shortGamePanel .shortgame-sheet {
+        width: 98vw !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+    #shortGamePanel .shortgame-lie-grid {
+        padding: 0 18px !important;
+    }
+    #shortGamePanel .shortgame-type-btn,
+    #shortGamePanel .shortgame-lie-btn,
+    #shortGamePanel .shortgame-distance-btn,
+    #shortGamePanel .shortgame-result-btn,
+    #shortGamePanel .shortgame-adjust-btn,
+    #shortGamePanel .shortgame-distance-display {
+        font-size: 13px !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
+}
+
+/* ===== SAVE HOLE POPUP POLISH ===== */
+
+#saveConfirmPopup .popup-box {
+    position: relative !important;
+    background: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    border-radius: 22px !important;
+    box-shadow: 0 14px 34px rgba(0,0,0,0.32) !important;
+    overflow: hidden !important;
+    padding: 0 22px 24px !important;
+}
+
+#saveConfirmPopup .popup-green-header,
+#saveConfirmPopup #saveConfirmHeader {
+    display: block !important;
+    width: calc(100% + 44px) !important;
+    margin: 0 -22px 20px !important;
+    padding: 16px 62px 16px 22px !important;
+    background: #178724 !important;
+    color: #ffffff !important;
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
+#saveConfirmPopup .popup-circle-close,
+#saveConfirmPopup .popup-close,
+#saveConfirmPopup .close-popup {
+    position: absolute !important;
+    top: 10px !important;
+    right: 12px !important;
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    color: #178724 !important;
+    border: none !important;
+    font-size: 30px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.22) !important;
+}
+
+#saveConfirmPopup .popup-actions {
+    display: flex !important;
+    gap: 10px !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+}
+
+#saveConfirmPopup #confirmOK {
+    flex: 1 !important;
+    background: linear-gradient(180deg,#666666 0%,#1b1b1b 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #111111 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.32) !important;
+}
+
+#saveConfirmPopup #confirmStay {
+    flex: 1 !important;
+    background: #ffffff !important;
+    color: #111111 !important;
+    border: 1px solid rgba(0,0,0,0.32) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.22) !important;
+}
+
+#openEnhancedStats {
+    box-shadow: 0 8px 18px rgba(0,0,0,0.45) !important;
+}
+
+
+#saveConfirmPopup #confirmCancel {
+    background: linear-gradient(180deg,#666666 0%, #1a1a1a 100%) !important;
+    color: #ffffff !important;
+    border: 1.25px solid #000000 !important;
+    border-radius: 14px !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.20),
+        0 8px 6px rgba(0,0,0,0.16) !important;
 }
