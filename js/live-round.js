@@ -1,5 +1,5 @@
 (function () {
-  const LIVE_TABLE = "live_round_status";
+  const LIVE_TABLE = "live_round_status_p2";
   const LIVE_SESSION_KEY = "golfStatsLiveSessionId";
 
   function getSupabaseClient() {

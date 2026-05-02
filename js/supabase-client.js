@@ -87,7 +87,7 @@ window.uploadCompletedRoundToSupabase = async function (round) {
   console.log("[SUPABASE UPLOAD] row being inserted:", row);
 
   const { error } = await window.supabaseClient
-    .from("completed_rounds")
+    .from("completed_rounds_p2")
     .insert([row]);
 
   console.log("[SUPABASE UPLOAD] insert finished, error:", error);
