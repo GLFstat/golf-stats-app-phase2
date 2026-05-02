@@ -12,7 +12,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
   <title>Golf Stats Tracker</title>
-  <link rel="stylesheet" href="style.css?v=yardages-fix-1">
+  <link rel="stylesheet" href="style.css?v=shortgame-test-1">
   <link rel="stylesheet" href="clubhouse.css">
 </head>
 <body>
@@ -154,39 +154,42 @@
   <div class="yardages-popup-card">
     
 <div class="yardages-popup-title">
-  <span>Hole Yardages</span>
+  <span>Hole Yardages / Pars</span>
   <button id="closeHoleYardagesBtn" class="popup-circle-close" type="button" aria-label="Close Hole Yardages">×</button>
 </div>
 
-    <button id="closeHoleYardagesBtn" class="popup-header-close popup-close-check" type="button" aria-label="Close Hole Yardages">✓</button>
 
-    <div class="yardages-popup-section-label">FRONT 9</div>
+   <div class="yardages-popup-section-label">FRONT 9</div>
 
-    <div class="yardages-grid">
-      <div class="yardage-item"><label for="yardage1" class="yardage-hole-label">1</label><input type="number" id="yardage1" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage2" class="yardage-hole-label">2</label><input type="number" id="yardage2" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage3" class="yardage-hole-label">3</label><input type="number" id="yardage3" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage4" class="yardage-hole-label">4</label><input type="number" id="yardage4" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage5" class="yardage-hole-label">5</label><input type="number" id="yardage5" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage6" class="yardage-hole-label">6</label><input type="number" id="yardage6" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage7" class="yardage-hole-label">7</label><input type="number" id="yardage7" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage8" class="yardage-hole-label">8</label><input type="number" id="yardage8" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage9" class="yardage-hole-label">9</label><input type="number" id="yardage9" class="yardage-input" min="0" inputmode="numeric"></div>
-    </div>
+<div class="yardages-grid">
+  <div class="yardage-item compact-row"><label for="yardage1" class="yardage-hole-label">1</label><input type="number" id="yardage1" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par1" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="yardage-item compact-row"><label for="yardage2" class="yardage-hole-label">2</label><input type="number" id="yardage2" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par2" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="yardage-item compact-row"><label for="yardage3" class="yardage-hole-label">3</label><input type="number" id="yardage3" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par3" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
 
-    <div class="yardages-popup-section-label yardages-back9-label">BACK 9</div>
+  <div class="yardage-item compact-row"><label for="yardage4" class="yardage-hole-label">4</label><input type="number" id="yardage4" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par4" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="yardage-item compact-row"><label for="yardage5" class="yardage-hole-label">5</label><input type="number" id="yardage5" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par5" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="yardage-item compact-row"><label for="yardage6" class="yardage-hole-label">6</label><input type="number" id="yardage6" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par6" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
 
-    <div class="yardages-grid">
-      <div class="yardage-item"><label for="yardage10" class="yardage-hole-label">10</label><input type="number" id="yardage10" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage11" class="yardage-hole-label">11</label><input type="number" id="yardage11" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage12" class="yardage-hole-label">12</label><input type="number" id="yardage12" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage13" class="yardage-hole-label">13</label><input type="number" id="yardage13" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage14" class="yardage-hole-label">14</label><input type="number" id="yardage14" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage15" class="yardage-hole-label">15</label><input type="number" id="yardage15" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage16" class="yardage-hole-label">16</label><input type="number" id="yardage16" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage17" class="yardage-hole-label">17</label><input type="number" id="yardage17" class="yardage-input" min="0" inputmode="numeric"></div>
-      <div class="yardage-item"><label for="yardage18" class="yardage-hole-label">18</label><input type="number" id="yardage18" class="yardage-input" min="0" inputmode="numeric"></div>
-    </div>
+  <div class="yardage-item compact-row"><label for="yardage7" class="yardage-hole-label">7</label><input type="number" id="yardage7" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par7" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="yardage-item compact-row"><label for="yardage8" class="yardage-hole-label">8</label><input type="number" id="yardage8" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par8" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="yardage-item compact-row"><label for="yardage9" class="yardage-hole-label">9</label><input type="number" id="yardage9" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par9" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+</div>
+
+<div class="yardages-popup-section-label yardages-back9-label">BACK 9</div>
+
+<div class="yardages-grid">
+  <div class="yardage-item compact-row"><label for="yardage10" class="yardage-hole-label">10</label><input type="number" id="yardage10" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par10" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="yardage-item compact-row"><label for="yardage11" class="yardage-hole-label">11</label><input type="number" id="yardage11" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par11" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="yardage-item compact-row"><label for="yardage12" class="yardage-hole-label">12</label><input type="number" id="yardage12" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par12" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+
+  <div class="yardage-item compact-row"><label for="yardage13" class="yardage-hole-label">13</label><input type="number" id="yardage13" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par13" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="yardage-item compact-row"><label for="yardage14" class="yardage-hole-label">14</label><input type="number" id="yardage14" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par14" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="yardage-item compact-row"><label for="yardage15" class="yardage-hole-label">15</label><input type="number" id="yardage15" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par15" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+
+  <div class="yardage-item compact-row"><label for="yardage16" class="yardage-hole-label">16</label><input type="number" id="yardage16" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par16" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="yardage-item compact-row"><label for="yardage17" class="yardage-hole-label">17</label><input type="number" id="yardage17" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par17" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+  <div class="yardage-item compact-row"><label for="yardage18" class="yardage-hole-label">18</label><input type="number" id="yardage18" class="compact-yardage-input" min="0" inputmode="numeric"><select id="par18" class="compact-par-input"><option value="">P</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+</div>
 
     <div class="yardages-total-row">
       <span class="yardages-total-label">Course Yardage:</span>
@@ -236,7 +239,9 @@
 
   <div class="hole-nav">
     <div class="hole-par-section">
-      <h2 class="enter-stats-header">Enter Stats for Hole <span id="holeHeader">1</span></h2>
+      <h2 class="enter-stats-header">
+  Enter Stats for Hole <span id="holeHeader">1</span><span id="holeHeaderYardage"></span>
+</h2>
 
       <div class="hole-par-container">
         <div class="hole-par-header">Select Hole's Par</div>
@@ -334,14 +339,13 @@
         <div class="es-panel-title">Your Performance Stats</div>
       </div>
 
-      <button id="closeEnhancedStats" class="es-close-btn" type="button">✕</button>
+      <button id="closeEnhancedStats" class="es-close-btn" type="button">×</button>
     </div>
 
     <div class="es-panel-body">
-      <p class="es-panel-text">
-        <div style="color:#c54c33;"><strong>Performance Stats are most accurate when entered now.</strong></div>
-    
-      </p>
+      <div class="es-panel-text">
+        <strong>Performance Stats are <br>most accurate when entered now.</strong>
+      </div>
 
      <div class="es-tile-grid">
   <button id="openTeeShotStats" class="es-tile" type="button">
@@ -394,50 +398,53 @@
         <div class="es-panel-title">Approach</div>
       </div>
 
-      <button id="closeApproachPanel" class="es-close-btn" type="button">✕</button>
+  <button id="closeApproachPanel" class="standard-popup-close" type="button" aria-label="Close Approach">
+  <img src="images/circle-x-close.svg" alt="">
+  </button>
     </div>
 
     <div class="es-panel-body">
 
       <div class="approach-section">
-        <div class="approach-label approach-main-label">
+
+        <div class="tee-shot-label approach-main-label">
   Shot Distance: <span id="approachDistanceToHoleLabel">—</span>
 </div>
 
         <div id="approachChipRow" class="approach-chip-row approach-chip-row-clean">
-<button class="approach-chip-btn" type="button" data-distance="50">50</button>
-<button class="approach-chip-btn" type="button" data-distance="100">100</button>
-<button class="approach-chip-btn" type="button" data-distance="150">150</button>
-<button class="approach-chip-btn" type="button" data-distance="200">200</button>
+<button class="tee-chip-btn approach-chip-btn" type="button" data-distance="50">50</button>
+<button class="tee-chip-btn approach-chip-btn" type="button" data-distance="100">100</button>
+<button class="tee-chip-btn approach-chip-btn" type="button" data-distance="150">150</button>
+<button class="tee-chip-btn approach-chip-btn" type="button" data-distance="200">200</button>
         </div>
 
         <div class="approach-adjust-row">
-          <button id="approachDistanceMinus" class="approach-adjust-btn" type="button">−</button>
-          <div id="approachDistanceDisplay" class="approach-distance-display">— yds</div>
-          <button id="approachDistancePlus" class="approach-adjust-btn" type="button">+</button>
+<button id="approachDistanceMinus" class="tee-adjust-btn approach-adjust-btn" type="button">−</button>
+<div id="approachDistanceDisplay" class="tee-distance-display approach-distance-display">— yds</div>
+<button id="approachDistancePlus" class="tee-adjust-btn approach-adjust-btn" type="button">+</button>
         </div>
       </div>
 
       <div class="approach-section approach-result-section">
-  <div class="approach-label approach-main-label">Shot Result</div>
+  <div class="tee-shot-label approach-main-label">Shot Result</div>
 
-  <div class="approach-result-table">
+<div class="approach-result-table">
     <div class="approach-row-label">Long:</div>
-    <button class="approach-result-btn" type="button" data-result="Long Left">LEFT</button>
-    <button class="approach-result-btn" type="button" data-result="Long Center">CENTER</button>
-    <button class="approach-result-btn" type="button" data-result="Long Right">RIGHT</button>
+    <button class="tee-option-btn approach-result-btn" type="button" data-result="Long Left">Left</button>
+    <button class="tee-option-btn approach-result-btn" type="button" data-result="Long Center">Center</button>
+    <button class="tee-option-btn approach-result-btn" type="button" data-result="Long Right">Right</button>
 
     <div class="approach-row-label">Pin High:</div>
-    <button class="approach-result-btn" type="button" data-result="Pin High Left">LEFT</button>
-    <button class="approach-result-btn" type="button" data-result="Hit / Center">CENTER</button>
-    <button class="approach-result-btn" type="button" data-result="Pin High Right">RIGHT</button>
+    <button class="tee-option-btn approach-result-btn" type="button" data-result="Pin High Left">Left</button>
+    <button class="tee-option-btn approach-result-btn" type="button" data-result="Hit / Center">Center</button>
+    <button class="tee-option-btn approach-result-btn" type="button" data-result="Pin High Right">Right</button>
 
     <div class="approach-row-label">Short:</div>
-    <button class="approach-result-btn" type="button" data-result="Short Left">LEFT</button>
-    <button class="approach-result-btn" type="button" data-result="Short Center">CENTER</button>
-    <button class="approach-result-btn" type="button" data-result="Short Right">RIGHT</button>
-  </div>
+    <button class="tee-option-btn approach-result-btn" type="button" data-result="Short Left">Left</button>
+    <button class="tee-option-btn approach-result-btn" type="button" data-result="Short Center">Center</button>
+    <button class="tee-option-btn approach-result-btn" type="button" data-result="Short Right">Right</button>
 </div>
+      </div>
 
       <div class="approach-summary-box">
         <div class="approach-summary-title">Quick Summary</div>
@@ -481,16 +488,20 @@
 <!-- Putting Panel -->
 <div id="puttingPanel" class="es-panel-overlay hidden">
   <div class="es-panel-sheet putting-sheet">
-    <div class="putting-header-row">
-      <div>
+    <div class="es-panel-header putting-header-row">
+      <div class="es-panel-title-wrap">
         <div id="puttingHoleLabel" class="es-panel-hole">Hole</div>
-        <div class="putting-title">Putting Performance Stats</div>
+        <div class="es-panel-title putting-title">Putting</div>
       </div>
-      <button id="closePuttingPanel" class="es-close-btn putting-close-btn" type="button">✕</button>
+      <button id="closePuttingPanel" class="es-close-btn putting-close-btn" type="button">×</button>
     </div>
 
     <div class="putting-card">
-      <div id="puttingStepTitle" class="putting-card-title">PUTT #1</div>
+      <div id="puttingStepTabs" class="putting-tabs">
+        <div id="puttingTab1" class="putting-tab">PUTT #1</div>
+        <div id="puttingTab2" class="putting-tab">PUTT #2</div>
+        <div id="puttingTab3" class="putting-tab">PUTT #3</div>
+    </div>
       <div class="putting-card-body">
         <div class="putting-label">START DISTANCE (FEET)</div>
         <div id="puttingChipRow" class="putting-chip-row">
@@ -527,13 +538,13 @@
         <line x1="295" y1="395" x2="940" y2="395" class="putting-yard-line" />
         <line x1="320" y1="500" x2="950" y2="500" class="putting-yard-line" />
         <line x1="350" y1="635" x2="950" y2="635" class="putting-yard-line" />
-        <text x="895" y="128" class="putting-yard-label putting-zero-label">0 ft</text>
+        <!--<text x="895" y="128" class="putting-yard-label putting-zero-label">0 ft</text>
         <text x="900" y="183" class="putting-yard-label">3 ft</text>
         <text x="915" y="233" class="putting-yard-label">6 ft</text>
         <text x="940" y="313" class="putting-yard-label">10 ft</text>
         <text x="955" y="403" class="putting-yard-label">15 ft</text>
         <text x="965" y="508" class="putting-yard-label">20 ft</text>
-        <text x="965" y="643" class="putting-yard-label">30+ ft</text>
+        <text x="965" y="643" class="putting-yard-label">30+ ft</text>  -->
         <path id="puttingRollPath" class="putting-roll-path" d="M 500 635 Q 505 350 500 120" />
         <circle id="puttingBallDot" class="putting-ball-dot" cx="500" cy="175" r="18" />
         <rect id="puttingBallLabelBox" class="putting-ball-label-box" x="535" y="153" width="74" height="38" rx="8" />
@@ -547,7 +558,7 @@
       <div class="putting-summary-cell putting-total-cell"><div class="putting-summary-kicker">TOTAL PUTTS</div><div id="puttingTotalSummary" class="putting-total-number">0</div></div>
     </div>
 
-    <div class="putting-footer-actions">
+    <div class="es-panel-footer">
       <button id="savePuttingStats" class="es-done-btn putting-save-btn" type="button">Save Putts</button>
       <button id="cancelPuttingStats" class="tee-cancel-btn putting-cancel-btn" type="button">Cancel</button>
     </div>
@@ -558,13 +569,17 @@
 <!-- Short Game Panel -->
 <div id="shortGamePanel" class="es-panel-overlay hidden shortgame-overlay">
   <div class="es-panel-sheet shortgame-sheet">
-    <div class="shortgame-header-row">
-      <div>
-        <div id="shortGameHoleLabel" class="shortgame-hole-label-top">HOLE</div>
-        <div class="shortgame-title">Short Game</div>
-      </div>
-      <button id="closeShortGamePanel" class="shortgame-close-btn" type="button" aria-label="Close Short Game">×</button>
-    </div>
+
+<div class="es-panel-header">
+  <div class="es-panel-title-wrap">
+    <div id="shortGameHoleLabel" class="es-panel-hole">Hole</div>
+    <div class="es-panel-title">Short Game</div>
+  </div>
+
+  <button id="closeShortGamePanel" class="standard-popup-close" type="button" aria-label="Close Short Game">
+    <img src="images/circle-x-close.svg" alt="">
+  </button>
+</div>
 
     <div class="es-panel-body shortgame-body">
       <div class="shortgame-section shortgame-section-tight">
@@ -589,10 +604,10 @@
       <div class="shortgame-section">
         <div class="shortgame-label">Distance to Hole</div>
         <div class="shortgame-distance-row">
-          <button class="shortgame-distance-btn" type="button" data-distance="10">10'</button>
-          <button id="shortGameDistancePlus" class="shortgame-adjust-btn" type="button">+</button>
+          <button class="shortgame-distance-btn" type="button" data-distance="10">10</button>
+          <button id="shortGameDistanceMinus" class="shortgame-adjust-btn" type="button">−</button>       
           <div id="shortGameDistanceDisplay" class="shortgame-distance-display">30 yds</div>
-          <button id="shortGameDistanceMinus" class="shortgame-adjust-btn" type="button">−</button>
+          <button id="shortGameDistancePlus" class="shortgame-adjust-btn" type="button">+</button>
           <button class="shortgame-distance-btn" type="button" data-distance="50">50</button>
         </div>
       </div>
@@ -681,10 +696,12 @@
     <div class="es-panel-header">
       <div class="es-panel-title-wrap">
         <div id="teeShotHoleLabel" class="es-panel-hole">Hole</div>
-        <div class="es-panel-title">Tee Shot</div>
+          <div class="es-panel-title">Tee Shot</div> 
       </div>
 
-      <button id="closeTeeShotPanel" class="es-close-btn" type="button">✕</button>
+      <button id="closeTeeShotPanel" class="standard-popup-close" type="button" aria-label="Close Tee Shot">
+  <img src="images/circle-x-close.svg" alt="">
+</button>
     </div>
 
     <div class="es-panel-body">
@@ -753,7 +770,15 @@
 
 
   <div class="return-row">
-    <button id="returnToDetails" type="button">← Return to Round Details</button>
+       <button id="returnToDetailsBtn" class="nav-text-link-btn" type="button">
+  ← Return to Round Details
+</button>
+
+<span class="link-separator">|</span>
+
+<button id="viewHoleYardagesBtn" class="ydg-text-link-btn" type="button">
+  View Hole Yardages
+</button>
   </div>
 </div>
 
@@ -788,7 +813,7 @@
       Select a direction and distance before saving Tee Shot.
     </div>
 
-    <button id="teeShotValidationOK" class="popup-header-close popup-close-check" type="button" aria-label="Close Tee Shot Incomplete">✓</button>
+    <button id="teeShotValidationOK" class="popup-header-close popup-close-check" type="button" aria-label="Close Tee Shot Incomplete">OK</button>
   </div>
 </div>
 
@@ -809,10 +834,22 @@
 
 <!-- Validation Popup -->
 <div id="validationPopup" class="popup-overlay">
-  <div class="popup-box styled-popup-box">
-    <div class="popup-green-header">Missing Required Stats</div>
-    <button id="validationOK" class="popup-header-close popup-close-check" type="button" aria-label="Close Missing Required Stats">✓</button>
-    <div id="validationText" class="popup-body-text"></div>
+  <div class="popup-box styled-popup-box validation-popup-box">
+
+    <div class="popup-green-header">
+      Missing Required Stats
+    </div>
+
+    <div id="validationText" class="popup-body-text validation-message">
+      Please enter the hole's Par, Putts, and the hole's Score before saving.
+    </div>
+
+    <div class="popup-btn-row">
+      <button id="validationOK" class="popup-btn-secondary" type="button">
+        OK
+      </button>
+    </div>
+
   </div>
 </div>
 
@@ -1066,11 +1103,15 @@
   </div>
 </div>
 
-<!-- Round Summary Modal -->
+<!-- ===== Round Summary Modal / Hole Stats Summary ===== -->
 <div id="summaryModal">
   <div class="summary-box">
-    <div id="exitSummary">EXIT ✖</div>
-    <h2>Round Summary</h2>
+
+    <!-- ===== Hole Stats Summary Header ===== -->
+    <div class="summary-modal-title">
+      <span>Hole Stats Summary</span>
+      <button id="exitSummary" class="summary-circle-close" type="button" aria-label="Close Hole Stats Summary">×</button>
+    </div>
 <div id="summaryCourseName" style="font-size:14px; color:#555; margin-top:-6px; margin-bottom:10px;"></div>
     <div class="table-container">
       <table id="summaryTable">
@@ -1163,6 +1204,27 @@
 <script src="js/live-round.js"></script>
 <script src="js/app.js"></script>
 <script src="js/clubhouse.js"></script>
+
+
+
+<!-- Zero Putts Confirmation Popup -->
+<div id="zeroPuttsPopup" class="popup-overlay">
+  <div class="popup-box">
+    <div class="popup-header">
+      <div class="popup-title">Confirm 0 Putts</div>
+      <button id="closeZeroPutts" class="popup-circle-close" type="button">×</button>
+    </div>
+
+    <div class="popup-body-text">
+      No putts entered.<br>Was this a hole-out?
+    </div>
+
+    <div class="popup-actions">
+      <button id="confirmZeroPuttsBtn" class="btn-primary" type="button">Yes — 0 Putts</button>
+      <button id="cancelZeroPuttsBtn" class="btn-secondary" type="button">Go Back</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
