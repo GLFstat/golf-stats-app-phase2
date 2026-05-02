@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stracker Admin Portal P2 - TEST</title>
+  <link rel="stylesheet" href="admin-portal-p2.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/admin-portal-p2.js" defer></script>
+</head>
+<body>
+
+
+<div style="
+  background:#14532d;
+  color:white;
+  text-align:center;
+  font-weight:700;
+  padding:8px;
+  letter-spacing:0.08em;
+">
+  PHASE 2 TEST PORTAL
+</div>
+
+
+
+
+<!-- ADMIN LOGIN OVERLAY -->
+<div id="adminLoginOverlay" class="admin-login-overlay">
+  <div class="admin-login-box">
+    <h2>Admin Access</h2>
+
+    <input 
+      type="password" 
+      id="adminPasswordInput" 
+      placeholder="Enter password" 
+    />
+
+    <button id="adminLoginBtn" type="button">Login</button>
+    <button id="closeAdminLoginBtn" type="button">Cancel</button>
+
+    <div id="adminLoginError" class="admin-login-error"></div>
+  </div>
+</div>
+
+
+  <div class="portal-shell">
+    <header class="portal-header">
+      <div class="header-overlay">
+        <div class="header-left">
+          <img src="images/Stracker-header-2.png" alt="Stracker Logo" class="header-logo" />
+          <div class="header-title-lockup">
+            <div id="portalTitle" class="header-subtitle"></div>
+          </div>
+        </div>
+
+<div class="header-right">
+  <button id="loginBtn" class="header-btn" type="button">Log In</button>
+
+  <button id="openBrandingModalBtn" class="header-btn admin-only hidden" type="button">
+    Edits
+  </button>
+
+  <button id="logoutBtn" class="header-btn admin-only hidden" type="button">
+    Log Out
+  </button>
+</div>
+
+
+      </div>
+    </header>
+
+    <main class="portal-main">
+      <section class="portal-grid">
+
+        <div class="portal-card live-card">
+          <div class="card-header">
+            <div class="card-header-title-row">
+              <h2>Live Round</h2>
+              <div id="liveRoundLastUpdate" class="live-round-last-update"></div>
+            </div>
+            <div class="card-header-actions">
+              <button id="refreshBtn" class="icon-btn" type="button" title="Refresh">↻</button>
+            </div>
+          </div>
+
+          <div id="roundDetails" class="live-round-content">
+            <div class="live-player-row">
+              <div>
+                <div class="live-player-name">Waiting for Live Round</div>
+                <div class="live-course-name">No active player data yet</div>
+              </div>
+
+              <div class="live-hole-box">
+                <div class="live-hole-number">--</div>
+                <div class="live-hole-of">of 18</div>
+              </div>
+            </div>
+
+            <div class="live-stats-list">
+              <div class="live-stat-line"><strong>Total Score:</strong> --</div>
+              <div class="live-stat-line"><strong>Total Putts:</strong> --</div>
+              <div class="live-stat-line"><strong>FIR:</strong> --</div>
+              <div class="live-stat-line"><strong>GIR:</strong> --</div>
+              <div class="live-stat-line"><strong>Up &amp; Downs:</strong> --</div>
+              <div class="live-stat-line"><strong>Penalties:</strong> --</div>
+            </div>
+
+            <div class="live-round-instruction">Tap a hole tile to see hole details</div>
+
+            <div class="holes-grid placeholder-holes">
+              <div class="hole">1</div><div class="hole">2</div><div class="hole">3</div><div class="hole">4</div><div class="hole">5</div><div class="hole">6</div>
+              <div class="hole">7</div><div class="hole">8</div><div class="hole">9</div><div class="hole">10</div><div class="hole">11</div><div class="hole">12</div>
+              <div class="hole">13</div><div class="hole">14</div><div class="hole">15</div><div class="hole">16</div><div class="hole">17</div><div class="hole">18</div>
+            </div>
+
+            <div class="live-footer-row">
+              <div class="last-updated">Last updated: --</div>
+              <button class="refresh-main-btn" type="button" onclick="loadLiveRounds()">Refresh</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-column">
+
+          <div class="portal-card completed-card">
+            <div class="card-header">
+              <h2>Live Round Snapshots</h2>
+            </div>
+
+            <div id="liveRoundsList" class="completed-rounds-list">
+              <table class="rounds-table">
+                <thead>
+                  <tr>
+                    <th>Course</th>
+                    <th>Date</th>
+                    <th>Score</th>
+                    <th>Test</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="5" class="placeholder-cell">No rounds loaded yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="portal-card latest-completed-card">
+            <div class="card-header">
+              <h2>Last Completed Round</h2>
+            </div>
+
+            <div id="latestCompletedRound" class="latest-completed-content empty">
+              No completed round found yet.
+            </div>
+          </div>
+
+          <div class="portal-card maintenance-card">
+            <div class="card-header">
+              <h2>Maintenance</h2>
+            </div>
+
+            <div class="maintenance-actions">
+              <button id="clearFinishedBtn" class="action-btn gold-btn" type="button">
+                Delete All Test Rounds
+              </button>
+
+              <button id="clearLiveBtn" class="action-btn gray-btn" type="button">
+                Clear Live Round Snapshot
+              </button>
+            </div>
+
+            <div id="maintenanceStats" class="maintenance-stats">
+              Records: -- total, -- test round(s)
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- Portal Modal Overlay -->
+  <div id="portalModalOverlay" class="portal-modal-overlay hidden">
+    <div class="portal-modal-card">
+      <h3 id="portalModalTitle">Notice</h3>
+      <div id="portalModalMessage" class="portal-modal-message"></div>
+
+      <div id="portalModalSummaryWrap" class="portal-summary-wrap hidden">
+        <div id="portalRoundSummaryTable" class="portal-round-summary-table"></div>
+      </div>
+
+      <div id="portalModalActions" class="portal-modal-actions">
+        <button id="portalModalCancelBtn" class="portal-modal-btn secondary" type="button">Cancel</button>
+        <button id="portalModalConfirmBtn" class="portal-modal-btn primary" type="button">OK</button>
+      </div>
+    </div>
+  </div>
+
+
+<div id="completedSummaryModal" class="summary-modal hidden">
+  <div class="summary-modal-backdrop" onclick="closeCompletedSummary()"></div>
+
+  <div class="summary-modal-card">
+    <button class="summary-modal-close" type="button" onclick="closeCompletedSummary()">×</button>
+
+    <div class="summary-modal-header">
+      <h2 id="completedSummaryTitle">Round Summary</h2>
+      <div id="completedSummaryMeta" class="summary-meta"></div>
+    </div>
+
+    <div id="completedSummaryBody" class="summary-modal-body">
+      Loading...
+    </div>
+  </div>
+</div>
+
+
+
+<!-- PORTAL BRANDING MODAL -->
+<div id="brandingModal" class="branding-modal hidden">
+  <div class="branding-modal-box">
+    <h3>Portal Branding</h3>
+
+<div class="branding-section">
+  <div class="branding-label">Player Name</div>
+
+  <select id="playerNameSelect" class="branding-select">
+    <option value="">I Gonzales (Default)</option>
+    <option value="Isaiah Gonzales">I Gonzales</option>
+    <option value="Player 2">Player 2</option>
+    <option value="Player 3">Player 3</option>
+  </select>
+</div>
+
+
+    <div class="branding-section">
+      <div class="branding-label">Header Image</div>
+
+      <div class="branding-image-options">
+        <button class="branding-option-btn" type="button" data-header-image="images/AP-hdr-pics/aphdr-shot1.jpg">1</button>
+        <button class="branding-option-btn" type="button" data-header-image="images/AP-hdr-pics/aphdr-shot2.jpg">2</button>
+        <button class="branding-option-btn" type="button" data-header-image="images/AP-hdr-pics/aphdr-shot3.jpg">3</button>
+      </div>
+    </div>
+
+    <div class="branding-actions">
+      <button id="closeBrandingModalBtn" class="header-btn" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
