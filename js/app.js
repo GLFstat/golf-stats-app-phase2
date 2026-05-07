@@ -2293,9 +2293,21 @@ if (saveBtn) {
             return;
         }
 
-        pendingSaveAfterValidation = false;
-        autoSaveInProgress = false;
-        
+pendingSaveAfterValidation = false;
+autoSaveInProgress = false;
+
+// ✅ Zero Putts confirmation only after required fields pass
+const puttsForZeroCheck = parseInt(document.getElementById("putts")?.value, 10);
+
+if (puttsForZeroCheck === 0 && window.zeroPuttsConfirmed !== true) {
+    const zeroPuttsPopup = document.getElementById("zeroPuttsPopup");
+    if (zeroPuttsPopup) {
+        zeroPuttsPopup.style.display = "flex";
+    }
+    return;
+}
+
+window.zeroPuttsConfirmed = false;
 
         const saveConfirmText = document.getElementById("saveConfirmText");
         const saveConfirmHeader = document.getElementById("saveConfirmHeader");
