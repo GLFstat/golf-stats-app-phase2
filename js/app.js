@@ -1065,12 +1065,9 @@ function getHoleSaveValidation() {
     const puttsValue = puttsInput ? String(puttsInput.value || "").trim() : "";
     const scoreValue = scoreInput ? String(scoreInput.value || "").trim() : "";
 
-   if (puttsValue === "") {
+if (puttsValue === "") {
     missing.push("Putts");
 }
-    if (puttsValue === "" || parseInt(puttsValue, 10) <= 0) {
-        missing.push("Putts");
-    }
 
     if (scoreValue === "" || parseInt(scoreValue, 10) <= 0) {
         missing.push("the hole's Score");
@@ -1091,9 +1088,9 @@ function applyHoleValidationHighlights() {
         document.querySelector(".hole-par-container")?.classList.add("validation-highlight");
     }
 
-    if (!puttsInput || String(puttsInput.value || "").trim() === "" || parseInt(puttsInput.value, 10) <= 0) {
-        puttsInput?.closest(".stat-counter")?.classList.add("validation-highlight");
-    }
+if (!puttsInput || String(puttsInput.value || "").trim() === "") {
+    puttsInput?.closest(".stat-counter")?.classList.add("validation-highlight");
+}
 
     if (!scoreInput || String(scoreInput.value || "").trim() === "" || parseInt(scoreInput.value, 10) <= 0) {
         scoreInput?.closest(".stat-counter")?.classList.add("validation-highlight");
