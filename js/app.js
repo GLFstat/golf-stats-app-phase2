@@ -1203,10 +1203,17 @@ function saveTeeShot() {
         holes[holeIndex] = {};
     }
 
-    holes[holeIndex].teeShot = {
-        direction: window.teeShotDraft?.direction || "",
-        distance: window.teeShotDraft?.distance ?? null
-    };
+const displayDistance = parseInt(
+    String(document.getElementById("teeDistanceDisplay")?.textContent || "").replace(/[^\d]/g, ""),
+    10
+);
+
+holes[holeIndex].teeShot = {
+    direction: window.teeShotDraft?.direction || "",
+    distance: Number.isFinite(displayDistance)
+        ? displayDistance
+        : (window.teeShotDraft?.distance ?? null)
+};
 
     persistActiveRound();
 
@@ -1234,23 +1241,16 @@ function completeHoleSave() {
 
     const selectedPar = selectedParEl ? parseInt(selectedParEl.value, 10) : null;
     const puttsValue = puttsEl ? parseInt(puttsEl.value, 10) || 0 : 0;
-
-    // ===== Zero Putts Confirmation =====
-if (puttsValue === 0 && !window.zeroPuttsConfirmed) {
-    const popup = document.getElementById("zeroPuttsPopup");
-    if (popup) popup.style.display = "flex";
-    return;
-}
-window.zeroPuttsConfirmed = false;
-
     const penaltyValue = penaltyEl ? parseInt(penaltyEl.value, 10) || 0 : 0;
     const scoreValue = scoreEl ? parseInt(scoreEl.value, 10) || 0 : 0;
 
-    if (selectedPar == null || scoreValue <= 0) {
+    if (selectedPar == null || scoreValue <= 0 || puttsValue <= 0) {
         if (saveConfirmPopup) saveConfirmPopup.style.display = "none";
         showHoleSaveValidationPopup();
         return;
     }
+
+    const existingHole = holes[currentHole - 1] || {};
 
     holes[currentHole - 1] = {
         fir: !!(firEl && firEl.checked),
@@ -1261,25 +1261,18 @@ window.zeroPuttsConfirmed = false;
         penalty: penaltyValue,
         score: scoreValue,
         par: selectedPar,
-teeShot: (
-    window.teeShotDraft &&
-    window.teeShotDraft.direction &&
-    window.teeShotDraft.distance !== null
-) ? {
-    direction: window.teeShotDraft.direction,
-    distance: window.teeShotDraft.distance
-} : (holes[currentHole - 1]?.teeShot || null),
-        approach: holes[currentHole - 1]?.approach || null,
-        putting: holes[currentHole - 1]?.putting || null,
-        shortGame: holes[currentHole - 1]?.shortGame || null,
-        notes: holes[currentHole - 1]?.notes || null,
+
+        // Preserve +Stats already saved before Save Hole
+        teeShot: existingHole.teeShot || null,
+        approach: existingHole.approach || null,
+        shortGame: existingHole.shortGame || null,
+        putting: existingHole.putting || null,
+        notes: existingHole.notes || null,
+
         saved: true
     };
 
-    if (window.teeShotDraft) {
-        window.teeShotDraft.direction = "";
-        window.teeShotDraft.distance = null;
-    }
+    console.log("SAVED HOLE WITH +STATS:", holes[currentHole - 1]);
 
     if (saveConfirmPopup) saveConfirmPopup.style.display = "none";
     if (validationPopup) validationPopup.style.display = "none";
@@ -2260,8 +2253,10 @@ function startCleanNewRoundNow(e) {
 
     clearActiveRoundStorage();
     removeFromStorage(ROUND_BG_INDEX_KEY);
-    localStorage.removeItem(HOLE_YARDAGES_KEY);
-localStorage.removeItem("strackerPhase2HolePars");
+// Keep hole yardages/pars entered on Round Details.
+// They should not be wiped when starting the new round.
+// localStorage.removeItem(HOLE_YARDAGES_KEY);
+// localStorage.removeItem(HOLE_PARS_KEY);
 
     resetCurrentRound();
 
@@ -2288,6 +2283,8 @@ if (deleteAndStartNewBtn) {
 }
 if (saveBtn) {
     saveBtn.addEventListener("click", () => {
+        if (!roundStarted) return;
+
         if (holes[currentHole - 1] && holes[currentHole - 1].saved) return;
 
         const validation = getHoleSaveValidation();
@@ -2423,14 +2420,6 @@ if (teeShotValidationOK) {
 if (validationOK) {
     validationOK.addEventListener("click", () => {
         if (validationPopup) validationPopup.style.display = "none";
-
-        const puttsInput = document.getElementById("putts");
-        const puttsValue = puttsInput ? String(puttsInput.value || "").trim() : "";
-
-        if (puttsValue === "" || parseInt(puttsValue, 10) <= 0) {
-            const zeroPuttsPopup = document.getElementById("zeroPuttsPopup");
-            if (zeroPuttsPopup) zeroPuttsPopup.style.display = "flex";
-        }
     });
 }
 
@@ -3126,11 +3115,11 @@ addHoldRepeat(teeDistancePlusBtn, 1);
 
 if (openTeeShotStatsBtn && teeShotPanel && enhancedStatsPanel) {
     openTeeShotStatsBtn.addEventListener("click", () => {
-                hidePerformanceStatPanels("teeShotPanel");
-enhancedStatsPanel.classList.add("hidden");
+        hidePerformanceStatPanels("teeShotPanel");
+        enhancedStatsPanel.classList.add("hidden");
 
-        loadTeeShotForCurrentHole();
         updateTeeShotDistanceChips();
+        loadTeeShotForCurrentHole();
         updateTeeShotHeader();
 
         if (typeof updateTeeShotSummary === "function") {
@@ -3466,23 +3455,6 @@ const loadHoleYardages = () => {
 
 if (addHoleYardagesBtn && holeYardagesPopup) {
     addHoleYardagesBtn.addEventListener("click", () => {
-        const savedRound = getParsedActiveRound();
-
-        if (!savedRound) {
-            localStorage.removeItem(HOLE_YARDAGES_KEY);
-localStorage.removeItem("strackerPhase2HolePars");
-
-            for (let i = 1; i <= 18; i++) {
-                const input = document.getElementById(`yardage${i}`);
-                if (input) input.value = "";
-
-                const parInput = document.getElementById(`par${i}`);
-                if (parInput) parInput.value = "";
-            }
-
-            updateHoleYardagesTotal();
-        }
-
         loadHoleYardages();
         holeYardagesPopup.classList.remove("hidden");
         updateHoleYardagesTotal();
@@ -3545,27 +3517,7 @@ document.querySelectorAll(".compact-par-input").forEach(input => {
         });
     }
 
-    const savedRoundForYardages = getParsedActiveRound();
-
-if (!savedRoundForYardages) {
-    localStorage.removeItem(HOLE_YARDAGES_KEY);
-localStorage.removeItem("strackerPhase2HolePars");
-
-    for (let i = 1; i <= 18; i++) {
-        const input = document.getElementById(`yardage${i}`);
-        if (input) input.value = "";
-
-        const parInput = document.getElementById(`par${i}`);
-        if (parInput) parInput.value = "";
-    }
-
-    const totalEl = document.getElementById("holeYardagesTotal");
-    if (totalEl) totalEl.textContent = "0";
-
-    if (teeYardageField) teeYardageField.value = "";
-} else {
-    loadHoleYardages();
-}
+loadHoleYardages();
 
 }
 
