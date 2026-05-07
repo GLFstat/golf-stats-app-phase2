@@ -138,7 +138,12 @@ function buildCompletedRound() {
                     penalty: 0,
                     score: 0,
                     par: null,
-                    saved: false
+                    saved: false,
+                    teeShot: null,
+                    approach: null,
+                    shortGame: null,
+                    putting: null,
+                    notes: null
                 };
             }
 
@@ -152,7 +157,14 @@ function buildCompletedRound() {
                 penalty: Number(h.penalty || 0),
                 score: Number(h.score || 0),
                 par: h.par == null ? null : Number(h.par),
-                saved: !!h.saved
+                saved: !!h.saved,
+
+                // ✅ PRESERVE +Stats
+                teeShot: h.teeShot || null,
+                approach: h.approach || null,
+                shortGame: h.shortGame || null,
+                putting: h.putting || null,
+                notes: h.notes || null
             };
         })
     };
