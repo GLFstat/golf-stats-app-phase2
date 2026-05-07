@@ -1274,8 +1274,9 @@ if (selectedPar == null || scoreValue <= 0) {
     if (saveConfirmPopup) saveConfirmPopup.style.display = "none";
     if (validationPopup) validationPopup.style.display = "none";
 
-    pendingSaveAfterValidation = false;
-    autoSaveInProgress = false;
+pendingSaveAfterValidation = false;
+autoSaveInProgress = false;
+window.zeroPuttsConfirmed = false;
 
     triggerSavedFeedback();
 
@@ -2301,6 +2302,12 @@ const puttsForZeroCheck = parseInt(document.getElementById("putts")?.value, 10);
 
 if (puttsForZeroCheck === 0 && window.zeroPuttsConfirmed !== true) {
     const zeroPuttsPopup = document.getElementById("zeroPuttsPopup");
+    const puttsInput = document.getElementById("putts");
+
+    if (puttsInput) {
+        puttsInput.closest(".stat-counter")?.classList.add("validation-highlight");
+    }
+
     if (zeroPuttsPopup) {
         zeroPuttsPopup.style.display = "flex";
     }
