@@ -1244,11 +1244,11 @@ function completeHoleSave() {
     const penaltyValue = penaltyEl ? parseInt(penaltyEl.value, 10) || 0 : 0;
     const scoreValue = scoreEl ? parseInt(scoreEl.value, 10) || 0 : 0;
 
-    if (selectedPar == null || scoreValue <= 0 || puttsValue <= 0) {
-        if (saveConfirmPopup) saveConfirmPopup.style.display = "none";
-        showHoleSaveValidationPopup();
-        return;
-    }
+if (selectedPar == null || scoreValue <= 0) {
+    if (saveConfirmPopup) saveConfirmPopup.style.display = "none";
+    showHoleSaveValidationPopup();
+    return;
+}
 
     const existingHole = holes[currentHole - 1] || {};
 
