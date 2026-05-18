@@ -17,6 +17,8 @@ let postRoundReturnTarget = "";
 let postRoundButtonDelayTimer = null;
 let postRoundButtonVisible = false;
 
+const HOLE_YARDAGES_KEY = "strackerPhase2HoleYardages";
+const HOLE_PARS_KEY = "strackerPhase2HolePars";
 const holes = new Array(18).fill(null);
 
 const STORAGE_KEY = "golfStatsActiveRound";
@@ -25,6 +27,7 @@ const COMPLETED_ROUNDS_KEY = "golfStatsCompletedRounds";
 const APP_VERSION_KEY = "golfStatsDataVersion";
 const CURRENT_DATA_VERSION = 1;
 const MAX_COMPLETED_ROUNDS = 250;
+
 
 let pendingSaveAfterValidation = false;
 let autoSaveInProgress = false;

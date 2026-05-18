@@ -271,11 +271,11 @@ header h1 {
 }
 
 .enter-stats-header {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
     margin: 0;
     text-align: left;
-    color: white;
+    color: rgb(255, 255, 255);
 }
 
 .hole-par-header {
@@ -285,6 +285,8 @@ header h1 {
     text-align: center;
     color: white;
 }
+
+
 
 .hole-par-radios {
     display: flex;
@@ -364,7 +366,8 @@ header h1 {
     height: 28px;
     transform: scale(1.4);
     margin-right: 12px;
-    accent-color: #4caf50;
+    accent-color: #178724;
+    color: white;
     background-color: rgba(255, 255, 255, 0.75);
     border-radius: 6px;
 }
@@ -482,9 +485,15 @@ header h1 {
     inset: 0;
     background: rgba(0,0,0,.22);
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;   /* 👈 CHANGED */
     justify-content: center;
     z-index: 9998;
+
+    overflow-y: auto;          /* 👈 ADDED */
+    -webkit-overflow-scrolling: touch;
+    padding-top: 10px;         /* 👈 ADDED */
+    padding-bottom: 24px;      /* 👈 ADDED */
+    box-sizing: border-box;
 }
 
 .es-panel-overlay.hidden {
@@ -501,6 +510,12 @@ header h1 {
     box-shadow: 0 -8px 20px rgba(0,0,0,.22);
     padding: 7px 12px 12px;
     margin-bottom: 98px;
+
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+
+    position: relative;   /* 👈 IMPORTANT */
 }
 
 .es-panel-handle {
@@ -539,17 +554,8 @@ header h1 {
 }
 
 .es-close-btn {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    color: #1f1f1f;
-    font-size: 28px;
-    line-height: 1;
-    padding: 0;
-    width: auto;
-    min-width: 0;
-    height: auto;
-    min-height: 0;
+    all: unset;
+    box-sizing: border-box;
 }
 
 .es-panel-body {
@@ -604,11 +610,15 @@ header h1 {
 }
 
 .es-panel-footer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
     margin-top: 10px;
+    margin-bottom: 14px;
 }
 
 .es-done-btn {
-    width: 100%;
+    width: 140%;
     min-height: 46px;
     border-radius: 13px;
     font-size: 18px;
@@ -640,6 +650,59 @@ header h1 {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
+}
+
+/* ===== Par 3 Tee Shot direction/result layout ===== */
+
+#teeShotDirectionGrid.tee-par3-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 5px 8px !important;
+}
+
+#teeShotDirectionGrid.tee-par3-grid .tee-option-btn {
+    min-height: 42px !important;
+    padding: 6px 8px !important;
+    font-size: 21px !important;
+}
+
+#teeShotDirectionGrid.tee-par3-grid #teeDirLong {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+}
+
+#teeShotDirectionGrid.tee-par3-grid #teeDirLeft {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+}
+
+#teeShotDirectionGrid.tee-par3-grid #teeDirCenter {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+}
+
+#teeShotDirectionGrid.tee-par3-grid #teeDirRight {
+    grid-column: 3 !important;
+    grid-row: 2 !important;
+}
+
+#teeShotDirectionGrid.tee-par3-grid #teeDirShort {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+}
+
+#teeShotDirectionGrid.tee-par3-grid #teeDirHoled {
+    grid-column: 2 !important;
+    grid-row: 4 !important;
+}
+
+/* Hide Par 3-only buttons on Par 4/5 */
+#teeShotDirectionGrid:not(.tee-par3-grid) .tee-par3-only {
+    display: none !important;
+}
+/* Hide Par 3-only buttons on Par 4/5 */
+#teeShotDirectionGrid:not(.tee-par3-grid) .tee-par3-only {
+    display: none !important;
 }
 
 .tee-option-btn {
@@ -741,7 +804,7 @@ header h1 {
 }
 
 .tee-cancel-btn {
-    width: 100%;
+    width: 140%;
     min-height: 42px;
     border-radius: 12px;
     border: 1px solid #cfcfcf;
@@ -752,6 +815,37 @@ header h1 {
     margin-top: 8px;
     box-shadow: none;
 }
+
+
+
+/* ===== Par 3-only Tee Shot result layout ===== */
+
+.tee-par3-top-result,
+.tee-par3-bottom-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tee-par3-top-result {
+    margin-bottom: 10px;
+}
+
+.tee-par3-bottom-results {
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.tee-par3-top-result .tee-option-btn,
+.tee-par3-bottom-results .tee-option-btn {
+    width: 42%;
+}
+
+.tee-par3-top-result.hidden,
+.tee-par3-bottom-results.hidden {
+    display: none !important;
+}
+
 
 
 
@@ -862,6 +956,7 @@ header h1 {
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
 }
 
+
 .nav-btn.disabled,
 .main-btn.disabled,
 .arrow-btn.disabled {
@@ -946,6 +1041,65 @@ header h1 {
     font-weight: bold;
     cursor: pointer;
 }
+
+/* ===== Start New Round confirmation popup ===== */
+
+#deleteRoundPopup .start-new-round-popup {
+  padding: 0 0 22px !important;
+  overflow: hidden;
+}
+
+#deleteRoundPopup .start-new-round-text {
+  padding: 22px 22px 16px;
+  margin: 0;
+  color: #222;
+  font-size: 17px;
+  line-height: 1.38;
+  font-weight: 500;
+}
+
+#deleteRoundPopup .start-new-warning-line {
+  color: #c62828;
+  font-weight: 700;
+}
+
+#deleteRoundPopup .start-new-round-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  padding: 0 18px;
+  margin: 0;
+}
+
+#deleteRoundPopup .start-new-round-actions button {
+  width: 100%;
+  max-width: 340px;
+  min-height: 48px;
+  border-radius: 13px;
+  font-size: 16px;
+  font-weight: 800;
+  margin: 0;
+  cursor: pointer;
+}
+
+#deleteRoundPopup .start-new-cancel-btn {
+  background: #ffffff !important;
+  color: #222222 !important;
+  border: 1px solid rgba(0,0,0,0.28) !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.18) !important;
+}
+
+#deleteRoundPopup .start-new-delete-btn {
+  background: linear-gradient(180deg,#5d5d5d 0%,#171717 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid #111111 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.25),
+    0 5px 12px rgba(0,0,0,0.34) !important;
+}
+
+
 
 .validation-highlight {
     box-shadow: 0 0 0 4px #ff3b30 !important;
@@ -1123,6 +1277,109 @@ header h1 {
     font-weight: 600;
 }
 
+
+/* ===== PERFORMANCE TRENDS EXPERIMENT START ===== */
+/* Optional read-only +Stats trend popup. Safe to remove if feature does not feel right. */
+
+#viewPerformanceTrendsBtn {
+    margin-top: 2px;
+    padding: 10px 16px;
+    font-size: 18px;
+    width: 75%;
+}
+
+.performance-trends-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+}
+
+.performance-trends-box {
+    background: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 18px;
+    width: calc(100% - 72px);
+    max-width: 580px;
+    max-height: 86vh;
+    overflow-y: auto;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.performance-trends-title {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 22px 58px 18px 58px;
+    min-height: 68px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    background: #228b22;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-sizing: border-box;
+}
+
+.performance-trends-close {
+    position: absolute;
+    top: 61%;
+    right: 14px;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: #ffffff;
+    color: #178724;
+    font-size: 26px;
+    font-weight: 300;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+.performance-trends-body {
+    padding: 18px 20px 22px;
+    color: #222222;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.performance-trends-section {
+    margin-bottom: 16px;
+}
+
+.performance-trends-section-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #2f7d38;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 5px;
+}
+
+.performance-trends-line {
+    margin: 4px 0;
+}
+
+/* ===== PERFORMANCE TRENDS EXPERIMENT END ===== */
+
+
+
 /* ================= Summary Modal ================= */
 #summaryModal {
     display: none;
@@ -1151,6 +1408,7 @@ header h1 {
     text-align: center;
     position: relative;
 }
+
 
 #exitSummary {
     position: absolute;
@@ -1878,6 +2136,7 @@ header h1 {
 }
 
 #nineteenthSummaryBtn,
+#nineteenthPerformanceTrendsBtn,
 #viewSavedRoundsBtn,
 #nineteenthDetailsBtn,
 #nineteenthNewRoundBtn,
@@ -2658,6 +2917,9 @@ header h1 {
     font-weight: 500;
     text-align: center;
     box-sizing: border-box;
+        width: 54px !important;
+    padding: 0 4px !important;
+    text-align: center;
 }
 
 .yardages-total-row {
@@ -2855,27 +3117,7 @@ header h1 {
 }
 
 
-/* APPROACH PANEL FIX */
-
-#approachPanel {
-  z-index: 9999;
-  background: rgba(0,0,0,0.22);
-}
-
-#approachPanel .es-panel-sheet {
-  background: rgba(243,243,240,.96);
-  color: #1f1f1f;
-  max-height: 82vh;
-  overflow-y: auto;
-}
-
-#approachPanel .approach-section,
-#approachPanel .approach-summary-box,
-#approachPanel .approach-label,
-#approachPanel .approach-distance-display,
-#approachPanel .approach-summary-text {
-  color: #1f1f1f;
-}
+/* APPROACH PANEL BASE */
 
 .approach-chip-btn,
 .approach-option-btn,
@@ -2943,8 +3185,9 @@ header h1 {
 ======================================== */
 
 .approach-sheet {
-  max-height: 86vh;
-  overflow-y: auto;
+  max-height: none !important;
+  height: auto !important;
+  overflow: visible !important;
 }
 
 .approach-section {
@@ -2989,23 +3232,6 @@ header h1 {
   gap: 8px;
 }
 
-.approach-result-btn {
-  min-height: 48px;
-  border-radius: 12px;
-  border: 1px solid #cfcfcf;
-  background: #ffffff;
-  color: #1f1f1f;
-  font-size: 14px;
-  font-weight: 800;
-  box-shadow: none;
-}
-
-.approach-result-btn.active,
-.approach-chip-btn.active {
-  background: #178724;
-  border-color: #0f5c18;
-  color: #ffffff;
-}
 
 .approach-map-wrap-large {
   height: 235px;
@@ -3027,6 +3253,10 @@ header h1 {
   font-size: 16px;
   font-weight: 800;
   margin: 6px 0 10px;
+}
+
+#approachPanel .approach-result-table .tee-option-btn.approach-result-btn {
+    font-size: 18px !important;
 }
 
 
@@ -3469,23 +3699,210 @@ header h1 {
     transition: cx 0.12s ease, cy 0.12s ease, x 0.12s ease, y 0.12s ease;
 }
 
-/* =====================================================
-   PUTTING +STATS PANEL — MOBILE FIRST
-===================================================== */
-#puttingPanel {
-    z-index: 10002;
+
+
+/* ===== Putting header polish ===== */
+
+#puttingPanel #puttingHoleLabel {
+    color: #caffd1 !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.03em !important;
+}
+
+#puttingPanel .putting-title {
+    color: #ffffff !important;
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    line-height: 1.05 !important;
+}
+
+#puttingPanel .putting-close-btn {
+    background: #ffffff !important;
+    color: #2f8a2f !important;
+    border-radius: 50% !important;
+    width: 34px !important;
+    height: 34px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 20px !important;
+    font-weight: 400 !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin-right: -32px !important;
+}
+
+#puttingPanel .putting-header-row {
+    margin-bottom: 0 !important;
+    position: relative !important;
+    z-index: 2 !important;
 }
 
 #puttingPanel .putting-sheet {
     width: 94%;
     max-width: 430px;
-    max-height: 94vh;
     margin-bottom: 12px;
-    overflow-y: auto;
     background: rgba(255,255,255,0.96);
     border-radius: 18px;
-    padding: 10px 12px 12px;
+    padding: 10px 12px 14px;
+
     box-sizing: border-box;
+    margin: 0 auto 18px auto !important;
+max-height: none !important;
+height: auto !important;
+display: block !important;
+}
+
+
+
+
+/* ===== Putting panel override: top aligned and scrollable ===== */
+#puttingPanel.es-panel-overlay {
+    align-items: flex-start !important;
+    justify-content: center !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: calc(env(safe-area-inset-top) + 8px) 0 calc(env(safe-area-inset-bottom) + 18px) 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* ===== Putting tabs ===== */
+
+#puttingPanel .putting-tabs {
+    display: flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    padding: 16px 10px 10px !important;
+    min-height: 48px !important;
+    border-bottom: 2px solid #9a9a9a !important;
+    background: #ffffff !important;
+    margin-top: -12px !important;
+    position: relative !important;
+    z-index: 5 !important;;
+}
+
+#puttingPanel .putting-tab {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-width: 79px !important;
+    padding: 12px 14px 10px !important;
+    border: 1px solid #aaa !important;
+    border-bottom: none !important;
+    border-radius: 14px 14px 0 0 !important;
+    background: #f4f4f4 !important;
+    color: rgba(17,17,17,0.38) !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.25) !important;
+    opacity: 1 !important;
+    transition: transform 0.28s ease, background 0.28s ease, color 0.28s ease;
+    transform: translateY(18px) !important;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+#puttingPanel .putting-tab.active {
+    background: #178724 !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    z-index: 4 !important;
+}
+
+
+#puttingPanel .putting-tab.tab-ready {
+    background: #178724 !important;
+    color: #ffffff !important;
+    transform: translateY(8px) !important;
+    z-index: 4 !important;
+}
+
+
+/* ===== Putting tabs - simple state system ===== */
+
+#puttingPanel .putting-tabs {
+    display: flex !important;
+    align-items: flex-end !important;
+    gap: 2px !important;
+    padding: 10px 10px 0 !important;
+    border-bottom: 2px solid #9a9a9a !important;
+    background: #ffffff !important;
+    margin-top: -12px !important;
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+#puttingPanel .putting-tab {
+    min-width: auto !important;
+    padding: 0 18px 10px !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: rgba(17,17,17,0.28) !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 2 !important;
+    transform: none !important;
+    transition: color 0.15s ease !important;
+}
+
+/* ===== Active/current putt ===== */
+
+#puttingPanel .putting-tab.active {
+    background: transparent !important;
+    color: #111111 !important;
+    font-weight: 700 !important;
+    padding: 10px 18px 10px !important;
+}
+
+/* ===== Completed putt ===== */
+
+#puttingPanel .putting-tab.complete {
+    background: transparent !important;
+    color: #178724 !important;
+    font-weight: 900 !important;
+}
+
+/* ===== Future inactive putt ===== */
+
+#puttingPanel .putting-tab.future {
+    background: transparent !important;
+    color: rgba(17,17,17,0.22) !important;
+    font-weight: 700 !important;
+}
+
+/* ===== Hide unused putts after made ===== */
+
+#puttingPanel .putting-tab.putting-tab-hidden {
+    display: none !important;
+}
+
+/* ===== Putting tab seam cover ===== */
+
+#puttingPanel .putting-tabs::after {
+    content: "" !important;
+    position: absolute !important;
+    left: 0;
+    right: 0;
+    bottom: -25px;
+    height: 25px;
+    background: #ffffff;
+    border-top: 2px solid #9a9a9a;
+    z-index: 5;
+}
+
+#puttingPanel .putting-label {
+    position: relative !important;
+    z-index: 6 !important;
 }
 
 .putting-header-row {
@@ -3630,6 +4047,8 @@ header h1 {
 .putting-green-wrap {
     position: relative;
     width: 100%;
+    height: 210px;
+    max-height: 210px;
     background: #fff;
     border-radius: 8px;
     overflow: hidden;
@@ -3639,7 +4058,8 @@ header h1 {
 .putting-base-image {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: contain;
 }
 
 .putting-overlay-svg {
@@ -3683,7 +4103,7 @@ header h1 {
     stroke: #cfd3d6;
     stroke-width: 3;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
-    transition: cx 0.65s cubic-bezier(.16,.8,.25,1), cy 0.65s cubic-bezier(.16,.8,.25,1);
+    transition: cx 0.55s cubic-bezier(.16,.8,.25,1), cy 0.55s cubic-bezier(.16,.8,.25,1);
 }
 
 .putting-ball-label-box {
@@ -3768,27 +4188,6 @@ header h1 {
     line-height: 1;
 }
 
-.putting-footer-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.putting-save-btn {
-    width: 100%;
-    min-height: 58px;
-    font-size: 26px;
-    border-radius: 13px;
-}
-
-.putting-cancel-btn {
-    width: 100%;
-    min-height: 48px;
-    font-size: 20px;
-    margin: 0;
-    border-radius: 12px;
-}
-
 @media (max-width: 390px) {
     .putting-title { font-size: 21px; }
     .putting-chip-row { gap: 4px; }
@@ -3814,7 +4213,9 @@ header h1 {
 
 #teeShotPanel .es-panel-footer,
 #approachPanel .es-panel-footer,
-.putting-footer-actions {
+#shortGamePanel .es-panel-footer,
+#puttingPanel .es-panel-footer,
+#notesPanel .es-panel-footer {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
   gap: 10px !important;
@@ -3826,429 +4227,29 @@ header h1 {
 #teeShotPanel .tee-cancel-btn,
 #approachPanel .es-done-btn,
 #approachPanel .tee-cancel-btn,
-#savePuttingStats,
-#cancelPuttingStats {
+#shortGamePanel .es-done-btn,
+#shortGamePanel .tee-cancel-btn,
+#puttingPanel .es-done-btn,
+#puttingPanel .tee-cancel-btn,
+#notesPanel .es-done-btn,
+#notesPanel .tee-cancel-btn {
   width: 100% !important;
   min-height: 46px !important;
   margin: 0 !important;
   padding: 10px 8px !important;
   font-size: 15px !important;
+  font-weight: 800 !important;
   line-height: 1.05 !important;
   white-space: nowrap !important;
   border-radius: 12px !important;
   box-sizing: border-box !important;
 }
 
-#saveTeeShotStats,
-#saveApproachStats,
-#savePuttingStats {
-  font-weight: 800 !important;
-}
 
-#cancelTeeShotStats,
-#cancelApproachStats,
-#cancelPuttingStats {
-  font-weight: 800 !important;
-}
-
-/* ========================================
-   MAIN PERFORMANCE STATS PANEL
-   Done + Cancel on one row
-======================================== */
-
-#enhancedStatsPanel .es-panel-footer {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 10px !important;
-  align-items: center !important;
-}
-
-#enhancedStatsPanel .es-done-btn,
-#enhancedStatsPanel .es-cancel-btn,
-#enhancedStatsPanel #closeEnhancedStatsFooter,
-#enhancedStatsPanel #cancelEnhancedStats {
-  width: 100% !important;
-  min-height: 46px !important;
-  margin: 0 !important;
-  padding: 10px 8px !important;
-  font-size: 15px !important;
-  line-height: 1.05 !important;
-  white-space: nowrap !important;
-  border-radius: 12px !important;
-  box-sizing: border-box !important;
-}
-
-#cancelEnhancedStats {
-  background: #ffffff !important;
-  color: #1f1f1f !important;
-  border: 1px solid #cfcfcf !important;
-  box-shadow: none !important;
-}
-
-
-/* ========================================
-   PERFORMANCE PANEL FOOTER FORCE VISIBLE
-======================================== */
-
-#enhancedStatsPanel .es-panel-sheet {
-  display: flex !important;
-  flex-direction: column !important;
-  max-height: 82vh !important;
-}
-
-#enhancedStatsPanel .es-panel-body {
-  flex: 1 1 auto !important;
-  overflow-y: auto !important;
-  min-height: 0 !important;
-}
-
-#enhancedStatsPanel .es-panel-footer {
-  flex: 0 0 auto !important;
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 10px !important;
-  margin-top: 12px !important;
-  padding-top: 8px !important;
-}
-
-#enhancedStatsPanel .es-panel-footer > * {
-  display: block !important;
-  width: 100% !important;
-}
 
 .yardages-popup-title span {
     color: #fff !important;
 }
-
-/* =========================================================
-   ADD HOLE YARDAGES POPUP — FINAL OVERRIDE
-   ========================================================= */
-
-#holeYardagesPopup .yardages-popup-card {
-    overflow: hidden;
-    
-    
-}
-
-#holeYardagesPopup .yardages-popup-title {
-    position: relative !important;
-    display: block !important;
-    width: auto !important;
-    box-sizing: border-box !important;
-    margin: -18px -18px 18px -18px !important;
-    padding: 16px 64px 16px 64px !important;
-    text-align: center !important;
-    font-size: 24px !important;
-    font-weight: 800 !important;
-    color: #ffffff !important;
-    background: #228b22 !important;
-    border-top-left-radius: 14px !important;
-    border-top-right-radius: 14px !important;
-    
-}
-
-#holeYardagesPopup .yardages-popup-title span {
-    color: #ffffff !important;
-}
-
-#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close {
-    position: absolute !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    width: 44px !important;
-    height: 44px !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
-    border-radius: 50% !important;
-    border: none !important;
-    background: #ffffff !important;
-    color: #178724 !important;
-    font-size: 36px !important;
-    font-weight: 800 !important;
-    line-height: 1 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2) !important;
-    z-index: 5 !important;
-}
-
-
-#holeYardagesPopup #saveHoleYardagesBtn,
-#holeYardagesPopup #cancelHoleYardagesBtn {
-    width: 100% !important;
-    margin: 0 !important;
-    min-height: 48px !important;
-    border-radius: 8px !important;
-    font-size: 18px !important;
-    font-weight: 800 !important;
-    box-sizing: border-box !important;
-}
-
-#holeYardagesPopup #saveHoleYardagesBtn {
-    background: linear-gradient(180deg,#6a6a6a 0%,#1c1c1c 100%) !important;
-    color: #ffffff !important;
-    border: 1px solid #111111 !important;
-}
-
-#holeYardagesPopup #cancelHoleYardagesBtn {
-    display: block !important;
-    background: #ffffff !important;
-    color: #111111 !important;
-    border: 1.5px solid #111111 !important;
-}
-
-/* =========================================================
-   ADD HOLE YARDAGES POPUP — HEADER/ACTIONS FINAL FIX
-   stacked ✓ + thinner X, centered title, side-by-side actions
-   ========================================================= */
-
-#holeYardagesPopup.yardages-popup-overlay {
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-#holeYardagesPopup .yardages-popup-card {
-    position: relative !important;
-    width: min(92vw, 430px) !important;
-    max-height: calc(100vh - 36px) !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    padding: 0 12px 14px !important;
-    border-radius: 18px !important;
-    background: #ffffff !important;
-}
-
-#holeYardagesPopup .yardages-popup-title {
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: calc(100% + 24px) !important;
-    min-height: 66px !important;
-    margin: 0 -12px 16px -12px !important;
-    padding: 14px 74px 14px 74px !important;
-    box-sizing: border-box !important;
-    background: #178724 !important;
-    color: #ffffff !important;
-    border-radius: 18px 18px 0 0 !important;
-    text-align: center !important;
-}
-
-#holeYardagesPopup .yardages-popup-title-text,
-#holeYardagesPopup .yardages-popup-title span.yardages-popup-title-text {
-    display: block !important;
-    width: 100% !important;
-    color: #ffffff !important;
-    font-size: 24px !important;
-    font-weight: 600 !important;
-    line-height: 1.1 !important;
-    text-align: center !important;
-}
-
-#holeYardagesPopup .yardages-popup-header-icons {
-    position: absolute !important;
-    top: 8px !important;
-    right: 14px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 4px !important;
-    width: 36px !important;
-    z-index: 10 !important;
-    pointer-events: none !important;
-}
-
-#holeYardagesPopup .yardages-popup-check,
-#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close {
-    width: 30px !important;
-    height: 30px !important;
-    min-width: 30px !important;
-    min-height: 30px !important;
-    max-width: 30px !important;
-    max-height: 30px !important;
-    border-radius: 999px !important;
-    border: 2px solid #ffffff !important;
-    background: #ffffff !important;
-    color: #178724 !important;
-    box-shadow: 0 2px 7px rgba(0,0,0,.20) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-sizing: border-box !important;
-    line-height: 1 !important;
-}
-
-#holeYardagesPopup .yardages-popup-check {
-    font-size: 19px !important;
-    font-weight: 800 !important;
-}
-
-#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close {
-    position: static !important;
-    transform: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    font-size: 25px !important;
-    font-weight: 300 !important;
-    cursor: pointer !important;
-    z-index: 11 !important;
-    pointer-events: auto !important;
-}
-
-#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close::before {
-    content: none !important;
-}
-
-#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close:active {
-    transform: scale(.96) !important;
-}
-
-#holeYardagesPopup .yardages-popup-actions {
-    margin: 14px auto 0 !important;
-    width: min(94%, 430px) !important;
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 12px !important;
-    align-items: center !important;
-}
-
-#holeYardagesPopup #saveHoleYardagesBtn,
-#holeYardagesPopup #cancelHoleYardagesBtn {
-    width: 100% !important;
-    min-width: 0 !important;
-    white-space: nowrap !important;
-    font-size: 18px !important;
-}
-
-#holeYardagesPopup #saveHoleYardagesBtn,
-#holeYardagesPopup #cancelHoleYardagesBtn {
-    width: 100% !important;
-    min-height: 48px !important;
-    margin: 0 !important;
-    padding: 10px 8px !important;
-    border-radius: 10px !important;
-    font-size: 17px !important;
-    font-weight: 800 !important;
-    line-height: 1.1 !important;
-    box-sizing: border-box !important;
-}
-
-#holeYardagesPopup #saveHoleYardagesBtn {
-    background: linear-gradient(180deg,#666666 0%,#1b1b1b 100%) !important;
-    color: #ffffff !important;
-    border: 1px solid #111111 !important;
-}
-
-#holeYardagesPopup #cancelHoleYardagesBtn {
-    display: block !important;
-    background: #ffffff !important;
-    color: #111111 !important;
-    border: 1px solid #656565 !important;
-    box-shadow: 0 3px 10px rgba(0,0,0,.32) !important;
-}
-
-
-
-/* FIX: Hole Yardages popup close button - show only the X circle */
-#holeYardagesPopup .popup-header-check,
-#holeYardagesPopup .yardages-popup-check,
-#holeYardagesPopup .popup-check-circle {
-  display: none !important;
-}
-
-#holeYardagesPopup .popup-circle-close {
-  position: absolute !important;
-  top: 58px !important;
-  right: 22px !important;
-  width: 42px !important;
-  height: 42px !important;
-  border-radius: 50% !important;
-  background: #ffffff !important;
-  color: #228b22 !important;
-  border: none !important;
-  font-size: 28px !important;
-  font-weight: 400 !important;
-  line-height: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.22) !important;
-}
-
-
-/* FORCE: thinner Cancel text */
-#holeYardagesPopup #cancelHoleYardagesBtn,
-#cancelHoleYardagesBtn span,
-#cancelHoleYardagesBtn {
-  font-family: Arial, sans-serif !important;
-  font-weight: 500 !important;
-  letter-spacing: 0 !important;
-}
-
-/* FORCE move Yardages close button lower */
-#holeYardagesPopup .yardages-popup-card .popup-circle-close,
-#holeYardagesPopup .popup-circle-close {
-  top: 100px !important;
-  transform: none !important;
-}
-
-/* FINAL FIX: Hole Yardages header */
-#holeYardagesPopup .yardages-popup-title {
-  position: relative !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  height: 86px !important;
-  padding: 0 76px !important;
-  background: #228b22 !important;
-  color: #fff !important;
-  box-sizing: border-box !important;
-}
-
-#holeYardagesPopup .yardages-popup-title span {
-  display: block !important;
-  width: 100% !important;
-  text-align: center !important;
-  color: #fff !important;
-  font-size: 28px !important;
-  font-weight: 800 !important;
-  line-height: 1.1 !important;
-}
-
-#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close {
-  position: absolute !important;
-  right: 14px !important;
-  top: 30% !important;
-  transform: translateY(-50%) !important;
-  width: 44px !important;
-  height: 44px !important;
-  border-radius: 50% !important;
-  background: #fff !important;
-  color: #228b22 !important;
-  border: none !important;
-  font-size: 30px !important;
-  font-weight: 300 !important;
-  line-height: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  box-shadow: 0 3px 8px rgba(0,0,0,.22) !important;
-}
-
-/* Hide accidental extra check circle in this popup header */
-#holeYardagesPopup .popup-header-check,
-#holeYardagesPopup .yardages-popup-check,
-#holeYardagesPopup .popup-check-circle,
-#holeYardagesPopup .header-check-circle {
-  display: none !important;
-}
-
-
 
 /* SAVE HOLE CONFIRM POPUP BUTTON POLISH */
 
@@ -4313,11 +4314,61 @@ header h1 {
 }
 
 
+
+/* ===== SHORT GAME RESULT GRID EXPERIMENT START ===== */
+/* Mirrors Approach result grid. Safe to remove if this layout does not feel right. */
+
+.shortgame-main-label {
+    font-size: 20px !important;
+    font-weight: 900 !important;
+    text-align: center !important;
+    margin: 8px 0 8px !important;
+}
+
+.shortgame-result-table {
+    display: grid;
+    grid-template-columns: 86px repeat(3, 1fr);
+    gap: 6px;
+    align-items: center;
+}
+
+.shortgame-row-label {
+    text-align: right;
+    font-size: 17px;
+    font-weight: 700;
+    color: #1f1f1f;
+    padding-right: 4px;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.shortgame-result-table .shortgame-result-btn {
+    min-height: 38px;
+    padding: 3px 2px;
+    font-size: 12px;
+    font-weight: 900;
+    border-radius: 10px;
+}
+
+.shortgame-holed-btn {
+    width: calc(75% + 8px);
+    margin-top: 8px;
+    min-height: 42px;
+    font-size: 16px !important;
+    font-weight: 900 !important;
+    border-radius: 12px;
+    margin-left: 90px;
+}
+
+/* ===== SHORT GAME RESULT GRID EXPERIMENT END ===== */
+
+
+
 /* ================= Short Game +Stats Panel ================= */
 .shortgame-sheet,
 .notes-sheet {
     width: 88%;
-    max-width: 405px;
+    max-width: 435px;
 }
 
 .shortgame-section {
@@ -4332,6 +4383,36 @@ header h1 {
     text-align: left;
     text-transform: uppercase;
     letter-spacing: .03em;
+}
+
+/* Short Game distance title row — match Approach */
+#shortGamePanel .shortgame-distance-label-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    font-size: 21px !important;
+    font-weight: 900 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    gap: 6px !important;
+    margin: 6px 0 8px !important;
+}
+
+/* Short Game: tighten extra green header height */
+#shortGamePanel .es-panel-header {
+    padding-top: 10px !important;
+    padding-bottom: 6px !important;
+}
+
+#shortGamePanel .es-panel-title {
+    line-height: 1.05 !important;
+    margin-bottom: 0 !important;
+}
+
+#shortGamePanel #shortGameDistanceToHoleLabel {
+    color: #2f7d38 !important;
+    font-weight: 700 !important;
 }
 
 .shortgame-chip-row {
@@ -4643,10 +4724,9 @@ header h1 {
 }
 
 #shortGamePanel .shortgame-sheet {
-    width: min(96vw, 430px) !important;
-    max-width: 430px !important;
-    margin: 0 auto 18px auto !important;
-    padding: 14px 14px 16px !important;
+    width: min(86vw, 380px) !important;
+    background: #ffffff !important;
+    border: 2px solid #ffffff !important;
     border-radius: 18px !important;
     background: rgba(246,246,244,.90) !important;
     box-shadow: 0 8px 26px rgba(0,0,0,.28) !important;
@@ -4733,10 +4813,17 @@ header h1 {
 }
 
 #shortGamePanel .shortgame-distance-row {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr 1.55fr 1fr 1fr !important;
-    gap: 8px !important;
-    align-items: center !important;
+    margin-top: 8px;
+
+    display: grid;
+
+    grid-template-columns: 60px 60px 120px 60px 50px;
+
+    gap: 8px;
+
+    align-items: center;
+
+    justify-content: center;
 }
 
 #shortGamePanel .shortgame-type-btn,
@@ -4752,7 +4839,7 @@ header h1 {
     color: #1f1f1f !important;
     font-size: 16px !important;
     font-weight: 900 !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,.12) !important;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.25) !important;
     padding: 6px 8px !important;
     white-space: nowrap !important;
 }
@@ -4775,7 +4862,8 @@ header h1 {
 }
 
 #shortGamePanel .shortgame-result-top-row,
-#shortGamePanel .shortgame-result-bottom-row {
+#shortGamePanel .shortgame-result-grid,
+#shortGamePanel .shortgame-result-holed-row {
     display: grid !important;
     gap: 8px !important;
 }
@@ -4784,15 +4872,77 @@ header h1 {
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
 }
 
-#shortGamePanel .shortgame-result-bottom-row {
-    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+#shortGamePanel .shortgame-result-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    margin-top: 8px !important;
+}
+
+#shortGamePanel .shortgame-result-holed-row {
+    grid-template-columns: 1fr !important;
     margin-top: 8px !important;
 }
 
 #shortGamePanel .shortgame-result-btn {
-    font-size: 14px !important;
-    padding-left: 5px !important;
-    padding-right: 5px !important;
+    font-size: 18px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    white-space: normal !important;
+    line-height: 1.05 !important;
+    font-weight: 700 !important;
+}
+
+#shortGamePanel .shortgame-result-btn[data-result="Holed"] {
+    font-size: 20px !important;
+}
+
+#shortGamePanel .shortgame-holed-btn {
+    font-size: 16px !important;
+}
+
+#shortGamePanel .shortgame-distance-label-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    font-size: 19px !important;
+    font-weight: 800 !important;
+
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+
+    gap: 6px !important;
+
+    margin: 2px 0 10px !important;
+}
+
+#shortGamePanel #shortGameDistanceToHoleLabel {
+    color: #4a9b57 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+}
+
+
+#shortGamePanel #shortGameDistanceToHoleLabel strong {
+    font-weight: 700 !important;
+}
+
+#shortGamePanel .shortgame-to-hole-text {
+    font-weight: 500 !important;
+    color: #4a9b57 !important;
+}
+
+
+#shortGamePanel #shortGameTipBtn {
+    margin-left: 2px !important;
+}
+
+#shortGamePanel .shortgame-distance-label-row .shortgame-label {
+    margin-bottom: 0 !important;
+}
+
+#shortGameDistanceToHoleLabel {
+    color: #2f7d38 !important;
+    font-weight: 900 !important;
 }
 
 #shortGamePanel .shortgame-type-btn.active,
@@ -4819,8 +4969,8 @@ header h1 {
 }
 
 #shortGamePanel .shortgame-summary-text {
-    font-size: 16px !important;
-    font-weight: 900 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
     color: #252525 !important;
     min-height: 20px !important;
 }
@@ -4840,11 +4990,79 @@ header h1 {
     margin-top: 14px !important;
 }
 
-@media (max-width: 390px) {
+
+#shortGamePanel #shortGameHoleLabel {
+    color: #caffd1 !important;
+    font-weight: 600 !important;
+}
+
+
+/* ===== Short Game: match standard ES popup shell/header ===== */
+
+#shortGamePanel .shortgame-sheet {
+    width: min(92vw, 430px) !important;
+    background: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    border-radius: 18px !important;
+    padding: 0 0 14px 0 !important;
+    overflow: hidden !important;
+}
+
+#shortGamePanel .es-panel-header {
+    background: #2f8a2f !important;
+    color: #ffffff !important;
+    padding: 18px 26px 24px 26px !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+}
+
+#shortGamePanel .es-panel-title-wrap {
+    text-align: left !important;
+}
+
+#shortGamePanel #shortGameHoleLabel {
+    color: #caffd1 !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.03em !important;
+}
+
+#shortGamePanel .es-panel-title {
+    color: #ffffff !important;
+    font-size: 30px !important;
+    font-weight:800 !important;
+    line-height: 1.05 !important;
+}
+
+#shortGamePanel .es-close-btn,
+#shortGamePanel .shortgame-close-btn {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    color: #2f8a2f !important;
+    font-size: 24px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+#shortGamePanel .shortgame-body {
+    padding: 14px 14px 0 14px !important;
+}
+
+
+
+
+@media (max-width: 390px) { 
     #shortGamePanel .shortgame-sheet {
-        width: 98vw !important;
-        padding-left: 10px !important;
-        padding-right: 10px !important;
+        width: 92% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
     #shortGamePanel .shortgame-lie-grid {
         padding: 0 18px !important;
@@ -4855,7 +5073,8 @@ header h1 {
     #shortGamePanel .shortgame-result-btn,
     #shortGamePanel .shortgame-adjust-btn,
     #shortGamePanel .shortgame-distance-display {
-        font-size: 13px !important;
+        font-size: 18px !important;
+        font-weight: 700 !important;
         padding-left: 4px !important;
         padding-right: 4px !important;
     }
@@ -4948,4 +5167,1987 @@ header h1 {
     box-shadow:
         inset 0 1px 0 rgba(255,255,255,0.20),
         0 8px 6px rgba(0,0,0,0.16) !important;
+}
+
+
+
+
+#holeHeaderYardage .yardage-number {
+    color: #aaffa1 !important;
+    font-weight: 800;
+}
+
+#holeHeaderYardage .yardage-unit {
+    color: #aaffa1 !important;
+    font-weight: 400;
+}
+
+.ydg-text-link-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    text-decoration: NONE;
+    padding: 4px 0;
+    margin: 4px 0;
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+.ydg-text-link-btn:active {
+    opacity: 0.7;
+}
+
+#returnToDetailsBtn,
+.ydg-text-link-btn {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    font-size: 16px;
+    text-decoration: none;
+    padding: 4px 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+
+.return-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.return-row .link-separator {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: #ffffff !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    line-height: 1;
+}
+
+/* Validation popup */
+.validation-popup-box {
+    max-width: 520px;
+}
+
+.validation-message {
+    text-align: center;
+    font-size: 17px;
+    line-height: 1.45;
+    color: #2f8a35;
+    padding: 28px 26px 18px;
+}
+
+.popup-btn-row {
+    display: flex;
+    justify-content: center;
+    padding: 0 24px 26px;
+}
+
+.popup-btn-secondary {
+    min-width: 150px;
+    height: 52px;
+    border-radius: 14px;
+    border: 1px solid rgba(0,0,0,0.22);
+    background: #ffffff;
+    color: #111111;
+    font-size: 20px;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.14);
+}
+
+/* ===== Hole Stats Summary Modal Polish ===== */
+
+#summaryModal .summary-box {
+    padding-top: 0 !important;
+    overflow: hidden !important;
+    border: 2px solid #ffffff !important;
+    border-radius: 18px !important;
+    width: calc(100% - 72px) !important;
+    max-width: 580px !important;
+    margin: 0 auto !important;
+}
+
+#summaryModal .summary-modal-title {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: -15px -15px 12px -15px !important;
+    padding: 22px 58px 18px 58px !important;
+    min-height: 68px !important;
+    text-align: center !important;
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+    background: #228b22 !important;
+    border-top-left-radius: 16px !important;
+    border-top-right-radius: 16px !important;
+    box-sizing: border-box !important;
+}
+
+#summaryModal .summary-modal-title span {
+    color: #ffffff !important;
+}
+
+#summaryModal #exitSummary.summary-circle-close {
+    position: absolute !important;
+    top: 61% !important;
+    right: 14px !important;
+    transform: translateY(-50%) !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    border: none !important;
+    background: #ffffff !important;
+    color: #178724 !important;
+    font-size: 26px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2) !important;
+    cursor: pointer !important;
+    z-index: 5 !important;
+}
+
+/* =========================================================
+   POPUP STYLE SYSTEM — CONSOLIDATED 2026-04-28
+   Master visual reference: Hole Yardages popup
+   Scope: appearance only; no app flow/logic changes
+   ========================================================= */
+
+:root {
+    --stracker-popup-green: #228b22;
+    --stracker-popup-card-bg: #ffffff;
+    --stracker-popup-close-green: #228b22;
+    --stracker-popup-dark-top: #666666;
+    --stracker-popup-dark-bottom: #1b1b1b;
+    --stracker-popup-radius: 18px;
+    --stracker-popup-button-radius: 12px;
+    --stracker-popup-shadow: 0 14px 34px rgba(0,0,0,0.32);
+    --stracker-popup-button-shadow: 0 4px 10px rgba(0,0,0,0.32);
+}
+
+
+/* ---------- Shared close X look ---------- */
+#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close,
+#enhancedStatsPanel #closeEnhancedStats.es-close-btn,
+/* #summaryModal #exitSummary.summary-circle-close, */
+#saveConfirmPopup .popup-circle-close,
+#saveConfirmPopup .popup-close,
+#saveConfirmPopup .close-popup {
+    position: absolute !important;
+    top: 14px !important;
+    right: 16px !important;
+    transform: none !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    color: var(--stracker-popup-close-green) !important;
+    border: none !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 18px !important;
+    font-weight:100!important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.22) !important;
+    cursor: pointer !important;
+    z-index: 20 !important;
+}
+
+/* ---------- Shared two-button row ---------- */
+#holeYardagesPopup .yardages-popup-actions,
+#enhancedStatsPanel .es-panel-footer {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 14px !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+}
+
+/* ---------- Shared action buttons ---------- */
+/* ---------- Shared action buttons ---------- */
+#holeYardagesPopup #saveHoleYardagesBtn,
+#holeYardagesPopup #cancelHoleYardagesBtn,
+#enhancedStatsPanel #doneEnhancedStats,
+#enhancedStatsPanel #cancelEnhancedStats {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 66px !important;
+    min-height: 66px !important;
+    margin: 0 !important;
+    padding: 10px 8px !important;
+    border-radius: var(--stracker-popup-button-radius) !important;
+    font-family: Arial, sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    line-height: 1.05 !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+    box-shadow: var(--stracker-popup-button-shadow) !important;
+
+    /* ✅ ADD THESE */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* Dark primary buttons */
+#holeYardagesPopup #saveHoleYardagesBtn,
+#enhancedStatsPanel #doneEnhancedStats {
+    background: linear-gradient(180deg, var(--stracker-popup-dark-top) 0%, var(--stracker-popup-dark-bottom) 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #111111 !important;
+}
+
+/* White secondary / Cancel buttons */
+#holeYardagesPopup #cancelHoleYardagesBtn,
+#enhancedStatsPanel #cancelEnhancedStats {
+    display: block !important;
+    background: #ffffff !important;
+    color: #222222 !important;
+    border: 1px solid #cfcfcf !important;
+}
+
+/* ---------- Hole Yardages popup standard ---------- */
+#holeYardagesPopup.yardages-popup-overlay {
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#holeYardagesPopup .yardages-popup-card {
+    position: relative !important;
+    width: min(92vw, 580px) !important;
+    max-height: calc(100vh - 36px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 0 18px 18px !important;
+    border-radius: var(--stracker-popup-radius) !important;
+    background: var(--stracker-popup-card-bg) !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: var(--stracker-popup-shadow) !important;
+    box-sizing: border-box !important;
+}
+
+#holeYardagesPopup .yardages-popup-title {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 86px !important;
+    margin: 0 -18px 18px -18px !important;
+    padding: 0 76px !important;
+    background: var(--stracker-popup-green) !important;
+    color: #ffffff !important;
+    border-radius: 18px 18px 0 0 !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
+#holeYardagesPopup .yardages-popup-title span {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+    color: #ffffff !important;
+    font-size: px !important;
+    font-weight: 800 !important;
+    line-height: 1.05 !important;
+}
+
+#holeYardagesPopup .popup-header-check,
+#holeYardagesPopup .yardages-popup-check,
+#holeYardagesPopup .popup-check-circle,
+#holeYardagesPopup .header-check-circle,
+#holeYardagesPopup .popup-close-check {
+    display: none !important;
+}
+
+#holeYardagesPopup .yardages-popup-actions {
+    margin: 18px auto 0 !important;
+}
+
+/* ---------- +Stats Contents panel standard ---------- */
+
+#enhancedStatsPanel.es-panel-overlay {
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(0,0,0,0.35) !important;
+}
+
+#enhancedStatsPanel .es-panel-sheet {
+    position: relative !important;
+    width: min(calc(100vw - 18px), 580px) !important;
+    max-width: 580px !important;
+    max-height: calc(100vh - 36px) !important;
+    margin: 0 !important;
+    padding: 0 20px 20px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    background: var(--stracker-popup-card-bg) !important;
+    border: 2px solid #ffffff !important;
+    border-radius: var(--stracker-popup-radius) !important;
+    box-shadow: var(--stracker-popup-shadow) !important;
+    color: #1f1f1f !important;
+    box-sizing: border-box !important;
+}
+
+#enhancedStatsPanel .es-panel-handle {
+    display: none !important;
+}
+
+#enhancedStatsPanel .es-panel-header {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 112px !important;
+    margin: 0 -20px 20px -20px !important;
+    padding: 16px 66px 16px 66px !important;
+    background: var(--stracker-popup-green) !important;
+    color: #ffffff !important;
+    border-radius: 18px 18px 0 0 !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
+#enhancedStatsPanel .es-panel-title-wrap {
+    width: 100% !important;
+    max-width: none !important;
+    text-align: center !important;
+}
+
+#enhancedStatsPanel .es-panel-hole {
+    position: absolute !important;
+    top: 12px !important;
+    left: 16px !important;
+    color: #bbf7ac !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    letter-spacing: .03em !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+}
+
+#enhancedStatsPanel .es-panel-title {
+    color: #ffffff !important;
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    line-height: 1.05 !important;
+    white-space: nowrap !important;
+}
+
+#enhancedStatsPanel #closeEnhancedStats.es-close-btn {
+    position: absolute !important;
+    top: 10px !important;
+    right: 14px !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    color: var(--stracker-popup-green) !important;
+    border: none !important;
+    font-size: 22px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.22) !important;
+}
+
+#enhancedStatsPanel .es-panel-body {
+    margin-top: 0 !important;
+}
+
+#enhancedStatsPanel .es-panel-text {
+    margin: 0 0 18px 0 !important;
+    color: #c0392b !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    line-height: 1.18 !important;
+    text-align: center !important;
+}
+
+#enhancedStatsPanel .es-tile-grid {
+    margin-top: 0 !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+}
+
+#enhancedStatsPanel .es-tile {
+    position: relative !important;
+    display: block !important;
+    min-height: 84px !important;
+    padding: 10px 12px !important;
+    border-radius: 16px !important;
+    background: #228b22 !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+}
+
+#enhancedStatsPanel .es-tile-wide {
+    grid-column: 1 / -1 !important;
+    min-height: 76px !important;
+}
+
+#enhancedStatsPanel .es-tile::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50% !important;
+    border: 2px solid rgba(50,200,50,0.95) !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: 50px 50px !important;
+    display: block !important;
+}
+
+#enhancedStatsPanel .es-tile-title {
+    display: block !important;
+    margin: 30px 46px 2px 0 !important;
+    color: #ffffff !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    line-height: 1.05 !important;
+}
+
+#enhancedStatsPanel .es-tile-sub {
+    display: block !important;
+    margin: 0 !important;
+    color: #ffffff !important;
+    font-size: 12px !important;
+    line-height: 1.15 !important;
+}
+
+#openTeeShotStats::before {
+    background-image: url("images/tee-shot-icon.svg") !important;
+}
+
+#openApproachStats::before {
+    background-image: url("images/approach-icon.svg") !important;
+}
+
+#openShortGameStats::before {
+    background-image: url("images/short-game-icon.svg") !important;
+}
+
+#openPuttingStats::before {
+    background-image: url("images/putt-icon.svg") !important;
+}
+
+#openNotesStats::before {
+    background-image: url("images/notes-icon.svg") !important;
+}
+
+#enhancedStatsPanel .es-tile::after {
+    display: none !important;
+}
+
+#enhancedStatsPanel .es-tile.saved .es-tile-title::after,
+#enhancedStatsPanel .es-tile.done .es-tile-title::after,
+#enhancedStatsPanel .es-tile.is-complete .es-tile-title::after {
+    content: " ✓" !important;
+    color: #ffffff !important;
+    font-size: 16px !important;
+    font-weight: 900 !important;
+    display: inline !important;
+}
+
+#enhancedStatsPanel .es-tile-check {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+#enhancedStatsPanel .es-panel-footer {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    margin-top: 22px !important;
+    align-items: center !important;
+}
+
+#enhancedStatsPanel #doneEnhancedStats,
+#enhancedStatsPanel #cancelEnhancedStats {
+    width: 100% !important;
+    height: 62px !important;
+    min-height: 62px !important;
+    margin: 0 !important;
+    padding: 10px 8px !important;
+    border-radius: 12px !important;
+    font-size: 21px !important;
+    font-weight: 800 !important;
+    line-height: 1.05 !important;
+    white-space: nowrap !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.35),
+        0 4px 10px rgba(0,0,0,0.32) !important;
+}
+
+#enhancedStatsPanel #doneEnhancedStats {
+    background: linear-gradient(180deg,#5d5d5d 0%,#171717 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #111111 !important;
+}
+
+#enhancedStatsPanel #cancelEnhancedStats {
+    background: #ffffff !important;
+    color: #222222 !important;
+    border: 1px solid #cfcfcf !important;
+}
+
+@media (max-width: 430px) {
+    #enhancedStatsPanel .es-panel-sheet {
+        width: min(calc(100vw - 8px), 580px) !important;
+    }
+
+    #enhancedStatsPanel .es-panel-header {
+        min-height: 106px !important;
+        margin-bottom: 18px !important;
+        padding-left: 56px !important;
+        padding-right: 56px !important;
+    }
+
+    #enhancedStatsPanel .es-panel-title {
+        font-size: 23px !important;
+    }
+
+    #enhancedStatsPanel .es-panel-hole {
+        font-size: 12px !important;
+    }
+
+    #enhancedStatsPanel .es-panel-text {
+        font-size: 18px !important;
+        margin-bottom: 16px !important;
+    }
+
+    #enhancedStatsPanel .es-tile-title {
+        font-size: 18px !important;
+    }
+
+    #enhancedStatsPanel .es-tile-sub {
+        font-size: 12px !important;
+    }
+
+    #enhancedStatsPanel #doneEnhancedStats,
+    #enhancedStatsPanel #cancelEnhancedStats {
+        height: 62px !important;
+        min-height: 62px !important;
+        font-size: 21px !important;
+    }
+}
+
+
+/* ========================================
+   STEP 1 — Hole Yardages title + X fix
+======================================== */
+
+#holeYardagesPopup .yardages-popup-title {
+    min-height: 86px !important;
+    padding: 0 62px 10px !important;
+}
+
+#holeYardagesPopup .yardages-popup-title span {
+    font-size: 22px !important;
+    line-height: 1.05 !important;
+    font-weight: 700 !important;
+}
+
+#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    min-height: 46px !important;
+    font-size: 32px !important;
+    font-weight: 300 !important;
+}
+
+/* ========================================
+   STEP 2 — Hole Yardages final tune
+======================================== */
+
+#holeYardagesPopup .yardages-popup-title {
+    justify-content: flex-start !important;
+    text-align: left !important;
+    padding-left: 22px !important;
+    padding-right: 72px !important;
+}
+
+#holeYardagesPopup .yardages-popup-title span {
+    font-weight: 700 !important;
+}
+
+#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+}
+
+/* ========================================
+   STEP 3 — Hole Yardages move title left
+======================================== */
+
+#holeYardagesPopup .yardages-popup-title span {
+    display: block !important;
+    width: 100% !important;
+    text-align: left !important;
+    padding-left: 6px !important;
+}
+
+/* ========================================
+   STEP 4 — Hole Yardages smaller circle
+======================================== */
+
+#holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+}
+
+
+/* ========================================
+   STEP 5 — +Stats title center + remove old tile check
+======================================== */
+
+#enhancedStatsPanel .es-panel-title-wrap {
+    position: relative !important;
+    width: 100% !important;
+    text-align: center !important;
+}
+
+#enhancedStatsPanel .es-panel-title {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+#enhancedStatsPanel .es-tile-check {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+/* ========================================
+   STEP 6 — +Stats header left align
+======================================== */
+
+#enhancedStatsPanel .es-panel-header {
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    padding-top: 14px !important;
+    padding-left: 18px !important;
+    padding-right: 56px !important;
+}
+
+#enhancedStatsPanel .es-panel-title-wrap {
+    text-align: left !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+}
+
+#enhancedStatsPanel .es-panel-hole {
+    position: static !important;
+    display: block !important;
+    margin: 0 0 8px 0 !important;
+    text-align: left !important;
+}
+
+#enhancedStatsPanel .es-panel-title {
+    width: auto !important;
+    margin: 0 !important;
+    text-align: left !important;
+}
+
+
+/* ========================================
+   STEP 7 — Reduce space under +Stats title
+======================================== */
+
+#enhancedStatsPanel .es-panel-header {
+    min-height: 88px !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 8px !important;
+     
+}
+
+#enhancedStatsPanel .es-panel-hole {
+    margin-bottom: 4px !important;
+}
+
+#enhancedStatsPanel .es-panel-title {
+    line-height: 1.6 !important;
+}
+
+/* ========================================
+   STEP 8 — Kill old floating tile check badge
+======================================== */
+
+#enhancedStatsPanel .es-tile-check,
+#enhancedStatsPanel .es-tile .es-tile-check,
+#enhancedStatsPanel .saved .es-tile-check,
+#enhancedStatsPanel .done .es-tile-check,
+#enhancedStatsPanel .is-complete .es-tile-check {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+
+/* ========================================
+   STEP 9 — Match +Stats X to Hole Yardages
+======================================== */
+
+#enhancedStatsPanel #closeEnhancedStats.es-close-btn {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    top: 10px !important;
+    right: 12px !important;
+    font-size: 28px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+}
+
+
+/* STEP 10B — +Stats X final match to Hole Yardages */
+#enhancedStatsPanel button#closeEnhancedStats.es-close-btn {
+    background: #ffffff !important;
+    color: #228b22 !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    font-size: 28px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
+
+/* ========================================
+   STEP 8 — Kill old floating tile check badge
+======================================== */
+
+#enhancedStatsPanel .es-tile-check,
+#enhancedStatsPanel .es-tile .es-tile-check,
+#enhancedStatsPanel .saved .es-tile-check,
+#enhancedStatsPanel .done .es-tile-check,
+#enhancedStatsPanel .is-complete .es-tile-check {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+
+/* ========================================
+   TEE SHOT PANEL — standard popup header/card
+======================================== */
+
+#teeShotPanel .es-panel-sheet {
+    background: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    padding: 0 20px 18px !important;
+    width: min(calc(100vw - 18px), 580px) !important;
+    max-width: 580px !important;
+    max-height: calc(100vh - 28px) !important;
+}
+
+#teeShotPanel .es-panel-header {
+    position: relative !important;
+    background: #228b22 !important;
+    color: #ffffff !important;
+    min-height: 88px !important;
+    margin: 0 -20px 14px -20px !important;
+    padding: 14px 56px 8px 18px !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+}
+
+#teeShotPanel .es-panel-title-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+}
+
+#teeShotPanel .es-panel-hole {
+    color: #bbf7ac !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    letter-spacing: .03em !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    margin: 0 0 6px 0 !important;
+}
+
+#teeShotPanel .es-panel-title {
+    color: #ffffff !important;
+    font-size: 27px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+}
+
+#teeShotPanel #closeTeeShotPanel.es-close-btn {
+    all: unset !important;
+    box-sizing: border-box !important;
+    position: absolute !important;
+    top: 12px !important;
+    right: 14px !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    color: #228b22 !important;
+    font-size: 28px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.22) !important;
+    z-index: 5 !important;
+}
+
+#teeShotPanel .es-panel-body {
+    background: #ffffff !important;
+}
+
+
+
+/* ========================================
+   TEE SHOT PANEL — tune header, X, body controls
+======================================== */
+
+/* tighter header */
+#teeShotPanel .es-panel-header {
+    min-height: 78px !important;
+    padding-top: 12px !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 12px !important;
+}
+
+#teeShotPanel .es-panel-hole {
+    margin-bottom: 5px !important;
+}
+
+#teeShotPanel .es-panel-title {
+    font-size: 25px !important;
+    line-height: 1 !important;
+}
+
+/* match the settled × style */
+#teeShotPanel #closeTeeShotPanel.es-close-btn {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    font-size: 28px !important;
+    font-weight: 300 !important;
+    font-family: Arial, sans-serif !important;
+}
+
+/* larger body text */
+#teeShotPanel .tee-shot-label {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+}
+
+#teeShotPanel .tee-option-btn,
+#teeShotPanel .tee-chip-btn,
+#teeShotPanel .tee-distance-display,
+#teeShotPanel .tee-adjust-btn {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+}
+
+/* consistent raised white controls */
+#teeShotPanel .tee-option-btn,
+#teeShotPanel .tee-chip-btn,
+#teeShotPanel .tee-distance-display,
+#teeShotPanel .tee-adjust-btn,
+#teeShotPanel .tee-cancel-btn {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.18) !important;
+    border: 1px solid #d0d0d0 !important;
+    background: #ffffff !important;
+}
+
+/* Cancel button match */
+#teeShotPanel .tee-cancel-btn,
+#teeShotPanel #cancelTeeShotBtn {
+    height: 64px !important;
+    min-height: 64px !important;
+    border-radius: 12px !important;
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    color: #222222 !important;
+}
+
+/* Save button match existing black raised style */
+#teeShotPanel #saveTeeShotBtn {
+    height: 64px !important;
+    min-height: 64px !important;
+    border-radius: 12px !important;
+    font-size: 22px !important;
+    font-weight: 800 !important;
+}
+
+
+/* ========================================
+   TEE SHOT PANEL — BUTTON ACTIVE + HEADER CLEANUP
+======================================== */
+
+#teeShotPanel .tee-option-btn.active,
+#teeShotPanel .tee-chip-btn.active {
+    background: #178724 !important;
+    border-color: #0f5c18 !important;
+    color: #ffffff !important;
+}
+
+#teeShotPanel .tee-option-btn.active *,
+#teeShotPanel .tee-chip-btn.active * {
+    color: #ffffff !important;
+}
+
+#teeShotPanel .es-panel-header {
+    min-height: 62px !important;
+    padding-top: 10px !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 8px !important;
+}
+
+#teeShotPanel .es-panel-title {
+    font-size: 25px !important;
+    line-height: 1 !important;
+    margin-top: 4px !important;
+}
+
+#teeShotPanel .es-panel-hole {
+    line-height: 1 !important;
+    margin-bottom: 6px !important;
+}
+
+#teeShotPanel #closeTeeShotPanel.es-close-btn {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    color: #228b22 !important;
+    font-size: 29px !important;
+    font-weight: 300 !important;
+    line-height: 30px !important;
+    padding: 0 !important;
+    top: 16px !important;
+    right: 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+
+/* Tee Shot popup: slightly narrower without pushing it down */
+#teeShotPanel .es-panel-sheet {
+    transform: scale(0.96) !important;
+    transform-origin: center center !important;
+}
+
+/* Par 3 Tee Shot panel slightly lower */
+#teeShotPanel.tee-shot-par3-mode .es-panel-sheet {
+    transform: scale(0.96) translateY(42px) !important;
+}
+
+#teeShotPanel .es-panel-header {
+    padding-right: 58px !important;
+}
+
+#teeShotPanel #closeTeeShotPanel.es-close-btn {
+    top: 12px !important;
+    right: 14px !important;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    border-radius: 50% !important;
+    background: #ffffff !important;
+    color: #228b22 !important;
+    font-size: 28px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
+
+
+.standard-popup-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.standard-popup-close img {
+    width: 34px;
+    height: 34px;
+    display: block;
+}
+/* ========================================
+   APPROACH PANEL — share Tee Shot popup model
+   Source-level cleanup: Approach inherits the same popup shell/header/control language.
+======================================== */
+
+#approachPanel .es-panel-sheet {
+    background: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    border-radius: 18px !important;
+    padding: 0 20px 18px !important;
+    width: 84% !important;
+    max-width: 390px !important;
+
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+
+    margin-bottom: 0 !important;
+
+}
+
+#approachPanel .es-panel-header {
+    position: relative !important;
+    background: #228b22 !important;
+    color: #ffffff !important;
+    min-height: 62px !important;
+    margin: 0 -20px 8px -20px !important;
+    padding: 10px 58px 8px 18px !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    border-top-left-radius: 16px !important;
+border-top-right-radius: 16px !important;
+overflow: hidden !important;
+}
+
+#approachPanel .es-panel-title-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+}
+
+#approachPanel .es-panel-hole {
+    color: #bbf7ac !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    letter-spacing: .03em !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    margin: 0 0 6px 0 !important;
+}
+
+#approachPanel .es-panel-title {
+    color: #ffffff !important;
+    font-size: 25px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    margin: 4px 0 0 0 !important;
+}
+
+#approachPanel .standard-popup-close {
+    top: 12px !important;
+    right: 14px !important;
+    width: 34px !important;
+    height: 34px !important;
+}
+
+#approachPanel .standard-popup-close img {
+    width: 34px !important;
+    height: 34px !important;
+}
+
+#approachPanel .es-panel-body {
+    background: #ffffff !important;
+    padding: 12px !important;
+    margin-top: 0 !important;
+}
+
+#approachPanel .tee-shot-label {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    color: #1f1f1f !important;
+    text-align: center !important;
+}
+
+#approachPanel .tee-option-btn,
+#approachPanel .tee-chip-btn,
+#approachPanel .tee-distance-display,
+#approachPanel .tee-adjust-btn,
+#approachPanel .tee-cancel-btn {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.18) !important;
+    border: 1px solid #d0d0d0 !important;
+    background: #ffffff !important;
+}
+
+#approachPanel .tee-option-btn,
+#approachPanel .tee-chip-btn,
+#approachPanel .tee-distance-display,
+#approachPanel .tee-adjust-btn {
+    font-size: 22px !important;
+    font-weight: 700 !important;
+}
+
+#approachPanel .tee-option-btn.active,
+#approachPanel .tee-chip-btn.active {
+    background: #178724 !important;
+    border-color: #0f5c18 !important;
+    color: #ffffff !important;
+}
+
+#approachPanel .tee-cancel-btn {
+    height: 64px !important;
+    min-height: 64px !important;
+    border-radius: 12px !important;
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    color: #222222 !important;
+}
+
+#approachPanel #saveApproachStats {
+    height: 64px !important;
+    min-height: 64px !important;
+    border-radius: 12px !important;
+    font-size: 22px !important;
+    font-weight: 600 !important;
+}
+
+#approachPanel .es-panel-footer {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+    margin-top: 12px !important;
+}
+
+
+
+
+.yardage-hole {
+    display: flex;
+    align-items: center;
+    gap: 4px; /* tighter */
+}
+
+.yardage-hole-num {
+    font-weight: 600;
+    color: #178724;
+    width: 12px;
+    text-align: right;
+    font-size: 14px;
+}
+
+/* EXACT width for 3 digits */
+.yardage-input {
+    width: 54px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size: 15px;
+    padding: 0;
+}
+
+/* EXACT width for 1 digit */
+.yardage-par-select {
+    width: 32px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size: 15px;
+    padding: 0;
+}
+
+.yardage-input::placeholder,
+.yardage-par-select option:first-child {
+    font-size: 12px;
+    color: #aaa;
+}
+
+
+
+/* Compact the existing Hole Yardages fields */
+#holeYardagesPopup .yardages-grid {
+    column-gap: 16px !important;
+}
+
+#holeYardagesPopup .yardage-item {
+    justify-content: flex-start !important;
+    gap: 2px !important;
+    width: auto !important;
+    min-width: 0 !important;
+}
+
+#holeYardagesPopup .yardage-hole-label {
+    width: 26px !important;
+    min-width: 26px !important;
+    max-width: 26px !important;
+}
+
+#holeYardagesPopup input.yardage-input {
+    flex: 0 0 52px !important;
+    width: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+    box-sizing: border-box !important;
+}
+
+
+/* FORCE yardage inputs to stop stretching */
+#holeYardagesPopup input.yardage-input {
+    flex: 0 0 auto !important;
+    width: 52px !important;
+    max-width: 52px !important;
+    min-width: 52px !important;
+
+    padding: 0 1px !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
+/* ALSO stop parent from stretching it */
+#holeYardagesPopup .yardage-item {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 3px !important;
+}
+
+/* Make sure nothing else is forcing width */
+#holeYardagesPopup .yardage-item * {
+    flex-grow: 0 !important;
+}
+
+
+#holeYardagesPopup .compact-yardage-input {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+
+    height: 44px !important;
+    padding: 0 0px !important;
+
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+}
+
+/* Remove spinner arrows that steal width */
+#holeYardagesPopup .compact-yardage-input::-webkit-outer-spin-button,
+#holeYardagesPopup .compact-yardage-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+/* Compact Par input instead of dropdown */
+#holeYardagesPopup .compact-par-input {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    height: 44px !important;
+    padding: 0 !important;
+    border: 1px solid #cfcfcf !important;
+    border-radius: 4px !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    appearance: textfield !important;
+    -moz-appearance: textfield !important;
+}
+
+#holeYardagesPopup .compact-par-input::-webkit-outer-spin-button,
+#holeYardagesPopup .compact-par-input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+
+/* SHORT GAME LIE BUTTON WIDTH FIX */
+#shortGamePanel .shortgame-lie-grid {
+    display: grid !important;
+    grid-template-columns: 1.25fr 1fr 1fr 1fr !important;
+    gap: 8px !important;
+    padding: 0 !important;
+}
+
+#shortGamePanel .shortgame-lie-btn {
+    min-width: 0 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+    white-space: nowrap !important;
+}
+
+
+/* ===== STANDARD +STATS POPUP SHELL ===== */
+
+.es-panel-sheet {
+    background: #ffffff !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+}
+
+.es-panel-header {
+    min-height: 76px !important;
+    background: #2f7d38 !important;
+    color: #ffffff !important;
+    padding: 16px 52px 16px 22px !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+}
+
+.es-panel-hole,
+.es-panel-title {
+    color: #ffffff !important;
+}
+
+.es-panel-hole {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    letter-spacing: .04em !important;
+    text-transform: uppercase !important;
+    line-height: 1.15 !important;
+}
+
+.es-panel-title {
+    font-size: 30px !important;
+    font-weight: 900 !important;
+    line-height: 1.05 !important;
+}
+
+.standard-popup-close {
+    position: absolute !important;
+    top: 9px !important;
+    right: 10px !important;
+    width: 30px !important;
+    height: 30px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.standard-popup-close img {
+    width: 30px !important;
+    height: 30px !important;
+    display: block !important;
+}
+
+.es-panel-body {
+    padding: 12px !important;
+    margin-top: 0 !important;
+}
+
+.es-panel-footer {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    margin-top: 12px !important;
+}
+
+.es-done-btn,
+.tee-cancel-btn {
+    width: 100% !important;
+    min-height: 44px !important;
+    margin: 0 !important;
+    border-radius: 12px !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+}
+
+.es-done-btn {
+    background: linear-gradient(180deg,#444 0%,#111 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid #222 !important;
+}
+
+.tee-cancel-btn {
+    background: #ffffff !important;
+    color: #111111 !important;
+    border: 1px solid #cfcfcf !important;
+}
+
+/* ===== Shared Performance Stat footer buttons =====
+   Governs Tee Shot, Approach, Putting, Short Game, and Notes together.
+   Keeps Save + Cancel centered instead of wall-to-wall.
+*/
+#teeShotPanel .es-panel-footer,
+#approachPanel .es-panel-footer,
+#puttingPanel .es-panel-footer,
+#shortGamePanel .es-panel-footer,
+#notesPanel .es-panel-footer {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-top: 12px !important;
+    margin-bottom: 16px !important;
+}
+
+#teeShotPanel .es-panel-footer .es-done-btn,
+#teeShotPanel .es-panel-footer .tee-cancel-btn,
+#approachPanel .es-panel-footer .es-done-btn,
+#approachPanel .es-panel-footer .tee-cancel-btn,
+#puttingPanel .es-panel-footer .es-done-btn,
+#puttingPanel .es-panel-footer .tee-cancel-btn,
+#shortGamePanel .es-panel-footer .es-done-btn,
+#shortGamePanel .es-panel-footer .tee-cancel-btn,
+#notesPanel .es-panel-footer .es-done-btn,
+#notesPanel .es-panel-footer .tee-cancel-btn {
+    flex: 0 0 auto !important;
+    width: min(190px, 45vw) !important;
+    min-height: 46px !important;
+    margin: 0 !important;
+}
+
+
+/* ===== Tee Shot Pro Tip icon ===== */
+
+.approach-main-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.protip-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.75);
+  background: #2f9e44;
+  color: white;
+  font-size: 15px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.22);
+  transform-origin: center center;
+}
+
+/* ===== ProTip attention animation ===== */
+
+.protip-btn.protip-attention {
+  animation: protipPulseBlinkCycle 12s linear infinite !important;
+  transform-origin: center center;
+}
+
+@keyframes protipPulseBlink {
+  0%   { opacity: 1; transform: scale(1); }
+  10%  { opacity: 0.15; transform: scale(2); }
+  20%  { opacity: 1; transform: scale(1); }
+
+  35%  { opacity: 0.15; transform: scale(2); }
+  45%  { opacity: 1; transform: scale(1); }
+
+  60%  { opacity: 0.15; transform: scale(2); }
+  70%  { opacity: 1; transform: scale(1); }
+
+  100% { opacity: 1; transform: scale(1); }
+}
+
+
+@keyframes protipPulseBlinkCycle {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  3% {
+    opacity: 0.25;
+    transform: scale(1.2);
+  }
+
+  6% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  11% {
+    opacity: 0.25;
+    transform: scale(1.2);
+  }
+
+  14% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  19% {
+    opacity: 0.25;
+    transform: scale(1.2);
+  }
+
+  22% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  27% {
+    opacity: 0.25;
+    transform: scale(1.2);
+  }
+
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  35% {
+    opacity: 0.25;
+    transform: scale(1.2);
+  }
+
+  38% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  43% {
+    opacity: 0.25;
+    transform: scale(1.2);
+  }
+
+  46% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  51% {
+    opacity: 0.25;
+    transform: scale(1.2);
+  }
+
+  54% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  59% {
+    opacity: 0.25;
+    transform: scale(1.2);
+  }
+
+  62% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* ===== Tee Shot / Approach Shot ProTip Popup ===== */
+
+.protip-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10020;
+  background: rgba(0,0,0,0.08);
+  display: flex;
+  align-items: flex-start !important;
+
+  justify-content: center;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.protip-popup-overlay.hidden {
+  display: none !important;
+}
+
+.protip-popup-card {
+  width: min(96vw, 430px);
+  background: #ffffff;
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+  color: #111;
+
+  position: fixed;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%) !important;
+}
+
+
+/* ===== Tee Shot ProTip sizing / scroll cleanup ===== */
+
+#teeShotTipPopup {
+  overflow: hidden !important;
+}
+
+#teeShotTipPopup .protip-popup-card {
+  width:90% !important;
+  max-width: 380px !important;
+  max-height: 70vh !important;
+  overflow-y: auto !important;
+  box-sizing: border-box;
+}
+
+
+.protip-popup-header {
+  background: #178724;
+  color: #ffffff;
+  min-height: 48px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.protip-popup-body {
+  padding: 16px 18px 18px;
+  font-size: 16px;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.protip-popup-body p {
+  margin: 0 0 10px;
+}
+
+
+
+/* ===== Universal ProTip yellow target highlight ===== */
+
+.protip-target-highlight {
+  position: relative !important;
+  z-index: 10150 !important;
+  border-radius: 14px !important;
+  outline: 3px solid #ffe650 !important;
+  outline-offset: 0px !important;
+  animation: protipTargetPulse 0.55s ease-in-out infinite !important;
+}
+
+@keyframes protipTargetPulse {
+  0%, 100% {
+    outline-color: rgba(244, 209, 61, 0.45);
+    box-shadow:
+      0 0 0 2px rgba(244, 209, 61, 0.35),
+      0 0 8px rgba(244, 209, 61, 0.45),
+      0 8px 18px rgba(0,0,0,0.22);
+  }
+
+  50% {
+    outline-color: rgba(244, 209, 61, 1);
+    box-shadow:
+      0 0 0 5px rgba(244, 209, 61, 1),
+      0 0 18px rgba(244, 209, 61, 0.95),
+      0 8px 18px rgba(0,0,0,0.22);
+  }
+}
+
+
+/* ===== Tee Shot label row ===== */
+
+.tee-shot-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ===== Zero Putts Confirmation Popup ===== */
+
+#zeroPuttsPopup {
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10020 !important;
+}
+
+#zeroPuttsPopup .popup-box {
+    width: min(88vw, 380px) !important;
+    max-width: 380px !important;
+    background: #ffffff !important;
+    border-radius: 18px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.28) !important;
+}
+
+#zeroPuttsPopup .popup-header {
+    background: #178724 !important;
+    color: #ffffff !important;
+    padding: 14px 18px !important;
+    position: relative !important;
+    text-align: left !important;
+}
+
+#zeroPuttsPopup .popup-title {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+}
+
+#zeroPuttsPopup .popup-circle-close {
+    position: absolute !important;
+    top: 50% !important;
+    right: 12px !important;
+    transform: translateY(-50%) !important;
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 50% !important;
+    border: none !important;
+    background: #ffffff !important;
+    color: #178724 !important;
+    font-size: 22px !important;
+    font-weight: 400 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+}
+
+#zeroPuttsPopup .popup-body-text {
+    padding: 24px 20px 18px !important;
+    font-size: 20px !important;
+    line-height: 1.25 !important;
+    color: #111111 !important;
+    text-align: center !important;
+}
+
+#zeroPuttsPopup .popup-actions {
+    display: flex !important;
+    gap: 12px !important;
+    justify-content: center !important;
+    padding: 0 18px 22px !important;
+}
+
+#zeroPuttsPopup .btn-primary,
+#zeroPuttsPopup .btn-secondary {
+    flex: 1 !important;
+    min-height: 46px !important;
+    border-radius: 12px !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+}
+
+#zeroPuttsPopup .btn-primary {
+    background: linear-gradient(180deg,#555 0%,#111 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+#zeroPuttsPopup .btn-secondary {
+    background: #ffffff !important;
+    color: #111111 !important;
+    border: 1px solid rgba(0,0,0,0.32) !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.18) !important;
+}
+
+/* ===== Putting Panel: hide moving distance label ===== */
+#puttingBallLabelBox,
+#puttingBallLabel {
+    display: none !important;
+}
+
+/* ===== Approach popup lower position - force override ===== */
+
+#approachTipPopup.protip-popup-overlay .protip-popup-card {
+  top: 260px !important;
+}
+
+
+/* ===== Approach ProTip final safety styles ===== */
+#approachTipPopup.protip-popup-overlay .protip-popup-card {
+  top: 260px !important;
+}
+
+#approachDistanceDisplay.approach-protip-highlight {
+  position: relative !important;
+  z-index: 10080 !important;
+  outline: 2px solid #f4f13f !important;
+  outline-offset: 5px !important;
+  box-shadow:
+    0 0 0 3px rgba(244, 209, 61, 0.55),
+    0 0 16px rgba(244, 209, 61, 0.9),
+    0 8px 18px rgba(0,0,0,0.22) !important;
+  animation: approachTipPulseFinal 1.25s ease-in-out infinite !important;
+}
+
+@keyframes approachTipPulseFinal {
+  0%, 100% {
+    outline-color: rgba(244, 209, 61, 0.45);
+    box-shadow:
+      0 0 0 2px rgba(244, 209, 61, 0.35),
+      0 0 8px rgba(244, 209, 61, 0.45),
+      0 8px 18px rgba(0,0,0,0.22);
+  }
+
+  50% {
+    outline-color: rgba(244, 209, 61, 1);
+    box-shadow:
+      0 0 0 5px rgba(244, 209, 61, 1),
+      0 0 18px rgba(244, 209, 61, 0.95),
+      0 8px 18px rgba(0,0,0,0.22);
+  }
+}
+
+
+/* ===== MASTER +STATS SAVE / CANCEL BUTTON MATCH ===== */
+
+#teeShotPanel .es-panel-footer,
+#approachPanel .es-panel-footer,
+#shortGamePanel .es-panel-footer,
+#puttingPanel .es-panel-footer,
+#notesPanel .es-panel-footer {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+  align-items: center !important;
+  margin: 10px 12px 14px !important;
+  width: auto !important;
+}
+
+#teeShotPanel .es-panel-footer button,
+#approachPanel .es-panel-footer button,
+#shortGamePanel .es-panel-footer button,
+#puttingPanel .es-panel-footer button,
+#notesPanel .es-panel-footer button {
+  width: 100% !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
+  margin: 0 !important;
+  padding: 0 10px !important;
+  border-radius: 12px !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+#teeShotPanel .es-done-btn,
+#approachPanel .es-done-btn,
+#shortGamePanel .es-done-btn,
+#puttingPanel .es-done-btn,
+#notesPanel .es-done-btn {
+  background: linear-gradient(180deg,#444 0%,#111 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid #222 !important;
+}
+
+#teeShotPanel .tee-cancel-btn,
+#approachPanel .tee-cancel-btn,
+#shortGamePanel .tee-cancel-btn,
+#puttingPanel .tee-cancel-btn,
+#notesPanel .tee-cancel-btn {
+  background: #ffffff !important;
+  color: #111111 !important;
+  border: 1px solid #cfcfcf !important;
+}
+
+
+/* ===== Short Game tip icon position tweak ===== */
+
+#shortGamePanel .shortgame-distance-label-row .protip-btn {
+  transform: translateY(0) !important;
+}
+
+
+/* ===== Short Game ProTip popup position ===== */
+
+#shortGameTipPopup .protip-popup-card {
+  top: 320px !important;
+}
+
+
+/* ===== Move Par 3 Tee Shot content lower ONLY ===== */
+#teeShotPanel.tee-shot-par3-mode .es-panel-body {
+    padding-top: 42px !important;
 }

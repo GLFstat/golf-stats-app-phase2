@@ -127,33 +127,47 @@ function buildCompletedRound() {
             coursePar: getFieldValue("coursePar")
         },
         holes: holes.map((h, idx) => {
-            if (!h) {
-                return {
-                    hole: idx + 1,
-                    fir: false,
-                    gir: false,
-                    updown: false,
-                    sand: false,
-                    putts: 0,
-                    penalty: 0,
-                    score: 0,
-                    par: null,
-                    saved: false
-                };
-            }
+if (!h) {
+  return {
+    hole: idx + 1,
+    fir: false,
+    gir: false,
+    updown: false,
+    sand: false,
+    putts: 0,
+    penalty: 0,
+    score: 0,
+    par: null,
+    saved: false,
 
-            return {
-                hole: idx + 1,
-                fir: !!h.fir,
-                gir: !!h.gir,
-                updown: !!h.updown,
-                sand: !!h.sand,
-                putts: Number(h.putts || 0),
-                penalty: Number(h.penalty || 0),
-                score: Number(h.score || 0),
-                par: h.par == null ? null : Number(h.par),
-                saved: !!h.saved
-            };
+    // ✅ keep structure consistent
+    teeShot: null,
+    approach: null,
+    shortGame: null,
+    putting: null,
+    notes: null
+  };
+}
+
+return {
+  hole: idx + 1,
+  fir: !!h.fir,
+  gir: !!h.gir,
+  updown: !!h.updown,
+  sand: !!h.sand,
+  putts: Number(h.putts || 0),
+  penalty: Number(h.penalty || 0),
+  score: Number(h.score || 0),
+  par: h.par == null ? null : Number(h.par),
+  saved: !!h.saved,
+
+  // ✅ PRESERVE +Stats
+  teeShot: h.teeShot || null,
+  approach: h.approach || null,
+  shortGame: h.shortGame || null,
+  putting: h.putting || null,
+  notes: h.notes || null
+};
         })
     };
 }

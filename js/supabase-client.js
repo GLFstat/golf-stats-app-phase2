@@ -62,6 +62,30 @@ window.uploadCompletedRoundToSupabase = async function (round) {
   round.details = details;
   round.summary = summary;
 
+  // CRITICAL: keep the full saved holes, including +Stats
+// Normalize holes so no null entries exist
+round.holes = Array.from({ length: 18 }, (_, i) => {
+  const h = roundHoles[i];
+
+  return h
+    ? {
+        ...h,
+        teeShot: h.teeShot || null,
+        approach: h.approach || null,
+        shortGame: h.shortGame || null,
+        putting: h.putting || null
+      }
+    : {
+        hole: i + 1,
+        teeShot: null,
+        approach: null,
+        shortGame: null,
+        putting: null
+      };
+});
+
+  console.log("[SUPABASE UPLOAD] holes being saved:", round.holes);
+
   const row = {
     player_name: "Isaiah Gonzales",
     round_date: details.roundDate || null,
@@ -87,7 +111,7 @@ window.uploadCompletedRoundToSupabase = async function (round) {
   console.log("[SUPABASE UPLOAD] row being inserted:", row);
 
   const { error } = await window.supabaseClient
-    .from("completed_rounds")
+    .from("completed_rounds_p2")
     .insert([row]);
 
   console.log("[SUPABASE UPLOAD] insert finished, error:", error);
