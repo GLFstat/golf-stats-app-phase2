@@ -4236,6 +4236,258 @@ loadHoleYardages();
 }
 
 
+
+/* ========================================
+   PHASE 2 – LOCAL COURSE YARDAGE LIBRARY
+======================================== */
+
+const COURSE_YARDAGE_LIBRARY_KEY = "strackerCourseYardageLibraryP2";
+
+function getCourseYardageLibrary() {
+    try {
+        return JSON.parse(localStorage.getItem(COURSE_YARDAGE_LIBRARY_KEY)) || {};
+    } catch (err) {
+        console.warn("Could not read course yardage library:", err);
+        return {};
+    }
+}
+
+function saveCourseYardageLibrary(library) {
+    try {
+        localStorage.setItem(
+            COURSE_YARDAGE_LIBRARY_KEY,
+            JSON.stringify(library || {})
+        );
+    } catch (err) {
+        console.warn("Could not save course yardage library:", err);
+    }
+}
+
+function buildCourseYardageLibraryKey(courseName, teeYardage) {
+    const cleanCourse = String(courseName || "").trim();
+    const cleanYardage = String(teeYardage || "").trim();
+
+    if (!cleanCourse) return "";
+
+    return `${cleanCourse} | ${cleanYardage || "No Course Yardage"}`;
+}
+
+function getCurrentHoleYardagesFromInputs() {
+    const holeYardages = {};
+
+    for (let i = 1; i <= 18; i++) {
+        const input = document.getElementById(`yardage${i}`);
+
+        holeYardages[i] = input
+            ? input.value.trim()
+            : "";
+    }
+
+    return holeYardages;
+}
+
+function applyHoleYardagesToInputs(holeYardages = {}) {
+    for (let i = 1; i <= 18; i++) {
+        const input = document.getElementById(`yardage${i}`);
+
+        if (input) {
+            input.value = holeYardages[i] || "";
+        }
+    }
+
+    let total = 0;
+
+    for (let i = 1; i <= 18; i++) {
+        const input = document.getElementById(`yardage${i}`);
+        const value = input ? parseInt(input.value, 10) : 0;
+        total += Number.isNaN(value) ? 0 : value;
+    }
+
+    const totalEl = document.getElementById("holeYardagesTotal");
+    if (totalEl) {
+        totalEl.textContent = total;
+    }
+}
+
+function calculateSavedHoleYardageTotal(holeYardages = {}) {
+    let total = 0;
+
+    Object.values(holeYardages).forEach((value) => {
+        const num = parseInt(value, 10);
+
+        if (!Number.isNaN(num)) {
+            total += num;
+        }
+    });
+
+    return total;
+}
+
+function populateSavedCourseYardageSelect() {
+    const select = document.getElementById(
+        "savedCourseYardageSelect"
+    );
+
+    if (!select) return;
+
+    const library = getCourseYardageLibrary();
+
+    select.innerHTML =
+        `<option value="">Select saved course yardages</option>`;
+
+    Object.keys(library)
+        .sort((a, b) => a.localeCompare(b))
+        .forEach((key) => {
+            const option = document.createElement("option");
+
+            option.value = key;
+            option.textContent = key;
+
+            select.appendChild(option);
+        });
+}
+
+function saveCurrentCourseYardageSet() {
+    let courseName = getFieldValue("courseName");
+
+const selectedCourseSet = document.getElementById("savedCourseYardageSelect")?.value || "";
+
+if (!selectedCourseSet) {
+    const enteredName = prompt("Save yardages as course name:", courseName || "");
+
+    if (!enteredName || !enteredName.trim()) {
+        return;
+    }
+
+    courseName = enteredName.trim();
+
+    const courseNameInput = document.getElementById("courseName");
+    if (courseNameInput && !courseNameInput.value.trim()) {
+        courseNameInput.value = courseName;
+    }
+}
+    const teeYardage = getFieldValue("teeYardage");
+
+    const holeYardages =
+        getCurrentHoleYardagesFromInputs();
+
+    const holeYardageTotal =
+        calculateSavedHoleYardageTotal(holeYardages);
+
+    if (!courseName) {
+        showYardageConfirmPopup({
+            title: "Course Name Needed",
+            message:
+                "Enter a Course Name before saving this yardage set.",
+            showCancel: false
+        });
+
+        return;
+    }
+
+    const filledCount = Object.values(holeYardages)
+        .filter(v => String(v || "").trim() !== "")
+        .length;
+
+    if (filledCount < 18) {
+        showYardageConfirmPopup({
+            title: "Incomplete Yardages",
+            message:
+                `Only ${filledCount} of 18 hole yardages are entered.`,
+            showCancel: false
+        });
+
+        return;
+    }
+
+    const key =
+        buildCourseYardageLibraryKey(
+            courseName,
+            teeYardage
+        );
+
+    const library = getCourseYardageLibrary();
+
+    library[key] = {
+        courseName,
+        teeYardage,
+        holeYardages,
+        holeYardageTotal,
+        savedAt: new Date().toISOString()
+    };
+
+    saveCourseYardageLibrary(library);
+
+    populateSavedCourseYardageSelect();
+
+    const select = document.getElementById(
+        "savedCourseYardageSelect"
+    );
+
+    if (select) {
+        select.value = key;
+    }
+
+showCourseLibraryMessage(
+    "Course Yardages Saved",
+    `${courseName} yardages saved locally.`
+);
+}
+
+function loadSelectedCourseYardageSet() {
+    const select = document.getElementById(
+        "savedCourseYardageSelect"
+    );
+
+    if (!select || !select.value) return;
+
+    const library = getCourseYardageLibrary();
+
+    const savedSet = library[select.value];
+
+    if (!savedSet) return;
+
+    applyHoleYardagesToInputs(
+        savedSet.holeYardages || {}
+    );
+
+    window.savedHoleYardages =
+        savedSet.holeYardages || {};
+
+    const teeYardageInput =
+        document.getElementById("teeYardage");
+
+    if (
+        teeYardageInput &&
+        savedSet.teeYardage &&
+        !teeYardageInput.value.trim()
+    ) {
+        teeYardageInput.value =
+            savedSet.teeYardage;
+    }
+
+showCourseLibraryMessage(
+    "Yardages Loaded",
+    `${savedSet.courseName} yardages loaded.`
+);
+}
+
+const savedCourseYardageSelect =
+    document.getElementById(
+        "savedCourseYardageSelect"
+    );
+
+if (savedCourseYardageSelect) {
+    savedCourseYardageSelect.addEventListener(
+        "change",
+        loadSelectedCourseYardageSet
+    );
+}
+
+populateSavedCourseYardageSelect();
+
+
+
 // ===== Window Events =====
 window.addEventListener("resize", adjustSummaryHeight);
 window.addEventListener("orientationchange", adjustSummaryHeight);
@@ -6222,3 +6474,101 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 }
 });
+
+
+/* ========================================
+   PHASE 2 – COURSE YARDAGE LIBRARY GLOBAL FIX
+======================================== */
+
+function showCourseLibraryMessage(title, message) {
+    if (typeof showYardageConfirmPopup === "function") {
+        showYardageConfirmPopup({
+            title,
+            message,
+            showCancel: false
+        });
+    } else {
+        alert(`${title}\n\n${message}`);
+    }
+}
+
+window.deleteSelectedCourseYardageSet = function () {
+    const select = document.getElementById("savedCourseYardageSelect");
+
+    if (!select || !select.value) {
+        showCourseLibraryMessage(
+            "No Saved Set Selected",
+            "Select a saved course yardage set before deleting."
+        );
+        return;
+    }
+
+    const library = getCourseYardageLibrary();
+    const key = select.value;
+
+    if (!library[key]) return;
+
+    const confirmed = confirm(`Delete saved yardage set?\n\n${key}`);
+    if (!confirmed) return;
+
+    delete library[key];
+
+    saveCourseYardageLibrary(library);
+    populateSavedCourseYardageSelect();
+
+    showCourseLibraryMessage(
+        "Course Set Deleted",
+        "The saved course yardage set was deleted locally."
+    );
+};
+
+window.renameSelectedCourseYardageSet = function () {
+    const select = document.getElementById("savedCourseYardageSelect");
+
+    if (!select || !select.value) {
+        showCourseLibraryMessage(
+            "No Saved Set Selected",
+            "Select a saved course yardage set before renaming."
+        );
+        return;
+    }
+
+    const library = getCourseYardageLibrary();
+    const oldKey = select.value;
+    const savedSet = library[oldKey];
+
+    if (!savedSet) return;
+
+    const newCourseName = prompt("Enter the new course name:", savedSet.courseName || "");
+    if (!newCourseName || !newCourseName.trim()) return;
+
+    const newKey = buildCourseYardageLibraryKey(newCourseName.trim(), savedSet.teeYardage);
+
+    if (newKey !== oldKey && library[newKey]) {
+        showCourseLibraryMessage(
+            "Name Already Exists",
+            "A saved yardage set with that course name and yardage already exists."
+        );
+        return;
+    }
+
+    savedSet.courseName = newCourseName.trim();
+
+    delete library[oldKey];
+    library[newKey] = savedSet;
+
+    saveCourseYardageLibrary(library);
+    populateSavedCourseYardageSelect();
+
+    select.value = newKey;
+
+    showCourseLibraryMessage(
+        "Course Set Renamed",
+        `Saved set renamed to ${newCourseName.trim()}.`
+    );
+};
+
+
+function showCourseLibraryMessage(title, message) {
+    alert(`${title}\n\n${message}`);
+}

@@ -162,6 +162,44 @@
   <button id="closeHoleYardagesBtn" class="popup-circle-close" type="button" aria-label="Close Hole Yardages">×</button>
 </div>
 
+<!-- ========================================
+     PHASE 2 – LOCAL COURSE YARDAGE LIBRARY
+======================================== -->
+<div class="course-yardage-library">
+  <label for="savedCourseYardageSelect">Load Saved Yardages</label>
+  <select id="savedCourseYardageSelect">
+    <option value="">Select saved course yardages</option>
+  </select>
+
+<div class="course-yardage-library-actions">
+
+  <button
+    id="saveCourseYardageSetBtn"
+    type="button"
+    onclick="saveCurrentCourseYardageSet();"
+  >
+    Save / Update Set
+  </button>
+
+  <button
+    id="renameCourseYardageSetBtn"
+    type="button"
+    onclick="renameSelectedCourseYardageSet();"
+  >
+    Rename Set
+  </button>
+
+  <button
+    id="deleteCourseYardageSetBtn"
+    type="button"
+    onclick="deleteSelectedCourseYardageSet();"
+  >
+    Delete Set
+  </button>
+
+</div>
+</div>
+
 
    <div class="yardages-popup-section-label">FRONT 9</div>
 
