@@ -814,8 +814,8 @@ function resetCurrentRound() {
 // 🔥 CRITICAL — CLEAR STORAGE CLEANLY
 clearActiveRoundStorage();
 removeFromStorage(ROUND_BG_INDEX_KEY);
-localStorage.removeItem(HOLE_YARDAGES_KEY);
-localStorage.removeItem("strackerPhase2HolePars");
+// PHASE 2 — Keep pre-round hole yardages/pars available until a different set is loaded or overwritten.
+// Do NOT clear HOLE_YARDAGES_KEY or HOLE_PARS_KEY here.
 
     // ===== RESET UI STATE =====
     loadRoundBackground();
@@ -1066,35 +1066,73 @@ function updateNavButtons() {
 function updateHoleScreen() {
     syncCurrentHoleFromIndex();
 
-const header = document.getElementById("holeHeader");
-if (header) header.textContent = currentHole;
+    const header = document.getElementById("holeHeader");
+    if (header) header.textContent = currentHole;
 
-const headerYardage = document.getElementById("holeHeaderYardage");
-if (headerYardage) {
-    const yds = typeof getCurrentHoleYardage === "function"
-        ? getCurrentHoleYardage()
-        : null;
+    const headerYardage = document.getElementById("holeHeaderYardage");
+    if (headerYardage) {
+        const yds = typeof getCurrentHoleYardage === "function"
+            ? getCurrentHoleYardage()
+            : null;
 
-    if (yds) {
-    headerYardage.innerHTML =
-        `: <span class="yardage-number">${yds}</span> <span class="yardage-unit">Yds</span>`;
-} else {
-    headerYardage.textContent = " —";
-}
-}
+        if (yds) {
+            headerYardage.innerHTML =
+                `: <span class="yardage-number">${yds}</span> <span class="yardage-unit">Yds</span>`;
+        } else {
+            headerYardage.textContent = " —";
+        }
+    }
 
     const holeData = holes[currentHole - 1];
 
     if (holeData && holeData.saved) {
         setStats(holeData);
-        if (saveBtn) saveBtn.classList.add("inactive");
+
+        // PHASE 2 — Restore saved Tee Shot club selection
+        const savedClub = holeData?.teeShot?.club || "D";
+
+        document.querySelectorAll(".tee-club-btn").forEach(btn => {
+            btn.classList.toggle(
+                "active",
+                btn.dataset.club === savedClub
+            );
+        });
+
+        window.teeShotDraft = window.teeShotDraft || {};
+        window.teeShotDraft.club = savedClub;
+
+        // PHASE 2 — Saved holes stay visually dimmed, but still clickable for edit confirmation.
+        if (saveBtn) {
+            saveBtn.textContent = "Save Hole";
+            saveBtn.classList.add("inactive");
+            saveBtn.disabled = false;
+            saveBtn.style.pointerEvents = "auto";
+        }
     } else {
         clearInputs();
-        if (saveBtn) saveBtn.classList.remove("inactive");
+
+        // PHASE 2 — Reset Tee Shot club selection for new/unsaved hole
+        document.querySelectorAll(".tee-club-btn").forEach(btn => {
+            btn.classList.toggle(
+                "active",
+                btn.dataset.club === "D"
+            );
+        });
+
+        window.teeShotDraft = window.teeShotDraft || {};
+        window.teeShotDraft.club = "D";
+
+        if (saveBtn) {
+            saveBtn.textContent = "Save Hole";
+            saveBtn.classList.remove("inactive");
+            saveBtn.disabled = false;
+            saveBtn.style.pointerEvents = "auto";
+        }
     }
-if (!holeData || !holeData.saved) {
-    syncHoleParRadioFromStoredPar();
-}
+
+    if (!holeData || !holeData.saved) {
+        syncHoleParRadioFromStoredPar();
+    }
 
     updateNavButtons();
     refreshTeeShotTile();
@@ -1299,6 +1337,7 @@ const displayDistance = parseInt(
 );
 
 holes[holeIndex].teeShot = {
+    club: window.teeShotDraft?.club || "D",
     direction: window.teeShotDraft?.direction || "",
     distance: Number.isFinite(displayDistance)
         ? displayDistance
@@ -1374,19 +1413,28 @@ if (selectedPar == null || scoreValue <= 0) {
     if (saveConfirmPopup) saveConfirmPopup.style.display = "none";
     if (validationPopup) validationPopup.style.display = "none";
 
+const wasEditingSavedHole = window.editingSavedHole === true;
+
 pendingSaveAfterValidation = false;
 autoSaveInProgress = false;
 window.zeroPuttsConfirmed = false;
+window.editingSavedHole = false;
+
+if (saveBtn) {
+    saveBtn.textContent = "Save Hole";
+}
 
     triggerSavedFeedback();
 
     const savedCount = holes.filter(h => h && h.saved).length;
     const isLastHole = savedCount === 18;
 
-    if (!isLastHole && currentHoleIndex < playOrder.length - 1) {
-        currentHoleIndex++;
-        syncCurrentHoleFromIndex();
-    }
+// PHASE 2 — Normal saves advance to next hole.
+// Edited saved holes stay on the same hole after updating.
+if (!wasEditingSavedHole && !isLastHole && currentHoleIndex < playOrder.length - 1) {
+    currentHoleIndex++;
+    syncCurrentHoleFromIndex();
+}
 
     if (isLastHole) {
         roundJustCompleted = true;
@@ -2569,7 +2617,22 @@ if (saveBtn) {
     saveBtn.addEventListener("click", () => {
         if (!roundStarted) return;
 
-        if (holes[currentHole - 1] && holes[currentHole - 1].saved) return;
+if (holes[currentHole - 1] && holes[currentHole - 1].saved && !window.editingSavedHole) {
+    const wantsToEdit = window.confirm(
+        "This hole has already been saved.\n\nDo you want to edit it?"
+    );
+
+    if (!wantsToEdit) {
+        return;
+    }
+
+    // PHASE 2 — Re-open saved hole for editing. Do not save yet.
+    window.editingSavedHole = true;
+    saveBtn.classList.remove("inactive");
+    saveBtn.textContent = "Update Hole";
+
+    return;
+}
 
         const validation = getHoleSaveValidation();
 
@@ -3255,8 +3318,20 @@ const teeDirHoledBtn = document.getElementById("teeDirHoled");
 
 let teeChipButtons = document.querySelectorAll(".tee-chip-btn");
 const teeDistanceDisplay = document.getElementById("teeDistanceDisplay");
+window.teeClubButtons = document.querySelectorAll(".tee-club-btn");
+
+// PHASE 2 — Tee Shot Club Used selection
+window.teeClubButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        window.teeClubButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        window.teeShotDraft.club = btn.dataset.club || "D";
+    });
+});
 
 window.teeShotDraft = window.teeShotDraft || {
+    club: "D",
     direction: "",
     distance: null
 };
@@ -3355,6 +3430,16 @@ const resetTeeShotDraft = () => {
 if (holeData && holeData.teeShot) {
     resetTeeShotDraft();
 
+    // PHASE 2 — Restore saved Tee Shot club when reopening hole
+window.teeShotDraft.club = holeData.teeShot.club || "D";
+
+document.querySelectorAll(".tee-club-btn").forEach(btn => {
+    btn.classList.toggle(
+        "active",
+        btn.dataset.club === window.teeShotDraft.club
+    );
+});
+
     // Holed is visual-only for now.
     // Do not restore it when opening the Tee Shot panel.
     if (holeData.teeShot.direction === "holed") {
@@ -3375,8 +3460,16 @@ if (holeData && holeData.teeShot) {
     if (typeof updateTeeShotSummary === "function") {
         updateTeeShotSummary();
     }
+
 } else {
     resetTeeShotDraft();
+
+    // PHASE 2 — Reset club selection for unsaved holes when Tee Shot panel opens.
+    window.teeShotDraft.club = "D";
+
+    document.querySelectorAll(".tee-club-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.club === "D");
+    });
 }
     };
     
@@ -4170,8 +4263,36 @@ const loadHoleYardages = () => {
 if (addHoleYardagesBtn && holeYardagesPopup) {
     addHoleYardagesBtn.addEventListener("click", () => {
         loadHoleYardages();
-        holeYardagesPopup.classList.remove("hidden");
+
+        // PHASE 2 — Refresh saved course yardage dropdown every time popup opens
+        if (typeof populateSavedCourseYardageSelect === "function") {
+            populateSavedCourseYardageSelect();
+        }
+
+        // PHASE 2 — If Round Details course already has a saved yardage set,
+        // automatically select it in the popup dropdown.
+        const courseName = getFieldValue("courseName");
+        const teeYardage = getFieldValue("teeYardage");
+        const savedSelect = document.getElementById("savedCourseYardageSelect");
+
+        if (courseName && savedSelect) {
+            const exactKey = buildCourseYardageLibraryKey(courseName, teeYardage);
+
+            if (exactKey && savedSelect.querySelector(`option[value="${CSS.escape(exactKey)}"]`)) {
+                savedSelect.value = exactKey;
+            } else {
+                const matchingOption = Array.from(savedSelect.options).find(option =>
+                    option.value.toLowerCase().startsWith(courseName.toLowerCase() + " |")
+                );
+
+                if (matchingOption) {
+                    savedSelect.value = matchingOption.value;
+                }
+            }
+        }
+
         updateHoleYardagesTotal();
+        holeYardagesPopup.classList.remove("hidden");
     });
 }
 
@@ -4324,33 +4445,46 @@ function calculateSavedHoleYardageTotal(holeYardages = {}) {
 }
 
 function populateSavedCourseYardageSelect() {
-    const select = document.getElementById(
-        "savedCourseYardageSelect"
-    );
-
+    const select = document.getElementById("savedCourseYardageSelect");
     if (!select) return;
 
     const library = getCourseYardageLibrary();
+    const courseName = getFieldValue("courseName");
+    const teeYardage = getFieldValue("teeYardage");
+    const draftKey = courseName
+        ? buildCourseYardageLibraryKey(courseName, teeYardage)
+        : "";
 
-    select.innerHTML =
-        `<option value="">Select saved course yardages</option>`;
+    select.innerHTML = `<option value="">Select saved course yardages</option>`;
+
+    // PHASE 2 — Show current Round Details course as the pending new yardage set.
+    if (draftKey && !library[draftKey]) {
+        const draftOption = document.createElement("option");
+        draftOption.value = `__NEW__${draftKey}`;
+        draftOption.textContent = draftKey;
+        select.appendChild(draftOption);
+        select.value = draftOption.value;
+    }
 
     Object.keys(library)
         .sort((a, b) => a.localeCompare(b))
         .forEach((key) => {
             const option = document.createElement("option");
-
             option.value = key;
             option.textContent = key;
-
             select.appendChild(option);
+
+            if (key === draftKey) {
+                select.value = key;
+            }
         });
 }
 
 function saveCurrentCourseYardageSet() {
     let courseName = getFieldValue("courseName");
 
-const selectedCourseSet = document.getElementById("savedCourseYardageSelect")?.value || "";
+const selectedCourseSetRaw = document.getElementById("savedCourseYardageSelect")?.value || "";
+const selectedCourseSet = selectedCourseSetRaw.startsWith("__NEW__") ? "" : selectedCourseSetRaw;
 
 if (!selectedCourseSet) {
     const enteredName = prompt("Save yardages as course name:", courseName || "");
@@ -4447,6 +4581,13 @@ function loadSelectedCourseYardageSet() {
 
     if (!savedSet) return;
 
+    // PHASE 2 — Auto-fill Round Details Course Name from selected saved yardage set
+const courseNameInput = document.getElementById("courseName");
+
+if (courseNameInput && savedSet.courseName) {
+    courseNameInput.value = savedSet.courseName;
+}
+
     applyHoleYardagesToInputs(
         savedSet.holeYardages || {}
     );
@@ -4457,14 +4598,14 @@ function loadSelectedCourseYardageSet() {
     const teeYardageInput =
         document.getElementById("teeYardage");
 
-    if (
-        teeYardageInput &&
-        savedSet.teeYardage &&
-        !teeYardageInput.value.trim()
-    ) {
-        teeYardageInput.value =
-            savedSet.teeYardage;
-    }
+  // PHASE 2 — Always sync tee yardage from selected saved yardage set
+if (teeYardageInput && savedSet.teeYardage) {
+    teeYardageInput.value = savedSet.teeYardage;
+}
+
+updateCoursePar();
+updateParRowState();
+updateRoundDetailCompletion();
 
 showCourseLibraryMessage(
     "Yardages Loaded",
