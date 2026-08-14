@@ -178,11 +178,19 @@ window.closeClubhouseScreen = function () {
 
 
 
-window.showClubhouseDoneScreen = function (e) {
+window.showClubhouseDoneScreen = async function (e) {
     if (e) {
         e.preventDefault();
         e.stopPropagation();
     }
+
+    if (typeof window.archiveCompletedRound === "function") {
+    const archived = await window.archiveCompletedRound();
+
+    if (!archived) {
+        return;
+    }
+}
 
     const clubhouse = document.getElementById("clubhouseScreen");
     const doneScreen = document.getElementById("clubhouseDoneScreen");
