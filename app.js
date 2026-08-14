@@ -244,10 +244,16 @@ function anyHoleSaved() {
     return holes.some(h => h && h.saved);
 }
 
+function getExpectedRoundLength() {
+    const selected = parseInt(getFieldValue("roundLength"), 10);
+    return selected === 9 ? 9 : 18;
+}
+
 function getRoundDetails() {
     return {
         roundDate: getFieldValue("roundDate"),
         roundType: getFieldValue("roundType"),
+        roundLength: getFieldValue("roundLength"),
         courseName: getFieldValue("courseName"),
         startingHole: getFieldValue("startingHole"),
         teeSlope: getFieldValue("teeSlope"),
@@ -367,6 +373,7 @@ function getTeeShotRemainingYardage() {
 function hasMeaningfulRoundDetails(details = {}) {
     const meaningfulFields = [
         "roundType",
+        "roundLength",
         "courseName",
         "startingHole",
         "teeSlope",
@@ -562,8 +569,13 @@ function getRoundTotalScore() {
 }
 
 function getRoundScoreVsPar() {
-    const coursePar = parseInt(document.getElementById("coursePar")?.value, 10) || 0;
-    return getRoundTotalScore() - coursePar;
+    const savedHoles = holes.filter(h => h && h.saved);
+
+    const playedPar = savedHoles.reduce((sum, h) => {
+        return sum + Number(h.par || 0);
+    }, 0);
+
+    return getRoundTotalScore() - playedPar;
 }
 
 function getCompletionHeadline() {
@@ -606,6 +618,7 @@ function clearRequiredRowHighlightForField(fieldId) {
     const rowMap = {
         roundDate: "row-roundDate",
         roundType: "row-roundType",
+        roundLength: "row-roundLength",
         courseName: "row-courseName",
         startingHole: "row-startingHole",
         teeSlope: "row-teeInfo",
@@ -662,6 +675,8 @@ function resetCurrentRound() {
     roundStarted = false;
     roundFinalized = false;
     roundJustCompleted = false;
+    roundEndedEarly = false;
+    completedHoleCount = null;
     postRoundMode = false;
     postRoundReturnTarget = "";
     pendingSaveAfterValidation = false;
@@ -687,6 +702,7 @@ function resetCurrentRound() {
 
     const fieldIds = [
         "roundType",
+        "roundLength",
         "courseName",
         "startingHole",
         "teeSlope",
@@ -794,6 +810,7 @@ function updateParRowState() {
 function updateRoundDetailCompletion() {
     updateRowState("row-roundDate", false);
     updateRowState("row-roundType", getFieldValue("roundType") !== "");
+    updateRowState("row-roundLength", getFieldValue("roundLength") !== "");
     updateRowState("row-courseName", getFieldValue("courseName") !== "");
     updateRowState("row-startingHole", getFieldValue("startingHole") !== "");
 
@@ -815,6 +832,7 @@ function validateRoundDetailsForStart() {
     const requiredRows = [
         { rowId: "row-roundDate", fieldId: "roundDate", label: "Date" },
         { rowId: "row-roundType", fieldId: "roundType", label: "Round Type" },
+        { rowId: "row-roundLength", fieldId: "roundLength", label: "Round Length" },
         { rowId: "row-courseName", fieldId: "courseName", label: "Course Name" },
         { rowId: "row-startingHole", fieldId: "startingHole", label: "Starting Hole" },
         { rowId: "row-coursePars", fieldId: null, label: "Front and Back 9 Par" }
@@ -1012,6 +1030,19 @@ if (!holeData || !holeData.saved) {
     refreshPuttingTile();
     refreshShortGameTile();
     refreshNotesTile();
+
+    const endRoundEarlyBtn = document.getElementById("endRoundEarlyBtn");
+
+if (endRoundEarlyBtn) {
+    const savedHoleCount = holes.filter(h => h && h.saved).length;
+
+    const shouldShowEndEarly =
+        roundStarted &&
+        savedHoleCount > 0 &&
+        !roundJustCompleted;
+
+    endRoundEarlyBtn.style.display = shouldShowEndEarly ? "inline-block" : "none";
+}
 }
 
 function goToHole(holeNum) {
@@ -1290,7 +1321,7 @@ teeShot: (
     triggerSavedFeedback();
 
     const savedCount = holes.filter(h => h && h.saved).length;
-    const isLastHole = savedCount === 18;
+    const isLastHole = savedCount === getExpectedRoundLength();
 
     if (!isLastHole && currentHoleIndex < playOrder.length - 1) {
         currentHoleIndex++;
@@ -1368,10 +1399,9 @@ if (summaryCourseNameEl) {
 
     tbody.innerHTML = "";
 
-    let frontTotals = { fir: 0, gir: 0, putts: 0, updown: 0, sand: 0, penalty: 0, score: 0, saved: 0 };
-    let backTotals = { fir: 0, gir: 0, putts: 0, updown: 0, sand: 0, penalty: 0, score: 0, saved: 0 };
-    let totalTotals = { fir: 0, gir: 0, putts: 0, updown: 0, sand: 0, penalty: 0, score: 0, saved: 0 };
-
+    let frontTotals = { fir: 0, firOpportunities: 0, gir: 0, putts: 0, updown: 0, sand: 0, penalty: 0, score: 0, saved: 0 };
+    let backTotals = { fir: 0, firOpportunities: 0, gir: 0, putts: 0, updown: 0, sand: 0, penalty: 0, score: 0, saved: 0 };
+    let totalTotals = { fir: 0, firOpportunities: 0, gir: 0, putts: 0, updown: 0, sand: 0, penalty: 0, score: 0, saved: 0 };
     let frontCumulativeScore = 0;
     let backCumulativeScore = 0;
 
@@ -1392,7 +1422,7 @@ if (summaryCourseNameEl) {
 
         tbody.innerHTML += `<tr ${highlight}>
             <td>${actualHoleNumber}</td>
-            <td>${holeData.fir ? "✔" : ""}</td>
+            <td>${isSaved && Number(holeData.par) === 3 ? "—" : (holeData.fir ? "✔" : "")}</td>
             <td>${holeData.gir ? "✔" : ""}</td>
             <td>${holeData.putts}</td>
             <td>${holeData.updown ? 1 : ""}</td>
@@ -1404,7 +1434,10 @@ if (summaryCourseNameEl) {
         if (isSaved) {
             const section = actualHoleNumber <= 9 ? frontTotals : backTotals;
 
-            section.fir += holeData.fir ? 1 : 0;
+            if (Number(holeData.par || 0) >= 4) {
+    section.firOpportunities++;
+    section.fir += holeData.fir ? 1 : 0;
+}
             section.gir += holeData.gir ? 1 : 0;
             section.putts += holeData.putts || 0;
             section.updown += holeData.updown ? 1 : 0;
@@ -1413,7 +1446,10 @@ if (summaryCourseNameEl) {
             section.score += holeData.score || 0;
             section.saved++;
 
-            totalTotals.fir += holeData.fir ? 1 : 0;
+            if (Number(holeData.par || 0) >= 4) {
+    totalTotals.firOpportunities++;
+    totalTotals.fir += holeData.fir ? 1 : 0;
+}
             totalTotals.gir += holeData.gir ? 1 : 0;
             totalTotals.putts += holeData.putts || 0;
             totalTotals.updown += holeData.updown ? 1 : 0;
@@ -1435,7 +1471,7 @@ if (summaryCourseNameEl) {
 
             tbody.innerHTML += `<tr class="totals-title">
                 <td>Totals</td>
-                <td>${frontTotals.saved ? Math.round(frontTotals.fir / frontTotals.saved * 100) + "%" : ""}</td>
+                <td>${frontTotals.firOpportunities ? Math.round(frontTotals.fir / frontTotals.firOpportunities * 100) + "%" : ""}</td>
                 <td>${frontTotals.saved ? Math.round(frontTotals.gir / frontTotals.saved * 100) + "%" : ""}</td>
                 <td>${frontTotals.putts}</td>
                 <td>${frontTotals.updown}</td>
@@ -1454,7 +1490,7 @@ if (summaryCourseNameEl) {
 
             tbody.innerHTML += `<tr class="totals-title">
                 <td>Totals</td>
-                <td>${backTotals.saved ? Math.round(backTotals.fir / backTotals.saved * 100) + "%" : ""}</td>
+                <td>${backTotals.firOpportunities ? Math.round(backTotals.fir / backTotals.firOpportunities * 100) + "%" : ""}</td>
                 <td>${backTotals.saved ? Math.round(backTotals.gir / backTotals.saved * 100) + "%" : ""}</td>
                 <td>${backTotals.putts}</td>
                 <td>${backTotals.updown}</td>
@@ -1467,7 +1503,7 @@ if (summaryCourseNameEl) {
             tbody.innerHTML += `<tr class="sub-header" style="background:#d5fadf;"><td colspan="8">Complete Round</td></tr>`;
             tbody.innerHTML += `<tr class="totals-title">
                 <td>Totals</td>
-                <td>${totalTotals.saved ? Math.round(totalTotals.fir / totalTotals.saved * 100) + "%" : ""}</td>
+                <td>${totalTotals.firOpportunities ? Math.round(totalTotals.fir / totalTotals.firOpportunities * 100) + "%" : ""}</td>
                 <td>${totalTotals.saved ? Math.round(totalTotals.gir / totalTotals.saved * 100) + "%" : ""}</td>
                 <td>${totalTotals.putts}</td>
                 <td>${totalTotals.updown}</td>
@@ -1835,6 +1871,24 @@ function playSplashToFreshRoundDetails() {
     }, 1100);
 }
 
+function endRoundEarly() {
+    const savedHoleCount = holes.filter(h => h && h.saved).length;
+
+    if (savedHoleCount <= 0) {
+        alert("No completed holes are available to save.");
+        return;
+    }
+
+    roundEndedEarly = true;
+    completedHoleCount = savedHoleCount;
+    roundJustCompleted = true;
+    roundFinalized = false;
+
+    persistActiveRound();
+
+    showRoundCompleteModal();
+}
+
 function showRoundCompleteModal() {
     const modal = document.getElementById("roundCompleteModal");
     const text = document.getElementById("roundCompleteText");
@@ -1882,11 +1936,16 @@ function show19thHoleScreen() {
     const savedHoleCount = holes.filter(h => h && h.saved).length;
 
     // Do not allow Round Wrap-up unless the round is actually complete
-    if (savedHoleCount < 18) {
-        showStatsScreen();
-        window.scrollTo(0, 0);
-        return;
-    }
+const validEarlyFinish =
+    roundEndedEarly &&
+    completedHoleCount != null &&
+    savedHoleCount === Number(completedHoleCount);
+
+if (savedHoleCount < getExpectedRoundLength() && !validEarlyFinish) {
+    showStatsScreen();
+    window.scrollTo(0, 0);
+    return;
+}
 
     const roundCompleteModal = document.getElementById("roundCompleteModal");
     const summaryModal = document.getElementById("summaryModal");
@@ -2001,16 +2060,36 @@ window.showSavedRoundsHub = function () {
 
 
 function wireStaticEventListeners() {
-        const statsHelpBtn = document.getElementById("statsHelpBtn");
-        const statsHelpPopup = document.getElementById("statsHelpPopup");
-        const statsHelpCloseBtn = document.getElementById("statsHelpCloseBtn");
-const saveConfirmStay = document.getElementById("confirmStay");
+    const statsHelpBtn = document.getElementById("statsHelpBtn");
+    const endRoundEarlyBtn = document.getElementById("endRoundEarlyBtn");
+    const statsHelpPopup = document.getElementById("statsHelpPopup");
+    const statsHelpCloseBtn = document.getElementById("statsHelpCloseBtn");
+    const saveConfirmStay = document.getElementById("confirmStay");
 
-document.getElementById("saveConfirmClose")?.addEventListener("click", () => {
-    document.getElementById("saveConfirmPopup").style.display = "none";
-});
+    document.getElementById("saveConfirmClose")?.addEventListener("click", () => {
+        document.getElementById("saveConfirmPopup").style.display = "none";
+    });
 
-const teeShotValidationOK = document.getElementById("teeShotValidationOK");
+    if (endRoundEarlyBtn) {
+        endRoundEarlyBtn.addEventListener("click", () => {
+            const savedHoleCount = holes.filter(h => h && h.saved).length;
+
+            if (savedHoleCount <= 0) {
+                alert("No completed holes are available to save.");
+                return;
+            }
+
+            const confirmed = window.confirm(
+                `End this round after ${savedHoleCount} completed hole${savedHoleCount === 1 ? "" : "s"}?`
+            );
+
+            if (!confirmed) return;
+
+            endRoundEarly();
+        });
+    }
+
+    const teeShotValidationOK = document.getElementById("teeShotValidationOK");
 
     if (statsHelpBtn && statsHelpPopup) {
         statsHelpBtn.addEventListener("click", () => {
@@ -2553,13 +2632,17 @@ if (validationOK) {
 
     const roundCompleteCloseBtn = document.getElementById("roundCompleteCloseBtn");
 if (roundCompleteCloseBtn) {
-    roundCompleteCloseBtn.addEventListener("click", () => {
+    roundCompleteCloseBtn.addEventListener("click", async () => {
         postRoundMode = false;
         postRoundReturnTarget = "nineteenth";
         persistActiveRound();
 
         if (typeof finalizeCompletedRoundIfNeeded === "function") {
-            finalizeCompletedRoundIfNeeded();
+            const finalized = await finalizeCompletedRoundIfNeeded();
+
+            if (!finalized) {
+                return;
+            }
         }
 
         show19thHoleScreen();
@@ -2601,9 +2684,13 @@ window.renderSavedRounds = function () {
                 ? round.holes.filter(h => h && h.saved)
                 : [];
 
-            const total = savedHoles.reduce((sum, h) => sum + Number(h.score || 0), 0);
-            const coursePar = Number(round.details?.coursePar || 0);
-            const vsPar = coursePar ? (total - coursePar) : 0;
+        const total = savedHoles.reduce((sum, h) => sum + Number(h.score || 0), 0);
+
+        const playedPar = savedHoles.reduce((sum, h) => {
+    return sum + Number(h.par || 0);
+}, 0);
+
+        const vsPar = playedPar ? (total - playedPar) : 0;
 
             totalScore = total;
             vsParText = vsPar === 0 ? "E" : `${vsPar > 0 ? "+" : ""}${vsPar}`;
@@ -2799,11 +2886,19 @@ if (nineteenthNewRoundBtn) {
 
             const savedHoleCount = holes.filter(h => h && h.saved).length;
 
-            if (savedHoleCount === 18 && (roundJustCompleted || postRoundMode)) {
-                show19thHoleScreen();
-            } else {
-                showStatsScreen();
-            }
+            const validCompletedRound =
+            savedHoleCount === getExpectedRoundLength() ||
+    (
+                roundEndedEarly &&
+             completedHoleCount != null &&
+                savedHoleCount === Number(completedHoleCount)
+    );
+
+if (validCompletedRound && (roundJustCompleted || postRoundMode)) {
+    show19thHoleScreen();
+} else {
+    showStatsScreen();
+}
 
             window.scrollTo(0, 0);
         });
@@ -2928,10 +3023,11 @@ if (closeTeeShotPanelBtn && teeShotPanel && enhancedStatsPanel) {
     let teeChipButtons = document.querySelectorAll(".tee-chip-btn");
     const teeDistanceDisplay = document.getElementById("teeDistanceDisplay");
 
-    window.teeShotDraft = window.teeShotDraft || {
+window.teeShotDraft = window.teeShotDraft || {
+    club: "D",
     direction: "",
     distance: null
-    };
+};
 
 const setTeeDirection = (direction) => {
     window.teeShotDraft.direction = direction;

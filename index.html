@@ -63,25 +63,36 @@
       </div>
 
       <div class="form-row detail-row required-row" id="row-roundType">
-        <div class="form-group full-width">
-          <label for="roundType">Round Type</label>
-          <select id="roundType">
-            <option value="" selected>Select Round Type</option>
-            <option value="Practice Round">Practice Round</option>
-            <option value="Jr PGA Tournament">Jr PGA Tournament</option>
-            <option value="High School Tournament">High School Tournament</option>
-            <option value="Other Event">Other Event</option>
-          </select>
-        </div>
-      </div>
+  <div class="form-group full-width">
+    <label for="roundType">Round Type</label>
+    <select id="roundType">
+      <option value="" selected>Select Round Type</option>
+      <option value="Practice Round">Practice Round</option>
+      <option value="Jr PGA Tournament">Jr PGA Tournament</option>
+      <option value="AJGA Tournament">AJGA Tournament</option>
+      <option value="High School Tournament">High School Tournament</option>
+      <option value="Other Play">Other Play</option>
+    </select>
+  </div>
+</div>
 
-      <div class="form-row detail-row required-row" id="row-courseName">
-        <div class="form-group full-width">
-          <label for="courseName">Course Name</label>
-          <input type="text" id="courseName" autocomplete="off">
-        </div>
-      </div>
+<div class="form-row detail-row required-row" id="row-roundLength">
+  <div class="form-group full-width">
+    <label for="roundLength">Round Length</label>
+    <select id="roundLength">
+      <option value="" selected>Select Round Length</option>
+      <option value="18">18 Holes</option>
+      <option value="9">9 Holes</option>
+    </select>
+  </div>
+</div>
 
+<div class="form-row detail-row required-row" id="row-courseName">
+  <div class="form-group full-width">
+    <label for="courseName">Course Name</label>
+    <input type="text" id="courseName" autocomplete="off">
+  </div>
+</div>
       <div class="form-row detail-row required-row" id="row-startingHole">
         <div class="form-group full-width">
           <label for="startingHole">Starting Hole</label>
@@ -366,6 +377,8 @@
   </div>
 
   <button id="seeStats" type="button">View Hole Stats Summary</button>
+
+  <button id="endRoundEarlyBtn" type="button">End Round Early</button>
 
 <!-- ===== PERFORMANCE TRENDS EXPERIMENT START ===== -->
 <!-- Optional read-only +Stats trend button. Safe to remove if feature does not feel right. -->

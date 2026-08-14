@@ -91,11 +91,25 @@ async function addCompletedRound(round) {
             const result = await window.uploadCompletedRoundToSupabase(round);
 
             if (!result.success) {
-                console.warn("Round saved locally, but Supabase upload failed:", result.error);
+                console.warn("Supabase upload failed:", result.error);
+
+                // Roll back the local completed copy so the round can
+                // safely remain active and be completed again.
+                const rolledBackRounds = getCompletedRounds().filter(r => r.id !== round.id);
+                saveCompletedRounds(rolledBackRounds);
+
+                return false;
             }
         }
     } catch (err) {
-        console.warn("Round saved locally, but cloud upload crashed:", err);
+        console.warn("Cloud upload crashed:", err);
+
+        // Roll back the local completed copy so we do not end up with
+        // a completed local round while the cloud copy is missing.
+        const rolledBackRounds = getCompletedRounds().filter(r => r.id !== round.id);
+        saveCompletedRounds(rolledBackRounds);
+
+        return false;
     }
 
     return true;
@@ -114,9 +128,14 @@ function buildCompletedRound() {
         id: generateRoundId(),
         date: new Date().toISOString(),
         version: CURRENT_DATA_VERSION,
+        roundEndedEarly: !!roundEndedEarly,
+        completedHoleCount: completedHoleCount == null
+             ? getSavedHoleCount()
+             : Number(completedHoleCount),
         details: {
             roundDate: getFieldValue("roundDate"),
             roundType: getFieldValue("roundType"),
+            roundLength: getFieldValue("roundLength"),
             courseName: getFieldValue("courseName"),
             startingHole: getFieldValue("startingHole"),
             teeSlope: getFieldValue("teeSlope"),
@@ -161,10 +180,25 @@ function buildCompletedRound() {
 window.archiveCompletedRound = async function archiveCompletedRound() {
     console.log("🔥 archiveCompletedRound RUNNING");
 
-    if (!roundJustCompleted || getSavedHoleCount() !== 18) {
-        console.log("[ARCHIVE] stopped early");
-        return true;
-    }
+const expectedLength =
+    typeof getExpectedRoundLength === "function"
+        ? getExpectedRoundLength()
+        : 18;
+
+const actualCompletedCount =
+    completedHoleCount == null
+        ? getSavedHoleCount()
+        : Number(completedHoleCount);
+
+const validCompletion =
+    roundEndedEarly
+        ? getSavedHoleCount() === actualCompletedCount
+        : getSavedHoleCount() === expectedLength;
+
+if (!roundJustCompleted || !validCompletion) {
+    console.log("[ARCHIVE] stopped early");
+    return true;
+}
 
     if (roundFinalized) {
         console.log("[ARCHIVE] already finalized");
@@ -283,6 +317,8 @@ function persistActiveRound() {
         roundDetails,
         soundOn,
         roundJustCompleted,
+        roundEndedEarly,
+        completedHoleCount,
         postRoundMode,
         postRoundReturnTarget,
         lastUpdated: Date.now()
@@ -305,6 +341,12 @@ function applyLoadedRound(saved) {
     roundStarted = !!saved.roundStarted;
     roundFinalized = !!saved.roundFinalized;
     roundJustCompleted = !!saved.roundJustCompleted;
+
+    roundEndedEarly = !!saved.roundEndedEarly;
+    completedHoleCount = saved.completedHoleCount == null
+        ? null
+        : Number(saved.completedHoleCount);
+
     postRoundMode = !!saved.postRoundMode;
     postRoundReturnTarget = String(saved.postRoundReturnTarget || "");
 
@@ -319,6 +361,12 @@ function applyLoadedRound(saved) {
     for (let i = 0; i < 18; i++) {
         holes[i] = savedHoles[i] || null;
     }
+
+// Legacy active rounds were created before Round Length existed.
+// Those rounds were necessarily planned as 18-hole rounds.
+if (!savedRoundDetails.roundLength) {
+    savedRoundDetails.roundLength = "18";
+}
 
     setRoundDetails(savedRoundDetails);
 
