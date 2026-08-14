@@ -1598,10 +1598,129 @@ async function adminCompleteRound() {
 
   if (!confirmed) return;
 
-  await showPortalAlert(
-    "Ready to Complete",
-    `Admin completion is ready for ${holesCompleted} holes. No round data has been changed yet.`
+  const totalScore = savedHoles.reduce((sum, h) => {
+    return sum + Number(h.score || 0);
+  }, 0);
+
+  const playedPar = savedHoles.reduce((sum, h) => {
+    return sum + Number(h.par || 0);
+  }, 0);
+
+  const vsPar = playedPar > 0
+    ? totalScore - playedPar
+    : null;
+
+  const totalPutts = savedHoles.reduce((sum, h) => {
+    return sum + Number(h.putts || 0);
+  }, 0);
+
+  const firOpportunities = savedHoles.filter(
+    h => Number(h.par || 0) >= 4
   );
+
+  const firMade = firOpportunities.filter(
+    h => h.fir === true
+  ).length;
+
+  const firPct = firOpportunities.length > 0
+    ? Number(((firMade / firOpportunities.length) * 100).toFixed(2))
+    : null;
+
+  const girMade = savedHoles.filter(
+    h => h.gir === true
+  ).length;
+
+  const girPct = savedHoles.length > 0
+    ? Number(((girMade / savedHoles.length) * 100).toFixed(2))
+    : null;
+
+  const completedPayload = {
+    details: {
+      roundDate: round.round_date || null,
+      roundType: round.round_type || null,
+      courseName: round.course_name || null,
+      coursePar: round.course_par || null,
+      teeYardage: round.tee_yardage || null,
+      teeRating: round.tee_rating || null,
+      teeSlope: round.tee_slope || null
+    },
+
+    holes: holes,
+
+    summary: {
+      totalScore,
+      vsPar,
+      firPct,
+      girPct,
+      totalPutts
+    },
+
+    roundEndedEarly: true,
+    completedHoleCount: holesCompleted,
+    completedByAdmin: true
+  };
+
+  const completedRow = {
+    player_name: playerName,
+    round_date: round.round_date || null,
+    round_type: round.round_type || null,
+
+    course_name: courseName,
+    course_par: round.course_par ? Number(round.course_par) : null,
+    tee_yardage: round.tee_yardage ? Number(round.tee_yardage) : null,
+    tee_rating: round.tee_rating ? Number(round.tee_rating) : null,
+    tee_slope: round.tee_slope ? Number(round.tee_slope) : null,
+
+    total_score: totalScore,
+    vs_par: vsPar,
+    fir_pct: firPct,
+    gir_pct: girPct,
+    total_putts: totalPutts,
+
+    is_test: isTestRound(round),
+    uploaded_from_device: "Admin Portal",
+    round_payload: completedPayload
+  };
+
+  const { error: insertError } = await portalSupabase
+    .from("completed_rounds_p2")
+    .insert([completedRow]);
+
+  if (insertError) {
+    console.error("Admin completed-round insert failed:", insertError);
+
+    await showPortalAlert(
+      "Could Not Complete Round",
+      "The completed round could not be saved. The live round has been left untouched."
+    );
+
+    return;
+  }
+  const { error: deleteError } = await portalSupabase
+    .from("live_round_status_p2")
+    .delete()
+    .eq("session_id", round.session_id);
+
+  if (deleteError) {
+    console.error("Admin live-round delete failed:", deleteError);
+
+    await showPortalAlert(
+      "Round Saved, Live Snapshot Remains",
+      "The round was saved to Completed Rounds, but its live snapshot could not be removed automatically."
+    );
+
+    await loadLastCompletedRound();
+    await loadLiveRounds();
+    return;
+  }
+
+  await showPortalAlert(
+    "Round Completed",
+    `${holesCompleted} completed hole${holesCompleted === 1 ? "" : "s"} were archived successfully.`
+  );
+
+  await loadLastCompletedRound();
+  await loadLiveRounds();
 }
 
 
