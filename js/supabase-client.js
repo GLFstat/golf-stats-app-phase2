@@ -31,8 +31,11 @@ window.uploadCompletedRoundToSupabase = async function (round) {
     return sum + Number(h.score || 0);
   }, 0);
 
-  const coursePar = Number(details.coursePar || 0);
-  const vsPar = coursePar > 0 ? totalScore - coursePar : null;
+  const playedPar = savedHoles.reduce((sum, h) => {
+    return sum + Number(h.par || 0);
+  }, 0);
+
+  const vsPar = playedPar > 0 ? totalScore - playedPar : null;
 
   const totalPutts = savedHoles.reduce((sum, h) => {
     return sum + Number(h.putts || 0);

@@ -10,6 +10,7 @@ const portalSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 const listEl = document.getElementById("liveRoundsList");
 const detailsEl = document.getElementById("roundDetails");
 const refreshBtn = document.getElementById("refreshBtn");
+
 const clearFinishedBtn = document.getElementById("clearFinishedBtn");
 const clearLiveBtn = document.getElementById("clearLiveBtn");
 const maintenanceStatsEl = document.getElementById("maintenanceStats");
@@ -28,6 +29,27 @@ let currentPortalModalResolver = null;
 let liveRoundsCache = [];
 let currentRounds = [];
 
+const AUTO_REFRESH_KEY = "strackerAdminAutoRefresh";
+let autoRefreshEnabled = localStorage.getItem(AUTO_REFRESH_KEY) !== "false";
+let autoRefreshTimer = null;
+
+const autoRefreshToggle = document.getElementById("autoRefreshToggle");
+
+if (autoRefreshToggle) {
+  autoRefreshToggle.checked = autoRefreshEnabled;
+
+  autoRefreshToggle.addEventListener("change", () => {
+    autoRefreshEnabled = autoRefreshToggle.checked;
+    localStorage.setItem(AUTO_REFRESH_KEY, String(autoRefreshEnabled));
+
+    if (autoRefreshEnabled) {
+      loadLiveRounds();
+      startAutoRefresh();
+    } else {
+      stopAutoRefresh();
+    }
+  });
+}
 
 
 // =========================
@@ -1130,6 +1152,12 @@ function showDetails(round) {
     ${holesHtml}
 
     <div class="live-footer-row">
+      ${
+        isAdminLoggedIn()
+          ? `<button class="refresh-main-btn" type="button" onclick="adminCompleteRound()">Complete Round</button>`
+          : ``
+      }
+
       <button class="refresh-main-btn" type="button" onclick="loadLiveRounds()">Refresh</button>
     </div>
   `;
@@ -1524,11 +1552,62 @@ function updatePortalTitle() {
   el.textContent = `Admin Portal for ${name}`;
 }
 
+async function adminCompleteRound() {
+  if (!isAdminLoggedIn()) {
+    await showPortalAlert(
+      "Admin Login Required",
+      "Please log in before completing a player's round."
+    );
+    return;
+  }
 
+  const round = window.currentLiveRoundForSummary;
+
+  if (!round) {
+    await showPortalAlert(
+      "No Active Round",
+      "No active round is currently selected."
+    );
+    return;
+  }
+
+  const holes = Array.isArray(round.holes_json) ? round.holes_json : [];
+  const savedHoles = holes.filter((h) => h && h.saved);
+  const holesCompleted = savedHoles.length;
+
+  if (!holesCompleted) {
+    await showPortalAlert(
+      "Cannot Complete Round",
+      "This round does not contain any completed holes."
+    );
+    return;
+  }
+
+  const courseName = round.course_name || "Unknown Course";
+  const playerName = round.player_name || "Player";
+
+  const confirmed = await showPortalConfirm(
+    "Complete this round?",
+    `<strong>${escapeHtml(playerName)}</strong><br>
+     ${escapeHtml(courseName)}<br><br>
+     This round contains <strong>${holesCompleted} completed hole${holesCompleted === 1 ? "" : "s"}</strong>.<br><br>
+     Complete and archive this round?`,
+    "Complete Round",
+    "Cancel"
+  );
+
+  if (!confirmed) return;
+
+  await showPortalAlert(
+    "Ready to Complete",
+    `Admin completion is ready for ${holesCompleted} holes. No round data has been changed yet.`
+  );
+}
 
 
 window.loadLiveRounds = loadLiveRounds;
 window.deleteRound = deleteRound;
+window.adminCompleteRound = adminCompleteRound;
 initAdminLogin();
 
 initPortalBrandingSafe();
@@ -1544,7 +1623,24 @@ console.log("finished calling loadLastCompletedRound");
 
 console.log("ADMIN PORTAL JS IS RUNNING");
 
-setInterval(() => {
-  loadLiveRounds();
-    loadLastCompletedRound();
-}, 5000);
+function startAutoRefresh() {
+  if (autoRefreshTimer) {
+    clearInterval(autoRefreshTimer);
+    autoRefreshTimer = null;
+  }
+
+  if (!autoRefreshEnabled) return;
+
+  autoRefreshTimer = setInterval(() => {
+    loadLiveRounds();
+  }, 5000);
+}
+
+function stopAutoRefresh() {
+  if (autoRefreshTimer) {
+    clearInterval(autoRefreshTimer);
+    autoRefreshTimer = null;
+  }
+}
+
+startAutoRefresh();

@@ -12,6 +12,8 @@ let resumingSavedRound = false;
 let summaryReturnTarget = "app";
 
 let roundJustCompleted = false;
+let roundEndedEarly = false;
+let completedHoleCount = null;
 let postRoundMode = false;
 let postRoundReturnTarget = "";
 let postRoundButtonDelayTimer = null;
@@ -86,6 +88,7 @@ const roundFormNote = document.getElementById("roundFormNote");
 const roundDetailFields = [
     "roundDate",
     "roundType",
+    "roundLength",
     "courseName",
     "startingHole",
     "teeSlope",

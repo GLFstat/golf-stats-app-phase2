@@ -244,10 +244,16 @@ function anyHoleSaved() {
     return holes.some(h => h && h.saved);
 }
 
+function getExpectedRoundLength() {
+    const selected = parseInt(getFieldValue("roundLength"), 10);
+    return selected === 9 ? 9 : 18;
+}
+
 function getRoundDetails() {
     return {
         roundDate: getFieldValue("roundDate"),
         roundType: getFieldValue("roundType"),
+        roundLength: getFieldValue("roundLength"),
         courseName: getFieldValue("courseName"),
         startingHole: getFieldValue("startingHole"),
         teeSlope: getFieldValue("teeSlope"),
@@ -458,6 +464,7 @@ function getTeeShotRemainingYardage() {
 function hasMeaningfulRoundDetails(details = {}) {
     const meaningfulFields = [
         "roundType",
+        "roundLength",
         "courseName",
         "startingHole",
         "teeSlope",
@@ -653,8 +660,13 @@ function getRoundTotalScore() {
 }
 
 function getRoundScoreVsPar() {
-    const coursePar = parseInt(document.getElementById("coursePar")?.value, 10) || 0;
-    return getRoundTotalScore() - coursePar;
+    const savedHoles = holes.filter(h => h && h.saved);
+
+    const playedPar = savedHoles.reduce((sum, h) => {
+        return sum + Number(h.par || 0);
+    }, 0);
+
+    return getRoundTotalScore() - playedPar;
 }
 
 function getCompletionHeadline() {
@@ -697,6 +709,7 @@ function clearRequiredRowHighlightForField(fieldId) {
     const rowMap = {
         roundDate: "row-roundDate",
         roundType: "row-roundType",
+        roundLength: "row-roundLength",
         courseName: "row-courseName",
         startingHole: "row-startingHole",
         teeSlope: "row-teeInfo",
@@ -753,6 +766,8 @@ function resetCurrentRound() {
     roundStarted = false;
     roundFinalized = false;
     roundJustCompleted = false;
+    roundEndedEarly = false;
+    completedHoleCount = null;
     postRoundMode = false;
     postRoundReturnTarget = "";
     pendingSaveAfterValidation = false;
@@ -778,6 +793,7 @@ function resetCurrentRound() {
 
     const fieldIds = [
         "roundType",
+        "roundLength",
         "courseName",
         "startingHole",
         "teeSlope",
@@ -885,6 +901,7 @@ function updateParRowState() {
 function updateRoundDetailCompletion() {
     updateRowState("row-roundDate", false);
     updateRowState("row-roundType", getFieldValue("roundType") !== "");
+    updateRowState("row-roundLength", getFieldValue("roundLength") !== "");
     updateRowState("row-courseName", getFieldValue("courseName") !== "");
     updateRowState("row-startingHole", getFieldValue("startingHole") !== "");
 
@@ -906,6 +923,7 @@ function validateRoundDetailsForStart() {
     const requiredRows = [
         { rowId: "row-roundDate", fieldId: "roundDate", label: "Date" },
         { rowId: "row-roundType", fieldId: "roundType", label: "Round Type" },
+        { rowId: "row-roundLength", fieldId: "roundLength", label: "Round Length" },
         { rowId: "row-courseName", fieldId: "courseName", label: "Course Name" },
         { rowId: "row-startingHole", fieldId: "startingHole", label: "Starting Hole" },
         { rowId: "row-coursePars", fieldId: null, label: "Front and Back 9 Par" }
@@ -1143,6 +1161,20 @@ function updateHoleScreen() {
     updateApproachLabelsForPar();
     updateTeeShotDirectionLayout();
     refreshNotesTile();
+
+    const endRoundEarlyBtn = document.getElementById("endRoundEarlyBtn");
+
+        if (endRoundEarlyBtn) {
+            const savedHoleCount = holes.filter(h => h && h.saved).length;
+
+            const shouldShowEndEarly =
+                roundStarted &&
+                savedHoleCount > 0 &&
+                !roundJustCompleted;
+
+            endRoundEarlyBtn.style.display =
+                shouldShowEndEarly ? "inline-block" : "none";
+    }
 }
 
 function goToHole(holeNum) {
@@ -1427,7 +1459,7 @@ if (saveBtn) {
     triggerSavedFeedback();
 
     const savedCount = holes.filter(h => h && h.saved).length;
-    const isLastHole = savedCount === 18;
+    const isLastHole = savedCount === getExpectedRoundLength();
 
 // PHASE 2 — Normal saves advance to next hole.
 // Edited saved holes stay on the same hole after updating.
@@ -2160,6 +2192,24 @@ function playSplashToFreshRoundDetails() {
     }, 1100);
 }
 
+function endRoundEarly() {
+    const savedHoleCount = holes.filter(h => h && h.saved).length;
+
+    if (savedHoleCount <= 0) {
+        alert("No completed holes are available to save.");
+        return;
+    }
+
+    roundEndedEarly = true;
+    completedHoleCount = savedHoleCount;
+    roundJustCompleted = true;
+    roundFinalized = false;
+
+    persistActiveRound();
+
+    showRoundCompleteModal();
+}
+
 function showRoundCompleteModal() {
     const modal = document.getElementById("roundCompleteModal");
     const text = document.getElementById("roundCompleteText");
@@ -2207,7 +2257,12 @@ function show19thHoleScreen() {
     const savedHoleCount = holes.filter(h => h && h.saved).length;
 
     // Do not allow Round Wrap-up unless the round is actually complete
-    if (savedHoleCount < 18) {
+    const validEarlyFinish =
+        roundEndedEarly &&
+        completedHoleCount != null &&
+        savedHoleCount === Number(completedHoleCount);
+
+    if (savedHoleCount < getExpectedRoundLength() && !validEarlyFinish) {
         showStatsScreen();
         window.scrollTo(0, 0);
         return;
@@ -2326,10 +2381,30 @@ window.showSavedRoundsHub = function () {
 
 
 function wireStaticEventListeners() {
-        const statsHelpBtn = document.getElementById("statsHelpBtn");
-        const statsHelpPopup = document.getElementById("statsHelpPopup");
-        const statsHelpCloseBtn = document.getElementById("statsHelpCloseBtn");
-const saveConfirmStay = document.getElementById("confirmStay");
+    const statsHelpBtn = document.getElementById("statsHelpBtn");
+    const endRoundEarlyBtn = document.getElementById("endRoundEarlyBtn");
+    const statsHelpPopup = document.getElementById("statsHelpPopup");
+    const statsHelpCloseBtn = document.getElementById("statsHelpCloseBtn");
+    const saveConfirmStay = document.getElementById("confirmStay");
+
+    if (endRoundEarlyBtn) {
+        endRoundEarlyBtn.addEventListener("click", () => {
+            const savedHoleCount = holes.filter(h => h && h.saved).length;
+
+            if (savedHoleCount <= 0) {
+                alert("No completed holes are available to save.");
+                return;
+            }
+
+            const confirmed = window.confirm(
+                `End this round after ${savedHoleCount} completed hole${savedHoleCount === 1 ? "" : "s"}?`
+            );
+
+            if (!confirmed) return;
+
+            endRoundEarly();
+        });
+    }
 
 document.getElementById("saveConfirmClose")?.addEventListener("click", () => {
     document.getElementById("saveConfirmPopup").style.display = "none";
@@ -3183,8 +3258,15 @@ if (nineteenthNewRoundBtn) {
             }
 
             const savedHoleCount = holes.filter(h => h && h.saved).length;
+            const validCompletedRound =
+                savedHoleCount === getExpectedRoundLength() ||
+                (
+                    roundEndedEarly &&
+                    completedHoleCount != null &&
+                    savedHoleCount === Number(completedHoleCount)
+                );
 
-            if (savedHoleCount === 18 && (roundJustCompleted || postRoundMode)) {
+            if (validCompletedRound && (roundJustCompleted || postRoundMode)) {
                 show19thHoleScreen();
             } else {
                 showStatsScreen();

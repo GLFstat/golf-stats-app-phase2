@@ -114,9 +114,14 @@ function buildCompletedRound() {
         id: generateRoundId(),
         date: new Date().toISOString(),
         version: CURRENT_DATA_VERSION,
+        roundEndedEarly: !!roundEndedEarly,
+        completedHoleCount: completedHoleCount == null
+            ? getSavedHoleCount()
+            : Number(completedHoleCount),
         details: {
             roundDate: getFieldValue("roundDate"),
             roundType: getFieldValue("roundType"),
+            roundLength: getFieldValue("roundLength"),
             courseName: getFieldValue("courseName"),
             startingHole: getFieldValue("startingHole"),
             teeSlope: getFieldValue("teeSlope"),
@@ -175,7 +180,22 @@ return {
 window.archiveCompletedRound = async function archiveCompletedRound() {
     console.log("🔥 archiveCompletedRound RUNNING");
 
-    if (!roundJustCompleted || getSavedHoleCount() !== 18) {
+    const expectedLength =
+        typeof getExpectedRoundLength === "function"
+            ? getExpectedRoundLength()
+            : 18;
+
+    const actualCompletedCount =
+        completedHoleCount == null
+            ? getSavedHoleCount()
+            : Number(completedHoleCount);
+
+    const validCompletion =
+        roundEndedEarly
+            ? getSavedHoleCount() === actualCompletedCount
+            : getSavedHoleCount() === expectedLength;
+
+    if (!roundJustCompleted || !validCompletion) {
         console.log("[ARCHIVE] stopped early");
         return true;
     }
@@ -286,21 +306,23 @@ function persistActiveRound() {
         return;
     }
 
-    const payload = {
-        roundStarted,
-        roundFinalized,
-        currentHole,
-        currentHoleIndex,
-        startingHole,
-        playOrder,
-        holes,
-        roundDetails,
-        soundOn,
-        roundJustCompleted,
-        postRoundMode,
-        postRoundReturnTarget,
-        lastUpdated: Date.now()
-    };
+const payload = {
+    roundStarted,
+    roundFinalized,
+    currentHole,
+    currentHoleIndex,
+    startingHole,
+    playOrder,
+    holes,
+    roundDetails,
+    soundOn,
+    roundJustCompleted,
+    roundEndedEarly,
+    completedHoleCount,
+    postRoundMode,
+    postRoundReturnTarget,
+    lastUpdated: Date.now()
+};
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     // 🔒 Backup save (safety layer)
@@ -319,6 +341,12 @@ function applyLoadedRound(saved) {
     roundStarted = !!saved.roundStarted;
     roundFinalized = !!saved.roundFinalized;
     roundJustCompleted = !!saved.roundJustCompleted;
+
+    roundEndedEarly = !!saved.roundEndedEarly;
+    completedHoleCount = saved.completedHoleCount == null
+    ? null
+    : Number(saved.completedHoleCount);
+
     postRoundMode = !!saved.postRoundMode;
     postRoundReturnTarget = String(saved.postRoundReturnTarget || "");
 
@@ -332,6 +360,12 @@ function applyLoadedRound(saved) {
 
     for (let i = 0; i < 18; i++) {
         holes[i] = savedHoles[i] || null;
+    }
+
+    // Legacy active rounds were created before Round Length existed.
+    // Those rounds were necessarily planned as 18-hole rounds.
+    if (!savedRoundDetails.roundLength) {
+        savedRoundDetails.roundLength = "18";
     }
 
     setRoundDetails(savedRoundDetails);
