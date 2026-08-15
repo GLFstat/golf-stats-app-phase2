@@ -1597,7 +1597,25 @@ async function adminCompleteRound() {
   );
 
   if (!confirmed) return;
+    let earlyFinishReason = null;
 
+if (holesCompleted < 18) {
+  const reason = window.prompt(
+    "Reason for early finish:\n\n" +
+    "Weather\n" +
+    "Injury/Illness\n" +
+    "Event Ended/Called\n" +
+    "Player Withdrawal\n" +
+    "Other",
+    "Weather"
+  );
+
+  if (reason === null) {
+    return;
+  }
+
+  earlyFinishReason = reason.trim() || "Other";
+}
   const totalScore = savedHoles.reduce((sum, h) => {
     return sum + Number(h.score || 0);
   }, 0);
@@ -1655,8 +1673,9 @@ async function adminCompleteRound() {
       totalPutts
     },
 
-    roundEndedEarly: true,
+    roundEndedEarly: holesCompleted < 18,
     completedHoleCount: holesCompleted,
+    earlyFinishReason: earlyFinishReason,
     completedByAdmin: true
   };
 
