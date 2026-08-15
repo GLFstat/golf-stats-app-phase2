@@ -269,6 +269,142 @@ function showPortalConfirm(title, message, confirmText = "Confirm", cancelText =
   });
 }
 
+
+function showEarlyFinishReasonPicker() {
+  return new Promise((resolve) => {
+    if (
+      !portalModalOverlay ||
+      !portalModalTitle ||
+      !portalModalMessage ||
+      !portalModalCancelBtn ||
+      !portalModalConfirmBtn ||
+      !portalModalSummaryWrap ||
+      !portalRoundSummaryTable
+    ) {
+      resolve(null);
+      return;
+    }
+
+    const reasons = [
+      "Weather",
+      "Injury / Illness",
+      "Event Ended / Called",
+      "Player Withdrawal",
+      "Other"
+    ];
+
+    currentPortalModalResolver = resolve;
+
+    portalModalTitle.textContent = "Reason for Early Finish";
+
+    portalModalMessage.innerHTML = `
+      <div style="text-align:left; max-width:360px; margin:0 auto;">
+        ${reasons.map((reason, index) => `
+          <label style="
+            display:flex;
+            align-items:center;
+            gap:10px;
+            padding:10px 4px;
+            cursor:pointer;
+          ">
+            <input
+              type="radio"
+              name="earlyFinishReason"
+              value="${reason}"
+              ${index === 0 ? "checked" : ""}
+            >
+            <span>${reason}</span>
+          </label>
+        `).join("")}
+
+        <div id="earlyFinishOtherWrap" style="display:none; margin-top:8px;">
+          <input
+            id="earlyFinishOtherText"
+            type="text"
+            placeholder="Enter reason"
+            style="
+              width:100%;
+              box-sizing:border-box;
+              padding:9px 10px;
+              font-size:16px;
+            "
+          >
+        </div>
+      </div>
+    `;
+
+    portalModalSummaryWrap.classList.add("hidden");
+    portalRoundSummaryTable.innerHTML = "";
+
+    portalModalCancelBtn.classList.remove("hidden");
+    portalModalCancelBtn.textContent = "Cancel";
+
+    portalModalConfirmBtn.textContent = "Continue";
+
+    portalModalOverlay.classList.remove("hidden");
+
+    const radios = portalModalMessage.querySelectorAll(
+      'input[name="earlyFinishReason"]'
+    );
+
+    const otherWrap =
+      document.getElementById("earlyFinishOtherWrap");
+
+    const otherText =
+      document.getElementById("earlyFinishOtherText");
+
+    radios.forEach((radio) => {
+      radio.addEventListener("change", () => {
+        if (otherWrap) {
+          otherWrap.style.display =
+            radio.value === "Other" && radio.checked
+              ? "block"
+              : "none";
+        }
+
+        if (
+          radio.value === "Other" &&
+          radio.checked &&
+          otherText
+        ) {
+          otherText.focus();
+        }
+      });
+    });
+
+    portalModalConfirmBtn.onclick = () => {
+      const selected = portalModalMessage.querySelector(
+        'input[name="earlyFinishReason"]:checked'
+      );
+
+      if (!selected) return;
+
+      let reason = selected.value;
+
+      if (reason === "Other") {
+        const customReason =
+          String(otherText?.value || "").trim();
+
+        if (!customReason) {
+          if (otherText) otherText.focus();
+          return;
+        }
+
+        reason = customReason;
+      }
+
+      closePortalModal();
+      resolve(reason);
+    };
+
+    portalModalCancelBtn.onclick = () => {
+      closePortalModal();
+      resolve(null);
+    };
+  });
+}
+
+
 function showPortalSummaryModal(title, htmlTable) {
   if (
     !portalModalOverlay ||
@@ -1600,22 +1736,13 @@ async function adminCompleteRound() {
     let earlyFinishReason = null;
 
 if (holesCompleted < 18) {
-  const reason = window.prompt(
-    "Reason for early finish:\n\n" +
-    "Weather\n" +
-    "Injury/Illness\n" +
-    "Event Ended/Called\n" +
-    "Player Withdrawal\n" +
-    "Other",
-    "Weather"
-  );
+  earlyFinishReason = await showEarlyFinishReasonPicker();
 
-  if (reason === null) {
+  if (!earlyFinishReason) {
     return;
   }
-
-  earlyFinishReason = reason.trim() || "Other";
 }
+
   const totalScore = savedHoles.reduce((sum, h) => {
     return sum + Number(h.score || 0);
   }, 0);
