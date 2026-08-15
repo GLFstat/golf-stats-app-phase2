@@ -304,13 +304,15 @@ function showEarlyFinishReasonPicker() {
             display:flex;
             align-items:center;
             gap:10px;
-            padding:10px 4px;
+            padding:12px 6px;
+            font-size:18px;
             cursor:pointer;
           ">
             <input
               type="radio"
               name="earlyFinishReason"
               value="${reason}"
+              style="width:20px; height:20px; flex:0 0 20px;"
               ${index === 0 ? "checked" : ""}
             >
             <span>${reason}</span>
