@@ -1830,6 +1830,8 @@ if (holesCompleted < 18) {
     fir_pct: firPct,
     gir_pct: girPct,
     total_putts: totalPutts,
+    completed_holes: holesCompleted,
+    early_finish_reason: earlyFinishReason,
 
     is_test: isTestRound(round),
     uploaded_from_device: "Admin Portal",
