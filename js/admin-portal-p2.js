@@ -1584,7 +1584,7 @@ async function adminCompleteRound() {
   }
 
   const courseName = round.course_name || "Unknown Course";
-  const playerName = round.player_name || "Player";
+  const playerName = round.player_name || getPortalPlayerName() || "Player";
 
   const confirmed = await showPortalConfirm(
     "Complete this round?",
