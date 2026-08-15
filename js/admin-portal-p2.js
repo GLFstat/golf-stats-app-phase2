@@ -854,7 +854,13 @@ const roundType =
   "Round";
 
 titleEl.textContent = `${playerName} — ${courseName}`;
-metaEl.textContent = `${roundDate}  -  ${roundType}`;
+const earlyFinishText =
+  payload.roundEndedEarly
+    ? `\nEnded after ${payload.completedHoleCount || ""} holes — ${payload.earlyFinishReason || "Reason not recorded"}`
+    : "";
+
+metaEl.textContent =
+  `${roundDate}  -  ${roundType}${earlyFinishText}`;
 bodyEl.innerHTML = buildCompletedSummaryHtml(payload, lastCompletedRoundData);
 
 modal.classList.remove("hidden");
