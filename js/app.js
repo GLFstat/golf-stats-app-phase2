@@ -768,6 +768,7 @@ function resetCurrentRound() {
     roundJustCompleted = false;
     roundEndedEarly = false;
     completedHoleCount = null;
+    earlyFinishReason = null;
     postRoundMode = false;
     postRoundReturnTarget = "";
     pendingSaveAfterValidation = false;
@@ -2192,7 +2193,7 @@ function playSplashToFreshRoundDetails() {
     }, 1100);
 }
 
-function endRoundEarly() {
+async function endRoundEarly() {
     const savedHoleCount = holes.filter(h => h && h.saved).length;
 
     if (savedHoleCount <= 0) {
@@ -2207,7 +2208,18 @@ function endRoundEarly() {
 
     persistActiveRound();
 
-    showRoundCompleteModal();
+    const archived = await window.archiveCompletedRound();
+
+    if (!archived) {
+        alert("The round could not be completed. Please try again.");
+        return;
+    }
+
+    alert(
+        `Round saved after ${savedHoleCount} completed hole${savedHoleCount === 1 ? "" : "s"}.`
+    );
+
+    resetCurrentRound();
 }
 
 function showRoundCompleteModal() {
@@ -2387,24 +2399,69 @@ function wireStaticEventListeners() {
     const statsHelpCloseBtn = document.getElementById("statsHelpCloseBtn");
     const saveConfirmStay = document.getElementById("confirmStay");
 
-    if (endRoundEarlyBtn) {
-        endRoundEarlyBtn.addEventListener("click", () => {
-            const savedHoleCount = holes.filter(h => h && h.saved).length;
+if (endRoundEarlyBtn) {
+    endRoundEarlyBtn.addEventListener("click", () => {
+        const savedHoleCount = holes.filter(h => h && h.saved).length;
 
-            if (savedHoleCount <= 0) {
-                alert("No completed holes are available to save.");
-                return;
-            }
+        if (savedHoleCount <= 0) {
+            alert("No completed holes are available to save.");
+            return;
+        }
 
-            const confirmed = window.confirm(
-                `End this round after ${savedHoleCount} completed hole${savedHoleCount === 1 ? "" : "s"}?`
-            );
+        const popup = document.getElementById("endRoundEarlyPopup");
+        const text = document.getElementById("endRoundEarlyText");
 
-            if (!confirmed) return;
+        if (!popup || !text) return;
 
-            endRoundEarly();
-        });
+        text.textContent =
+            `End this round after ${savedHoleCount} completed hole${savedHoleCount === 1 ? "" : "s"}?`;
+
+        document
+            .querySelectorAll('input[name="earlyFinishReason"]')
+            .forEach(input => {
+                input.checked = false;
+            });
+
+        popup.style.display = "flex";
+    });
+}
+
+const endRoundEarlyPopup = document.getElementById("endRoundEarlyPopup");
+const endRoundEarlyConfirm = document.getElementById("endRoundEarlyConfirm");
+const endRoundEarlyCancel = document.getElementById("endRoundEarlyCancel");
+const endRoundEarlyClose = document.getElementById("endRoundEarlyClose");
+
+function closeEndRoundEarlyPopup() {
+    if (endRoundEarlyPopup) {
+        endRoundEarlyPopup.style.display = "none";
     }
+}
+
+if (endRoundEarlyCancel) {
+    endRoundEarlyCancel.addEventListener("click", closeEndRoundEarlyPopup);
+}
+
+if (endRoundEarlyClose) {
+    endRoundEarlyClose.addEventListener("click", closeEndRoundEarlyPopup);
+}
+
+if (endRoundEarlyConfirm) {
+    endRoundEarlyConfirm.addEventListener("click", () => {
+        const selectedReason = document.querySelector(
+            'input[name="earlyFinishReason"]:checked'
+        );
+
+        if (!selectedReason) {
+            alert("Please select a reason for ending the round early.");
+            return;
+        }
+
+        earlyFinishReason = selectedReason.value;
+
+        closeEndRoundEarlyPopup();
+        endRoundEarly();
+    });
+}
 
 document.getElementById("saveConfirmClose")?.addEventListener("click", () => {
     document.getElementById("saveConfirmPopup").style.display = "none";

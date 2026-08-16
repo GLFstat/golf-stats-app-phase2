@@ -968,6 +968,7 @@ body {
 .summary-meta {
   font-size: 0.95rem;
   color: #666;
+  white-space: pre-line;
 }
 
 .summary-modal-body {

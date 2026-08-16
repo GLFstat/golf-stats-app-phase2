@@ -378,7 +378,6 @@
 
   <button id="seeStats" type="button">View Hole Stats Summary</button>
 
-  <button id="endRoundEarlyBtn" type="button">End Round Early</button>
 
 <!-- ===== PERFORMANCE TRENDS EXPERIMENT START ===== -->
 <!-- Optional read-only +Stats trend button. Safe to remove if feature does not feel right. -->
@@ -1030,17 +1029,23 @@
 
 
 
-  <div class="return-row">
-       <button id="returnToDetailsBtn" class="nav-text-link-btn" type="button">
-  ← Return to Round Details
-</button>
+<div class="return-row">
+  <button id="returnToDetailsBtn" class="nav-text-link-btn" type="button">
+    ← Return to Round Details
+  </button>
 
-<span class="link-separator">|</span>
+  <span class="link-separator">|</span>
 
-<button id="viewHoleYardagesBtn" class="ydg-text-link-btn" type="button">
-  View Hole Yardages
-</button>
-  </div>
+  <button id="viewHoleYardagesBtn" class="ydg-text-link-btn" type="button">
+    View Hole Yardages
+  </button>
+</div>
+
+<div class="end-round-early-row">
+  <button id="endRoundEarlyBtn" class="nav-text-link-btn" type="button">
+    End Round Early
+  </button>
+</div>
 </div>
 
 
@@ -1085,11 +1090,74 @@
   <div class="popup-green-header" id="saveConfirmHeader">Save Hole</div>
   <div id="saveConfirmText" class="popup-body-text">Save Hole X Stats?</div>
 
-
-
 <button id="confirmCancel" type="button">Add +Stats</button>
 <button id="confirmOK" type="button">Save Hole</button>
 <button id="confirmStay" class="popup-header-close popup-close-check" type="button" aria-label="Close Save Confirmation">Cancel</button>
+  </div>
+</div>
+
+<!-- End Round Early Popup -->
+<div id="endRoundEarlyPopup" class="popup-overlay">
+  <div class="popup-box end-round-early-popup-box">
+
+    <div class="popup-green-header end-round-early-header">
+      <span>End Round Early</span>
+
+      <button
+        id="endRoundEarlyClose"
+        class="popup-circle-close"
+        type="button"
+        aria-label="Close End Round Early"
+      >×</button>
+    </div>
+
+    <div class="end-round-early-body">
+
+      <div id="endRoundEarlyText" class="end-round-early-question">
+        End this round early?
+      </div>
+
+      <div class="end-round-early-reason-title">
+        Reason for ending early:
+      </div>
+
+      <div class="early-finish-reasons">
+  <label>
+    <input type="radio" name="earlyFinishReason" value="Weather">
+    <span>Weather</span>
+  </label>
+
+  <label>
+    <input type="radio" name="earlyFinishReason" value="Withdrawal - Injury/Illness">
+    <span>Withdrawal - Injury/Illness</span>
+  </label>
+
+  <label>
+    <input type="radio" name="earlyFinishReason" value="Event Cancelled">
+    <span>Event Cancelled</span>
+  </label>
+
+  <label>
+    <input type="radio" name="earlyFinishReason" value="Other">
+    <span>Other</span>
+  </label>
+</div>
+
+<div class="end-round-early-actions">
+  <button id="endRoundEarlyCancel" type="button">
+    Cancel
+  </button>
+
+  <button id="endRoundEarlyConfirm" type="button">
+    End &amp; Save Round
+  </button>
+</div>
+
+<button id="discardRoundBtn" class="discard-round-link" type="button">
+  End &amp; Discard Round
+</button>
+
+    </div>
   </div>
 </div>
 

@@ -118,6 +118,7 @@ function buildCompletedRound() {
         completedHoleCount: completedHoleCount == null
             ? getSavedHoleCount()
             : Number(completedHoleCount),
+            earlyFinishReason: earlyFinishReason || null,
         details: {
             roundDate: getFieldValue("roundDate"),
             roundType: getFieldValue("roundType"),
@@ -319,6 +320,7 @@ const payload = {
     roundJustCompleted,
     roundEndedEarly,
     completedHoleCount,
+    earlyFinishReason,
     postRoundMode,
     postRoundReturnTarget,
     lastUpdated: Date.now()
@@ -346,6 +348,8 @@ function applyLoadedRound(saved) {
     completedHoleCount = saved.completedHoleCount == null
     ? null
     : Number(saved.completedHoleCount);
+
+    earlyFinishReason = saved.earlyFinishReason || null;
 
     postRoundMode = !!saved.postRoundMode;
     postRoundReturnTarget = String(saved.postRoundReturnTarget || "");

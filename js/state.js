@@ -14,6 +14,7 @@ let summaryReturnTarget = "app";
 let roundJustCompleted = false;
 let roundEndedEarly = false;
 let completedHoleCount = null;
+let earlyFinishReason = null;
 let postRoundMode = false;
 let postRoundReturnTarget = "";
 let postRoundButtonDelayTimer = null;

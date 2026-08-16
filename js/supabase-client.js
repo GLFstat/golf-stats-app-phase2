@@ -105,6 +105,9 @@ round.holes = Array.from({ length: 18 }, (_, i) => {
     fir_pct: summary.firPct,
     gir_pct: summary.girPct,
     total_putts: summary.totalPutts || null,
+    
+    completed_holes: round.completedHoleCount ?? savedHoles.length,
+    early_finish_reason: round.earlyFinishReason || null,
 
     is_test: round.is_test === true,
     uploaded_from_device: navigator.userAgent || "unknown",

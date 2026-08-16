@@ -1446,24 +1446,32 @@ header h1 {
 
 .performance-trends-close {
     position: absolute;
-    top: 61%;
+    top: 10px;
     right: 14px;
-    transform: translateY(-50%);
-    width: 38px;
-    height: 38px;
+    transform: none;
+
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    min-height: 34px;
+
     border-radius: 50%;
     border: none;
     background: #ffffff;
-    color: #178724;
-    font-size: 26px;
+    color: #228b22;
+
+    font-size: 32px;
     font-weight: 300;
     line-height: 1;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     padding: 0;
     margin: 0;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+
+    box-shadow: 0 3px 8px rgba(0,0,0,0.22);
     cursor: pointer;
 }
 
@@ -5454,6 +5462,7 @@ display: block !important;
 
 
 /* ---------- Shared close X look ---------- */
+#endRoundEarlyPopup .popup-circle-close,
 #holeYardagesPopup #closeHoleYardagesBtn.popup-circle-close,
 #enhancedStatsPanel #closeEnhancedStats.es-close-btn,
 /* #summaryModal #exitSummary.summary-circle-close, */
@@ -5461,20 +5470,20 @@ display: block !important;
 #saveConfirmPopup .popup-close,
 #saveConfirmPopup .close-popup {
     position: absolute !important;
-    top: 14px !important;
+    top: 10px !important;
     right: 16px !important;
     transform: none !important;
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    min-height: 36px !important;
+width: 34px !important;
+height: 34px !important;
+min-width: 34px !important;
+min-height: 34px !important;
     border-radius: 50% !important;
     background: #ffffff !important;
     color: var(--stracker-popup-close-green) !important;
     border: none !important;
     font-family: Arial, sans-serif !important;
-    font-size: 18px !important;
-    font-weight:100!important;
+    font-size: 32px !important;
+    font-weight:300!important;
     line-height: 1 !important;
     display: flex !important;
     align-items: center !important;
@@ -7295,4 +7304,174 @@ overflow: hidden !important;
   box-shadow: inset 0 0 0 1px #ffffff !important;
 }
 
+/* ===== White End Early text link at bottom of Hole Screen ===== */
+.end-round-early-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+}
 
+.end-round-early-row #endRoundEarlyBtn {
+  width: auto;
+  min-width: 0;
+  padding: 6px 14px;
+  margin: 0;
+  background: transparent;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.2;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+/* =========================================
+   END ROUND EARLY POPUP
+========================================= */
+
+.end-round-early-popup-box {
+  width: min(88vw, 390px);
+  padding: 0;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+/* Green Stracker header */
+.end-round-early-header {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 15px 52px 15px 18px;
+  text-align: center;
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* Close X inside green header */
+.end-round-early-header .popup-circle-close {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #1f8f43;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 34px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* White popup body */
+.end-round-early-body {
+  padding: 22px 26px 24px;
+  color: #111111;
+}
+
+/* "End this round after X holes?" */
+.end-round-early-question {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* Reason heading */
+.end-round-early-reason-title {
+  margin-bottom: 12px;
+  text-align: left;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* Reason choices */
+.early-finish-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 0 24px;
+  text-align: left;
+}
+
+.early-finish-reasons label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.25;
+  cursor: pointer;
+}
+
+.early-finish-reasons input[type="radio"] {
+  width: 19px;
+  height: 19px;
+  margin: 0;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+/* Bottom action buttons */
+.end-round-early-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.end-round-early-actions button {
+  min-width: 125px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Cancel */
+#endRoundEarlyCancel {
+  background: #f2f2f2;
+  color: #111111;
+  border: 1px solid #dddddd;
+}
+
+/* End & Save */
+#endRoundEarlyConfirm {
+  background: linear-gradient(180deg, #1f8f43, #13672f);
+  color: #ffffff;
+  border: none;
+}
+
+/* End & Discard Round */
+#discardRoundBtn.discard-round-link {
+  display: block;
+  width: auto;
+  min-width: 0;
+  margin: 10px auto 0;
+  padding: 7px 14px;
+
+  background: transparent;
+  border: 1px solid #111;
+  border-radius: 4px;
+
+  color: #111;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.2;
+
+  box-shadow: none;
+  cursor: pointer;
+}
