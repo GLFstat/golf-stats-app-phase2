@@ -1253,7 +1253,7 @@ holesHtml += `
   <div class="hole ${h && h.saved ? "saved" : ""} ${resultClass}" onclick="openLiveHoleDetail(${index})">
     <div class="hole-number">Hole ${escapeHtml(String(getHoleNumber(h, index)))}</div>
     <div class="hole-score">${escapeHtml(display)}</div>
-    <div class="hole-par">${escapeHtml(parDisplay)}</div>
+    ${parDisplay ? `<div class="hole-par-badge">${escapeHtml(parDisplay)}</div>` : ""}
   </div>
 `;
   });
