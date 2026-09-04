@@ -1246,12 +1246,16 @@ function showDetails(round) {
       }
     }
 
-    holesHtml += `
-      <div class="hole ${h && h.saved ? "saved" : ""} ${resultClass}" onclick="openLiveHoleDetail(${index})">
-        <div class="hole-number">Hole ${escapeHtml(String(getHoleNumber(h, index)))}</div>
-        <div class="hole-score">${escapeHtml(display)}</div>
-      </div>
-    `;
+const holePar = getNumericValueOrNull(getHolePar(h));
+const parDisplay = holePar != null ? `P${holePar}` : "";
+
+holesHtml += `
+  <div class="hole ${h && h.saved ? "saved" : ""} ${resultClass}" onclick="openLiveHoleDetail(${index})">
+    <div class="hole-number">Hole ${escapeHtml(String(getHoleNumber(h, index)))}</div>
+    <div class="hole-score">${escapeHtml(display)}</div>
+    <div class="hole-par">${escapeHtml(parDisplay)}</div>
+  </div>
+`;
   });
 
   holesHtml += `</div>`;

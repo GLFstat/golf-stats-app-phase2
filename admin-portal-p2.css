@@ -266,7 +266,7 @@ body {
   background: #ececec;
   border: 1px solid #d2d2d2;
   border-radius: 8px;
-  padding: 9px 4px;
+  padding: 9px 4px 11px;
   font-size: 13px;
   text-align: center;
   color: #25252b;
@@ -517,6 +517,14 @@ body {
 .hole-score {
   font-size: 20px;
   font-weight: 700;
+}
+
+.hole-par {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  margin-top: 3px;
+  opacity: 0.78;
 }
 
 /* ===== HOLE TILE COLOR SYSTEM ===== */
