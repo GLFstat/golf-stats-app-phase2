@@ -255,6 +255,27 @@ body {
   font-size: 18px;
 }
 
+/* ===== FINAL RESULTS HEADING ===== */
+
+.final-results-heading {
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.final-results-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #222222;
+  line-height: 1.2;
+}
+
+.final-results-subtitle {
+  margin-top: 0px;
+  font-size: 1.0rem;
+  font-weight: 600;
+  color: rgba(4, 145, 70, 0.75);
+}
+
 .holes-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(54px, 1fr));
@@ -519,13 +540,7 @@ body {
   font-weight: 700;
 }
 
-.hole-par {
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1;
-  margin-top: 3px;
-  opacity: 0.78;
-}
+
 
 /* ===== HOLE TILE COLOR SYSTEM ===== */
 
@@ -566,6 +581,15 @@ body {
   color: #ffffff !important;
 }
 
+/* Keep all played tiles aligned the same */
+.holes-grid .hole.hole-birdie,
+.holes-grid .hole.hole-par,
+.holes-grid .hole.hole-bogey {
+  height: 72px;
+  align-self: start;
+  margin-top: 0;
+}
+
 .holes-grid .hole.hole-birdie strong,
 .holes-grid .hole.hole-par strong,
 .holes-grid .hole.hole-bogey strong,
@@ -574,6 +598,17 @@ body {
 .holes-grid .hole.hole-bogey .hole-score {
   color: #ffffff !important;
 }
+
+.holes-grid .hole.hole-birdie .hole-number,
+.holes-grid .hole.hole-par .hole-number,
+.holes-grid .hole.hole-bogey .hole-number {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.8;
+  line-height: 1;
+}
+
+
 
 /* === COURSE NAME SIZE ONLY === */
 .live-course-name {
@@ -1692,17 +1727,21 @@ body {
 
 .hole-par-badge {
   display: inline-block;
-  margin-top: 5px;
-  padding: 2px 6px;
+  margin-top: 2px;
+  padding: 1px 6px 2px;
   border: 1px solid rgba(255, 255, 255, 0.95);
   border-radius: 5px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   line-height: 1;
   color: #ffffff;
   background: transparent;
 }
 
+.hole-par-badge span {
+  display: inline-block;
+  transform: translateY(1px);
+}
 
 
 

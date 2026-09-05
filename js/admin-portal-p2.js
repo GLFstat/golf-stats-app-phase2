@@ -888,16 +888,68 @@ async function loadLiveRounds() {
   renderCompletedRounds(currentRounds);
   renderMaintenanceStats(currentRounds);
 
+
   if (currentRounds.length > 0) {
     const activeRound = currentRounds.find((round) => {
       const holesCompleted = Number(round.holes_completed || 0);
       return holesCompleted < 18;
     }) || currentRounds[0];
 
-    showDetails(activeRound);
+  showDetails(activeRound);
+} else {
+  const completedRound = lastCompletedRoundData;
+  const payload = completedRound?.round_payload;
+
+  if (completedRound && payload && Array.isArray(payload.holes)) {
+    const finalRound = {
+      ...completedRound,
+      holes_json: payload.holes,
+      total_score:
+        completedRound.total_score ??
+        payload.summary?.totalScore ??
+        0,
+      holes_completed:
+        completedRound.completed_holes ??
+        payload.holes.filter((h) => h && h.saved).length,
+      current_hole:
+        completedRound.completed_holes ??
+        payload.holes.filter((h) => h && h.saved).length,
+      course_name:
+        completedRound.course_name ??
+        payload.details?.courseName ??
+        "Unknown Course",
+      round_date:
+        completedRound.round_date ??
+        payload.details?.roundDate ??
+        null,
+      round_type:
+        completedRound.round_type ??
+        payload.details?.roundType ??
+        null,
+      course_par:
+        completedRound.course_par ??
+        payload.details?.coursePar ??
+        null,
+      tee_yardage:
+        completedRound.tee_yardage ??
+        payload.details?.teeYardage ??
+        null,
+      tee_rating:
+        completedRound.tee_rating ??
+        payload.details?.teeRating ??
+        null,
+      tee_slope:
+        completedRound.tee_slope ??
+        payload.details?.teeSlope ??
+        null,
+      __finalResultsView: true
+    };
+
+    showDetails(finalRound);
   } else {
     detailsEl.innerHTML = `<div class="live-round-content empty">No live round snapshots found.</div>`;
   }
+}
 }
 
 function renderCompletedRounds(rounds) {
@@ -1188,15 +1240,28 @@ function openLiveHoleDetail(index) {
 
 function showDetails(round) {
   window.currentLiveRoundForSummary = round;
+  const isFinalResultsView = round.__finalResultsView === true;
 
   const holes = Array.isArray(round.holes_json) ? round.holes_json : [];
   const holeDisplay = round.current_hole || holes.filter((h) => h.saved).length || 0;
   const roundVsPar = getRoundVsParFromHoles(round);
-  const lastUpdateText = getLastUpdateText(round.last_update);
+  const statusTimestamp = isFinalResultsView
+  ? (
+      round.completed_at ||
+      round.finished_at ||
+      round.updated_at ||
+      round.created_at ||
+      round.last_update
+    )
+  : round.last_update;
+
+const lastUpdateText = getLastUpdateText(statusTimestamp);
 
   const lastUpdateEl = document.getElementById("liveRoundLastUpdate");
   if (lastUpdateEl) {
-    lastUpdateEl.textContent = lastUpdateText;
+    lastUpdateEl.textContent = isFinalResultsView
+      ? lastUpdateText.replace("Last update:", "Round completed:")
+      : lastUpdateText;
   }
 
   const savedHoles = holes.filter((h) => h && h.saved);
@@ -1253,7 +1318,7 @@ holesHtml += `
   <div class="hole ${h && h.saved ? "saved" : ""} ${resultClass}" onclick="openLiveHoleDetail(${index})">
     <div class="hole-number">Hole ${escapeHtml(String(getHoleNumber(h, index)))}</div>
     <div class="hole-score">${escapeHtml(display)}</div>
-    ${parDisplay ? `<div class="hole-par-badge">${escapeHtml(parDisplay)}</div>` : ""}
+    ${parDisplay ? `<div class="hole-par-badge"><span>${escapeHtml(parDisplay)}</span></div>` : ""}
   </div>
 `;
   });
@@ -1261,7 +1326,18 @@ holesHtml += `
   holesHtml += `</div>`;
 
   detailsEl.innerHTML = `
-    <div class="live-player-row">
+  ${
+    isFinalResultsView
+      ? `
+        <div class="final-results-heading">
+          <div class="final-results-title">Final Results</div>
+          <div class="final-results-subtitle">From the most recent round played</div>
+        </div>
+      `
+      : ``
+  }
+
+  <div class="live-player-row">
       <div>
         <div class="live-player-name">${
   escapeHtml(
@@ -1301,7 +1377,7 @@ holesHtml += `
 
     <div class="live-footer-row">
       ${
-        isAdminLoggedIn()
+        isAdminLoggedIn() && !isFinalResultsView
           ? `<button class="refresh-main-btn" type="button" onclick="adminCompleteRound()">Complete Round</button>`
           : ``
       }
