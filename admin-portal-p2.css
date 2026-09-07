@@ -1744,5 +1744,64 @@ body {
 }
 
 
+/* =========================
+   RECRUITING DATA SETTINGS
+   ========================= */
+
+.recruiting-settings-card .card-header {
+  margin-bottom: 16px;
+}
+
+.recruiting-settings-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 20px 26px 24px;
+}
+
+.recruiting-settings-content label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #222;
+}
+
+#recruitingStartDate {
+  width: 180px;
+  padding: 8px 10px;
+  border: 1px solid #b8b8b8;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+#recruitingStartDate:disabled {
+  background: #eee;
+  color: #777;
+  cursor: not-allowed;
+}
+
+.recruiting-settings-status {
+  font-size: 14px;
+  color: #555;
+}
+
+#saveRecruitingStartDateBtn {
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 6px;
+  background: #1f2937;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#saveRecruitingStartDateBtn:hover {
+  background: #111827;
+}
+
 
 

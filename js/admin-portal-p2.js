@@ -25,6 +25,71 @@ const portalModalActions = document.getElementById("portalModalActions");
 const portalModalCancelBtn = document.getElementById("portalModalCancelBtn");
 const portalModalConfirmBtn = document.getElementById("portalModalConfirmBtn");
 
+async function loadRecruitingStartDate() {
+  const dateInput = document.getElementById("recruitingStartDate");
+  const statusEl = document.getElementById("recruitingStartDateStatus");
+
+  if (!dateInput || !statusEl) return;
+
+  statusEl.textContent = "Loading current setting...";
+
+  const { data, error } = await portalSupabase
+    .from("recruiting_settings")
+    .select("data_start_date, updated_at")
+    .eq("id", 1)
+    .single();
+
+  if (error) {
+    console.error("Error loading recruiting start date:", error);
+    statusEl.textContent = "Could not load recruiting start date.";
+    return;
+  }
+
+  if (data?.data_start_date) {
+    dateInput.value = data.data_start_date;
+    statusEl.textContent =
+      `Recruiting analytics begin on ${data.data_start_date}.`;
+  } else {
+    dateInput.value = "";
+    statusEl.textContent =
+      "No Recruiting Data Start Date is currently set.";
+  }
+}
+
+async function saveRecruitingStartDate() {
+  const dateInput = document.getElementById("recruitingStartDate");
+  const statusEl = document.getElementById("recruitingStartDateStatus");
+
+  if (!dateInput || !statusEl) return;
+
+  const selectedDate = dateInput.value;
+
+  if (!selectedDate) {
+    statusEl.textContent = "Please select a Recruiting Data Start Date.";
+    return;
+  }
+
+  statusEl.textContent = "Saving...";
+
+  const { error } = await portalSupabase
+    .from("recruiting_settings")
+    .update({
+      data_start_date: selectedDate,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", 1);
+
+  if (error) {
+    console.error("Error saving recruiting start date:", error);
+    statusEl.textContent = "Could not save Recruiting Data Start Date.";
+    return;
+  }
+
+  statusEl.textContent =
+    `Recruiting analytics begin on ${selectedDate}.`;
+}
+
+
 let currentPortalModalResolver = null;
 let liveRoundsCache = [];
 let currentRounds = [];
@@ -58,7 +123,7 @@ if (autoRefreshToggle) {
 // Login popup opens only when Log In is tapped.
 // =========================
 
-const ADMIN_PASSWORD = "fairway123";
+const ADMIN_EMAIL = "strackeradmin@gmail.com";
 const ADMIN_LOGIN_KEY = "strackerAdminLoggedIn";
 
 function showAdminLogin() {
@@ -84,7 +149,26 @@ function updateAdminHeaderButtons() {
   const brandingBtn = document.getElementById("openBrandingModalBtn");
   const logoutBtn = document.getElementById("logoutBtn");
 
+  const recruitingLoginBtn =
+  document.getElementById("recruitingLoginBtn");
+
+  const recruitingLogoutBtn =
+  document.getElementById("recruitingLogoutBtn");
+
   const loggedIn = isAdminLoggedIn();
+
+  const recruitingStartDate = document.getElementById("recruitingStartDate");
+
+if (recruitingStartDate) {
+  recruitingStartDate.disabled = !loggedIn;
+}
+
+const saveRecruitingStartDateBtn =
+  document.getElementById("saveRecruitingStartDateBtn");
+
+if (saveRecruitingStartDateBtn) {
+  saveRecruitingStartDateBtn.disabled = !loggedIn;
+}
 
   if (loginBtn) {
     loginBtn.classList.toggle("hidden", loggedIn);
@@ -97,28 +181,52 @@ function updateAdminHeaderButtons() {
   if (logoutBtn) {
     logoutBtn.classList.toggle("hidden", !loggedIn);
   }
+
+  if (recruitingLoginBtn) {
+   recruitingLoginBtn.classList.toggle("hidden", loggedIn);
+  }
+
+  if (recruitingLogoutBtn) {
+   recruitingLogoutBtn.classList.toggle("hidden", !loggedIn);
+  
+  }
 }
 
-function handleAdminLogin() {
+async function handleAdminLogin() {
   const passwordInput = document.getElementById("adminPasswordInput");
+  const saveRecruitingStartDateBtn =
+    document.getElementById("saveRecruitingStartDateBtn");
   const errorBox = document.getElementById("adminLoginError");
 
   if (!passwordInput || !errorBox) return;
 
-  const enteredPassword = passwordInput.value.trim();
+  const enteredPassword = passwordInput.value;
 
-  if (enteredPassword === ADMIN_PASSWORD) {
-    setAdminLoggedIn(true);
-    hideAdminLogin();
-    updateAdminHeaderButtons();
-    errorBox.textContent = "";
-    passwordInput.value = "";
-  } else {
-    errorBox.textContent = "Incorrect password.";
-  }
+  errorBox.textContent = "Signing in...";
+
+  const { error } = await portalSupabase.auth.signInWithPassword({
+    email: ADMIN_EMAIL,
+    password: enteredPassword
+  });
+
+
+  if (saveRecruitingStartDateBtn) {
+  saveRecruitingStartDateBtn.addEventListener(
+    "click",
+    saveRecruitingStartDate
+  );
 }
 
-function handleAdminLogout() {
+  setAdminLoggedIn(true);
+  hideAdminLogin();
+  updateAdminHeaderButtons();
+  errorBox.textContent = "";
+  passwordInput.value = "";
+}
+
+async function handleAdminLogout() {
+  await portalSupabase.auth.signOut();
+
   setAdminLoggedIn(false);
   hideAdminLogin();
   updateAdminHeaderButtons();
@@ -130,16 +238,34 @@ function handleAdminLogout() {
   if (errorBox) errorBox.textContent = "";
 }
 
-function initAdminLogin() {
+async function initAdminLogin() {
   const loginBtn = document.getElementById("loginBtn");
   const loginSubmitBtn = document.getElementById("adminLoginBtn");
   const closeAdminLoginBtn = document.getElementById("closeAdminLoginBtn");
   const logoutBtn = document.getElementById("logoutBtn");
+
+  const recruitingLoginBtn =
+  document.getElementById("recruitingLoginBtn");
+
+  const recruitingLogoutBtn =
+  document.getElementById("recruitingLogoutBtn");
+
   const passwordInput = document.getElementById("adminPasswordInput");
+
+  if (saveRecruitingStartDateBtn) {
+  saveRecruitingStartDateBtn.addEventListener(
+    "click",
+    saveRecruitingStartDate
+  );
+}
 
   // Portal should always be visible on page load.
   // Keep popup hidden until user taps Log In.
   hideAdminLogin();
+
+  const { data } = await portalSupabase.auth.getSession();
+  setAdminLoggedIn(!!data.session);
+
   updateAdminHeaderButtons();
 
   if (loginBtn) {
@@ -870,6 +996,8 @@ modal.classList.remove("hidden");
 
 async function loadLiveRounds() {
   listEl.innerHTML = "Loading...";
+
+  await loadLastCompletedRound();
 
   const { data, error } = await portalSupabase
     .from("live_round_status_p2")
@@ -1971,10 +2099,7 @@ window.openLiveHoleDetail = openLiveHoleDetail;
 window.showDetails = showDetails;
 
 loadLiveRounds();
-console.log("about to run loadLastCompletedRound");
-loadLastCompletedRound();
-console.log("finished calling loadLastCompletedRound");
-
+loadRecruitingStartDate();
 
 console.log("ADMIN PORTAL JS IS RUNNING");
 
@@ -1988,7 +2113,7 @@ function startAutoRefresh() {
 
   autoRefreshTimer = setInterval(() => {
     loadLiveRounds();
-  }, 5000);
+  }, 600000); // 10 minutes
 }
 
 function stopAutoRefresh() {
