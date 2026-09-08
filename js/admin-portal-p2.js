@@ -163,9 +163,6 @@ if (recruitingStartDate) {
   recruitingStartDate.disabled = !loggedIn;
 }
 
-const saveRecruitingStartDateBtn =
-  document.getElementById("saveRecruitingStartDateBtn");
-
 if (saveRecruitingStartDateBtn) {
   saveRecruitingStartDateBtn.disabled = !loggedIn;
 }
@@ -209,14 +206,6 @@ async function handleAdminLogin() {
     password: enteredPassword
   });
 
-
-  if (saveRecruitingStartDateBtn) {
-  saveRecruitingStartDateBtn.addEventListener(
-    "click",
-    saveRecruitingStartDate
-  );
-}
-
   setAdminLoggedIn(true);
   hideAdminLogin();
   updateAdminHeaderButtons();
@@ -250,9 +239,12 @@ async function initAdminLogin() {
   const recruitingLogoutBtn =
   document.getElementById("recruitingLogoutBtn");
 
-  const passwordInput = document.getElementById("adminPasswordInput");
+const passwordInput = document.getElementById("adminPasswordInput");
 
-  if (saveRecruitingStartDateBtn) {
+const saveRecruitingStartDateBtn =
+  document.getElementById("saveRecruitingStartDateBtn");
+
+if (saveRecruitingStartDateBtn) {
   saveRecruitingStartDateBtn.addEventListener(
     "click",
     saveRecruitingStartDate
@@ -270,6 +262,14 @@ async function initAdminLogin() {
 
   if (loginBtn) {
     loginBtn.addEventListener("click", showAdminLogin);
+  }
+
+  if (recruitingLoginBtn) {
+  recruitingLoginBtn.addEventListener("click", showAdminLogin);
+  }
+
+  if (recruitingLogoutBtn) {
+  recruitingLogoutBtn.addEventListener("click", handleAdminLogout);
   }
 
   if (loginSubmitBtn) {
