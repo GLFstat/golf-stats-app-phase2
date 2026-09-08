@@ -579,11 +579,25 @@ if (refreshBtn) {
 }
 
 if (clearFinishedBtn) {
-  clearFinishedBtn.addEventListener("click", clearFinished);
+  clearFinishedBtn.addEventListener("click", () => {
+    if (!isAdminLoggedIn()) {
+      showAdminLogin();
+      return;
+    }
+
+    clearFinished();
+  });
 }
 
 if (clearLiveBtn) {
-  clearLiveBtn.addEventListener("click", clearLiveSnapshots);
+  clearLiveBtn.addEventListener("click", () => {
+    if (!isAdminLoggedIn()) {
+      showAdminLogin();
+      return;
+    }
+
+    clearLiveSnapshots();
+  });
 }
 
 if (logoutBtn) {
@@ -949,6 +963,11 @@ const rows = holes.map((hole, index) => {
 }
 
 async function openCompletedSummary() {
+  if (!isAdminLoggedIn()) {
+    showAdminLogin();
+    return;
+  }
+
   if (!lastCompletedRoundData) {
     alert("No round data available.");
     return;
@@ -1682,35 +1701,40 @@ function escapeHtml(str) {
 async function clearFinished() {
 
   if (!isAdminLoggedIn()) {
-    await showPortalAlert(
-      "Admin Login Required",
-      "Please log in before using maintenance delete actions."
-    );
+    showAdminLogin();
     return;
   }
 
   const testRounds = currentRounds.filter(isTestRound);
 
   if (!testRounds.length) {
-    alert("No test rounds found.");
+    await showPortalAlert(
+      "No Test Rounds",
+      "No test rounds were found."
+    );
     return;
   }
 
-  let preview = "Delete the following test rounds?\n\n";
+  let preview = "<strong>Delete the following test rounds?</strong><br><br>";
 
   testRounds.forEach((round, index) => {
     const course = round.course_name || "Unknown Course";
     const date = round.round_date || "Unknown Date";
-    preview += `${index + 1}. ${course} (${date})\n`;
+    preview += `${index + 1}. ${escapeHtml(course)} (${escapeHtml(date)})<br>`;
   });
 
   preview +=
-    "\nThese are identified as test rounds because the course or player name contains 'test'.\n\n" +
-    "This will delete ONLY live snapshots (live_round_status_p2).\n" +
-    "Completed rounds will NOT be affected.\n\n" +
-    "Proceed?";
+    "<br>These are identified as test rounds because the course or player name contains 'test'.<br><br>" +
+    "This will delete <strong>ONLY live snapshots</strong> from live_round_status_p2.<br>" +
+    "Completed rounds will <strong>NOT</strong> be affected.";
 
-  const confirmed = confirm(preview);
+  const confirmed = await showPortalConfirm(
+    "Delete All Test Rounds?",
+    preview,
+    "Delete Test Rounds",
+    "Cancel"
+  );
+
   if (!confirmed) return;
 
   const ids = testRounds.map((r) => r.session_id);
@@ -1722,33 +1746,44 @@ async function clearFinished() {
 
   if (error) {
     console.error("Error deleting test rounds:", error);
-    alert("Could not delete test rounds.");
+
+    await showPortalAlert(
+      "Delete Failed",
+      "Could not delete test rounds."
+    );
+
     return;
   }
 
-  alert(`${ids.length} test round(s) deleted.`);
+  await showPortalAlert(
+    "Test Rounds Deleted",
+    `${ids.length} test round(s) deleted.`
+  );
+
   loadLiveRounds();
 }
 
 async function clearLiveSnapshots() {
 
   if (!isAdminLoggedIn()) {
-    await showPortalAlert(
-      "Admin Login Required",
-      "Please log in before using maintenance delete actions."
-    );
+    showAdminLogin();
     return;
   }
-  
-  const message =
-    "Clear all live round snapshots?\n\n" +
-    "This will delete all current rows from live_round_status_p2 only.\n\n" +
-    "It will NOT delete any finished rounds already saved in completed_rounds.\n\n" +
-    "If a round is still in progress, the player app may still keep a local copy on the phone/browser. " +
-    "You may still need to return to the app and choose Start New instead of Resume to fully clear that active round.\n\n" +
-    "Delete live snapshots now?";
 
-  const confirmed = confirm(message);
+  const message =
+    "<strong>Clear all live round snapshots?</strong><br><br>" +
+    "This will delete all current rows from <strong>live_round_status_p2</strong> only.<br><br>" +
+    "It will <strong>NOT</strong> delete any finished rounds already saved in completed_rounds.<br><br>" +
+    "If a round is still in progress, the player app may still keep a local copy on the phone/browser. " +
+    "You may still need to return to the app and choose Start New instead of Resume to fully clear that active round.";
+
+  const confirmed = await showPortalConfirm(
+    "Clear Live Round Snapshots?",
+    message,
+    "Clear Snapshots",
+    "Cancel"
+  );
+
   if (!confirmed) return;
 
   const { error } = await portalSupabase
@@ -1758,11 +1793,20 @@ async function clearLiveSnapshots() {
 
   if (error) {
     console.error("Error clearing live snapshots:", error);
-    alert("Could not clear live snapshots.");
+
+    await showPortalAlert(
+      "Clear Failed",
+      "Could not clear live round snapshots."
+    );
+
     return;
   }
 
-  alert("Live round snapshot(s) cleared. Completed rounds were not affected.");
+  await showPortalAlert(
+    "Live Snapshots Cleared",
+    "Live round snapshot(s) cleared. Completed rounds were not affected."
+  );
+
   loadLiveRounds();
 }
 
