@@ -1419,8 +1419,29 @@ const lastUpdateText = getLastUpdateText(statusTimestamp);
       : lastUpdateText;
   }
 
-  const savedHoles = holes.filter((h) => h && h.saved);
-  const lastSavedHole = savedHoles.length ? savedHoles[savedHoles.length - 1] : null;
+const savedHoles = holes.filter((h) => h && h.saved);
+
+const firOpportunities = savedHoles.filter(
+  (h) => Number(getHolePar(h)) >= 4
+);
+
+const liveFirMade = firOpportunities.filter(
+  (h) => getHoleFirValue(h) === true
+).length;
+
+const liveGirMade = savedHoles.filter(
+  (h) => getHoleGirValue(h) === true
+).length;
+
+const liveFirPct = firOpportunities.length
+  ? Math.round((liveFirMade / firOpportunities.length) * 100)
+  : 0;
+
+const liveGirPct = savedHoles.length
+  ? Math.round((liveGirMade / savedHoles.length) * 100)
+  : 0;
+
+const lastSavedHole = savedHoles.length ? savedHoles[savedHoles.length - 1] : null;
 
   const lastHoleNumber = lastSavedHole
     ? getHoleNumber(lastSavedHole, savedHoles.length - 1)
@@ -1518,8 +1539,8 @@ holesHtml += `
         </span>
       </div>
       <div class="live-stat-line"><strong>Total Putts:</strong> ${escapeHtml(String(round.total_putts ?? 0))} (thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
-      <div class="live-stat-line"><strong>FIR:</strong> ${escapeHtml(String(round.total_fir ?? 0))} (${escapeHtml(String(round.fir_pct != null ? Math.round(Number(round.fir_pct)) : 0))}% thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
-      <div class="live-stat-line"><strong>GIR:</strong> ${escapeHtml(String(round.total_gir ?? 0))} (${escapeHtml(String(round.gir_pct != null ? Math.round(Number(round.gir_pct)) : 0))}% thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
+      <div class="live-stat-line"><strong>FIR:</strong> ${escapeHtml(String(liveFirMade))} (${escapeHtml(String(liveFirPct))}% thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
+      <div class="live-stat-line"><strong>GIR:</strong> ${escapeHtml(String(liveGirMade))} (${escapeHtml(String(liveGirPct))}% thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
       <div class="live-stat-line"><strong>Up & Downs:</strong> ${escapeHtml(String(round.total_up_downs ?? 0))}</div>
       <div class="live-stat-line"><strong>Last Hole:</strong> ${escapeHtml(String(lastHoleNumber))}</div>
       <div class="live-stat-line"><strong>Last Hole Score:</strong> ${escapeHtml(String(getHoleScore(lastSavedHole) ?? "--"))}</div>
