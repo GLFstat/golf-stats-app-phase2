@@ -1540,9 +1540,9 @@ if (summaryCourseNameEl) {
 
     tbody.innerHTML = "";
 
-    let frontTotals = { fir: 0, gir: 0, putts: 0, updown: 0, sand: 0, penalty: 0, score: 0, saved: 0 };
-    let backTotals = { fir: 0, gir: 0, putts: 0, updown: 0, sand: 0, penalty: 0, score: 0, saved: 0 };
-    let totalTotals = { fir: 0, gir: 0, putts: 0, updown: 0, sand: 0, penalty: 0, score: 0, saved: 0 };
+let frontTotals = { fir: 0, firOpportunities: 0, gir: 0, putts: 0, updown: 0, sand: 0, penalty: 0, score: 0, saved: 0 };
+let backTotals = { fir: 0, firOpportunities: 0, gir: 0, putts: 0, updown: 0, sand: 0, penalty: 0, score: 0, saved: 0 };
+let totalTotals = { fir: 0, firOpportunities: 0, gir: 0, putts: 0, updown: 0, sand: 0, penalty: 0, score: 0, saved: 0 };
 
     let frontCumulativeScore = 0;
     let backCumulativeScore = 0;
@@ -1577,7 +1577,10 @@ if (summaryCourseNameEl) {
             const section = actualHoleNumber <= 9 ? frontTotals : backTotals;
 
             section.fir += holeData.fir ? 1 : 0;
-            section.gir += holeData.gir ? 1 : 0;
+            if (Number(holeData.par) >= 4) {
+            section.firOpportunities++;
+}
+section.gir += holeData.gir ? 1 : 0;
             section.putts += holeData.putts || 0;
             section.updown += holeData.updown ? 1 : 0;
             section.sand += holeData.sand ? 1 : 0;
@@ -1585,8 +1588,11 @@ if (summaryCourseNameEl) {
             section.score += holeData.score || 0;
             section.saved++;
 
-            totalTotals.fir += holeData.fir ? 1 : 0;
-            totalTotals.gir += holeData.gir ? 1 : 0;
+totalTotals.fir += holeData.fir ? 1 : 0;
+if (Number(holeData.par) >= 4) {
+    totalTotals.firOpportunities++;
+}
+totalTotals.gir += holeData.gir ? 1 : 0;
             totalTotals.putts += holeData.putts || 0;
             totalTotals.updown += holeData.updown ? 1 : 0;
             totalTotals.sand += holeData.sand ? 1 : 0;
@@ -1607,7 +1613,7 @@ if (summaryCourseNameEl) {
 
             tbody.innerHTML += `<tr class="totals-title">
                 <td>Totals</td>
-                <td>${frontTotals.saved ? Math.round(frontTotals.fir / frontTotals.saved * 100) + "%" : ""}</td>
+            <td>${frontTotals.firOpportunities ? Math.round(frontTotals.fir / frontTotals.firOpportunities * 100) + "%" : ""}</td>
                 <td>${frontTotals.saved ? Math.round(frontTotals.gir / frontTotals.saved * 100) + "%" : ""}</td>
                 <td>${frontTotals.putts}</td>
                 <td>${frontTotals.updown}</td>
@@ -1626,7 +1632,7 @@ if (summaryCourseNameEl) {
 
             tbody.innerHTML += `<tr class="totals-title">
                 <td>Totals</td>
-                <td>${backTotals.saved ? Math.round(backTotals.fir / backTotals.saved * 100) + "%" : ""}</td>
+            <td>${backTotals.firOpportunities ? Math.round(backTotals.fir / backTotals.firOpportunities * 100) + "%" : ""}</td>
                 <td>${backTotals.saved ? Math.round(backTotals.gir / backTotals.saved * 100) + "%" : ""}</td>
                 <td>${backTotals.putts}</td>
                 <td>${backTotals.updown}</td>
@@ -1639,7 +1645,7 @@ if (summaryCourseNameEl) {
             tbody.innerHTML += `<tr class="sub-header" style="background:#d5fadf;"><td colspan="8">Complete Round</td></tr>`;
             tbody.innerHTML += `<tr class="totals-title">
                 <td>Totals</td>
-                <td>${totalTotals.saved ? Math.round(totalTotals.fir / totalTotals.saved * 100) + "%" : ""}</td>
+            <td>${totalTotals.firOpportunities ? Math.round(totalTotals.fir / totalTotals.firOpportunities * 100) + "%" : ""}</td>
                 <td>${totalTotals.saved ? Math.round(totalTotals.gir / totalTotals.saved * 100) + "%" : ""}</td>
                 <td>${totalTotals.putts}</td>
                 <td>${totalTotals.updown}</td>
@@ -3041,12 +3047,18 @@ if (exitPerformanceTrends) {
             advanceRoundBackground();
         }
 
-        suppressResumePanelUntilStart = false;
-        roundStarted = true;
-        roundFinalized = false;
-        persistActiveRound();
-        updateResumePanel();
-        showStatsScreen();
+suppressResumePanelUntilStart = false;
+roundStarted = true;
+roundFinalized = false;
+
+persistActiveRound();
+
+if (window.startLiveRoundTracking) {
+    window.startLiveRoundTracking();
+}
+
+updateResumePanel();
+showStatsScreen();
     });
 }
 
