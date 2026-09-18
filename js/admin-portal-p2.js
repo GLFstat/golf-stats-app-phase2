@@ -973,12 +973,20 @@ async function openCompletedSummary() {
     return;
   }
 
-  const payload = lastCompletedRoundData.round_payload;
+let payload = lastCompletedRoundData.round_payload;
 
-  if (!payload) {
-    alert("No round payload found.");
+// Admin-created/repaired completed rounds may have their
+// hole data stored directly in holes_json instead of round_payload.
+if (!payload && Array.isArray(lastCompletedRoundData.holes_json)) {
+    payload = {
+        holes: lastCompletedRoundData.holes_json
+    };
+}
+
+if (!payload) {
+    alert("No round data found.");
     return;
-  }
+}
 
   const modal = document.getElementById("completedSummaryModal");
   const titleEl = document.getElementById("completedSummaryTitle");
