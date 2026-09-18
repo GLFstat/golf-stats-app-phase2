@@ -844,11 +844,6 @@ const topCards = `
     </div>
 
     <div class="summary-stat-card">
-      <div class="summary-stat-label">GIR %</div>
-      <div class="summary-stat-value">${girPct}%</div>
-    </div>
-
-    <div class="summary-stat-card">
       <div class="summary-stat-label">Sand Saves</div>
       <div class="summary-stat-value">${sandSaveTotal}</div>
     </div>
