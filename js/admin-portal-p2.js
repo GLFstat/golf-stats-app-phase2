@@ -1518,8 +1518,8 @@ holesHtml += `
         </span>
       </div>
       <div class="live-stat-line"><strong>Total Putts:</strong> ${escapeHtml(String(round.total_putts ?? 0))} (thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
-      <div class="live-stat-line"><strong>FIR:</strong> ${escapeHtml(String(round.total_fir ?? 0))} (${escapeHtml(String(round.holes_completed ? Math.round(((round.total_fir ?? 0) / round.holes_completed) * 100) : 0))}% thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
-      <div class="live-stat-line"><strong>GIR:</strong> ${escapeHtml(String(round.total_gir ?? 0))} (${escapeHtml(String(round.holes_completed ? Math.round(((round.total_gir ?? 0) / round.holes_completed) * 100) : 0))}% thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
+      <div class="live-stat-line"><strong>FIR:</strong> ${escapeHtml(String(round.total_fir ?? 0))} (${escapeHtml(String(round.fir_pct != null ? Math.round(Number(round.fir_pct)) : 0))}% thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
+      <div class="live-stat-line"><strong>GIR:</strong> ${escapeHtml(String(round.total_gir ?? 0))} (${escapeHtml(String(round.gir_pct != null ? Math.round(Number(round.gir_pct)) : 0))}% thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
       <div class="live-stat-line"><strong>Up & Downs:</strong> ${escapeHtml(String(round.total_up_downs ?? 0))}</div>
       <div class="live-stat-line"><strong>Last Hole:</strong> ${escapeHtml(String(lastHoleNumber))}</div>
       <div class="live-stat-line"><strong>Last Hole Score:</strong> ${escapeHtml(String(getHoleScore(lastSavedHole) ?? "--"))}</div>
@@ -2023,29 +2023,61 @@ if (holesCompleted < 18) {
     ? totalScore - playedPar
     : null;
 
-  const totalPutts = savedHoles.reduce((sum, h) => {
-    return sum + Number(h.putts || 0);
-  }, 0);
+const totalPutts = savedHoles.reduce((sum, h) => {
+  return sum + Number(h.putts || 0);
+}, 0);
 
-  const firOpportunities = savedHoles.filter(
-    h => Number(h.par || 0) >= 4
+// Treat the different Yes/True formats used by older and newer
+// round data as the same positive result.
+function isMade(value) {
+  return (
+    value === true ||
+    value === "true" ||
+    value === "TRUE" ||
+    value === 1 ||
+    value === "1" ||
+    value === "yes" ||
+    value === "Yes" ||
+    value === "Y" ||
+    value === "y"
   );
+}
 
-  const firMade = firOpportunities.filter(
-    h => h.fir === true
-  ).length;
+// FIR applies only to Par 4 and Par 5 holes.
+const firOpportunities = savedHoles.filter(
+  h => Number(h.par || 0) >= 4
+);
 
-  const firPct = firOpportunities.length > 0
-    ? Number(((firMade / firOpportunities.length) * 100).toFixed(2))
-    : null;
+const firMade = firOpportunities.filter(
+  h => isMade(getHoleFirValue(h))
+).length;
 
-  const girMade = savedHoles.filter(
-    h => h.gir === true
-  ).length;
+const firPct = firOpportunities.length > 0
+  ? Number(((firMade / firOpportunities.length) * 100).toFixed(2))
+  : null;
 
-  const girPct = savedHoles.length > 0
-    ? Number(((girMade / savedHoles.length) * 100).toFixed(2))
-    : null;
+// GIR applies to every played hole.
+const girMade = savedHoles.filter(
+  h => isMade(getHoleGirValue(h))
+).length;
+
+const girPct = savedHoles.length > 0
+  ? Number(((girMade / savedHoles.length) * 100).toFixed(2))
+  : null;
+
+// Additional completed-round totals.
+const totalUpDowns = savedHoles.filter(
+  h => isMade(getHoleUpDownValue(h))
+).length;
+
+const totalSandSaves = savedHoles.filter(
+  h => isMade(getHoleSandSaveValue(h))
+).length;
+
+const totalPenalties = savedHoles.reduce((sum, h) => {
+  const value = Number(getHolePenaltiesValue(h) || 0);
+  return sum + (Number.isFinite(value) ? value : 0);
+}, 0);
 
   const completedPayload = {
     details: {
@@ -2060,13 +2092,18 @@ if (holesCompleted < 18) {
 
     holes: holes,
 
-    summary: {
-      totalScore,
-      vsPar,
-      firPct,
-      girPct,
-      totalPutts
-    },
+summary: {
+  totalScore,
+  vsPar,
+  firPct,
+  girPct,
+  totalPutts,
+  totalFir: firMade,
+  totalGir: girMade,
+  totalUpDowns,
+  totalSandSaves,
+  totalPenalties
+},
 
     roundEndedEarly: holesCompleted < 18,
     completedHoleCount: holesCompleted,
@@ -2085,13 +2122,21 @@ if (holesCompleted < 18) {
     tee_rating: round.tee_rating ? Number(round.tee_rating) : null,
     tee_slope: round.tee_slope ? Number(round.tee_slope) : null,
 
-    total_score: totalScore,
-    vs_par: vsPar,
-    fir_pct: firPct,
-    gir_pct: girPct,
-    total_putts: totalPutts,
-    completed_holes: holesCompleted,
-    early_finish_reason: earlyFinishReason,
+total_score: totalScore,
+vs_par: vsPar,
+
+total_fir: firMade,
+total_gir: girMade,
+total_up_downs: totalUpDowns,
+total_sand_saves: totalSandSaves,
+total_penalties: totalPenalties,
+
+fir_pct: firPct,
+gir_pct: girPct,
+total_putts: totalPutts,
+
+completed_holes: holesCompleted,
+early_finish_reason: earlyFinishReason,
 
     is_test: isTestRound(round),
     uploaded_from_device: "Admin Portal",
