@@ -2039,9 +2039,14 @@ if (holesCompleted < 18) {
     ? totalScore - playedPar
     : null;
 
-const totalPutts = savedHoles.reduce((sum, h) => {
-  return sum + Number(h.putts || 0);
-}, 0);
+const knownPutts = savedHoles
+  .filter(h => h.putts != null)
+  .map(h => Number(h.putts));
+
+const totalPutts =
+  knownPutts.length === savedHoles.length
+    ? knownPutts.reduce((sum, putts) => sum + putts, 0)
+    : null;
 
 // Treat the different Yes/True formats used by older and newer
 // round data as the same positive result.

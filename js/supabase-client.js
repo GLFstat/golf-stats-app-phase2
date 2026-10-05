@@ -37,9 +37,14 @@ window.uploadCompletedRoundToSupabase = async function (round) {
 
   const vsPar = playedPar > 0 ? totalScore - playedPar : null;
 
-  const totalPutts = savedHoles.reduce((sum, h) => {
-    return sum + Number(h.putts || 0);
-  }, 0);
+const knownPutts = savedHoles
+  .filter(h => h.putts != null)
+  .map(h => Number(h.putts));
+
+const totalPutts =
+  knownPutts.length === savedHoles.length
+    ? knownPutts.reduce((sum, putts) => sum + putts, 0)
+    : null;
 
   // FIR opportunities are par 4s and par 5s
   const firOpportunities = savedHoles.filter(h => Number(h.par || 0) >= 4);

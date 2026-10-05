@@ -161,7 +161,7 @@ return {
   gir: !!h.gir,
   updown: !!h.updown,
   sand: !!h.sand,
-  putts: Number(h.putts || 0),
+ putts: h.putts == null ? null : Number(h.putts),
   penalty: Number(h.penalty || 0),
   score: Number(h.score || 0),
   par: h.par == null ? null : Number(h.par),
