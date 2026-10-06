@@ -1058,6 +1058,10 @@ async function loadLiveRounds() {
         completedRound.total_score ??
         payload.summary?.totalScore ??
         0,
+      total_putts:
+        completedRound.total_putts ??
+        payload.summary?.totalPutts ??
+        null,
       holes_completed:
         completedRound.completed_holes ??
         payload.holes.filter((h) => h && h.saved).length,
