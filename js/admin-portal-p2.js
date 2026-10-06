@@ -1537,7 +1537,7 @@ holesHtml += `
           ${escapeHtml(String(round.total_score ?? 0))} (${escapeHtml(formatScore(roundVsPar ?? 0, true))} thru ${escapeHtml(String(round.holes_completed ?? 0))})
         </span>
       </div>
-      <div class="live-stat-line"><strong>Total Putts:</strong> ${escapeHtml(String(round.total_putts ?? 0))} (thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
+      <div class="live-stat-line"><strong>Total Putts:</strong> ${escapeHtml(String(round.total_putts ?? "--"))} (thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
       <div class="live-stat-line"><strong>FIR:</strong> ${escapeHtml(String(liveFirMade))} (${escapeHtml(String(liveFirPct))}% thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
       <div class="live-stat-line"><strong>GIR:</strong> ${escapeHtml(String(liveGirMade))} (${escapeHtml(String(liveGirPct))}% thru ${escapeHtml(String(round.holes_completed ?? 0))})</div>
       <div class="live-stat-line"><strong>Up & Downs:</strong> ${escapeHtml(String(round.total_up_downs ?? 0))}</div>
